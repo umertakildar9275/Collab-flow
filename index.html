@@ -207,7 +207,6 @@
   .item-cover{aspect-ratio:16/10; background:var(--green-soft); position:relative;}
   .item-cover img{width:100%; height:100%; object-fit:cover;}
   .badge{position:absolute; top:10px; left:10px; background:rgba(255,255,255,.95); color:var(--green-deep); font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;}
-  .badge-demo{background:#fff3d9; color:#8a5a00;}
   .item-body{padding:16px; display:flex; flex-direction:column; gap:6px; flex:1;}
   .item-body h4{font-size:16px;}
   .item-meta{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0;}
@@ -297,8 +296,9 @@
   }
 
   .mode-pill{font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; letter-spacing:.03em;}
-  .mode-demo{background:#fff3d9; color:#8a5a00;}
+  .mode-connecting{background:#fff3d9; color:#8a5a00;}
   .mode-live{background:#d6f3e2; color:#0f6b3a;}
+  .mode-error{background:#f4dede; color:#8a2c2c;}
 
   .stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:26px;}
   @media(min-width:640px){ .stat-grid{grid-template-columns:repeat(4,1fr);} }
@@ -358,7 +358,9 @@
   .notif-item .m{color:var(--ink-soft);}
   .notif-item .ts{font-size:11px; color:var(--ink-soft); margin-top:4px;}
 
-  .demo-note{background:#fff3d9; border:1px solid #f0dca6; color:#8a5a00; font-size:12.5px; padding:10px 14px; border-radius:var(--radius-s); margin-bottom:16px;}
+  .status-banner{font-size:12.5px; padding:10px 14px; border-radius:var(--radius-s); margin-bottom:16px;}
+  .status-banner.error{background:#f4dede; border:1px solid #f0c9c0; color:#8a2c2c;}
+  .status-banner.info{background:#e7f1ea; border:1px solid #cfe4d8; color:#123524;}
   .private-note{background:#f4dede; border:1px solid #f0c9c0; color:#8a2c2c; font-size:12px; padding:3px 9px; border-radius:999px; font-weight:700; display:inline-block;}
 
   .rate-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
@@ -379,6 +381,7 @@
 </style>
 </head>
 <body>
+<div id="globalConnError" class="status-banner error" style="display:none; position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:300; max-width:92vw; box-shadow:var(--shadow-2);">Unable to connect to CollabFlow. Please check your connection and try again.</div>
 
 <!-- ==================================================
      PUBLIC WEBSITE
@@ -499,7 +502,6 @@
         <h2>Active campaigns</h2>
         <p>Discover active collaboration opportunities and campaign requirements.</p>
       </div>
-      <div class="demo-note">Demo/placeholder listings shown below — not real active campaigns.</div>
       <div class="toolbar">
         <input class="search-input" id="campaignSearch" placeholder="Search brand, campaign, platform, content type…" oninput="BrandHub.render()">
         <button class="btn btn-outline btn-sm" onclick="BrandHub.openFilters()">Filter</button>
@@ -516,7 +518,6 @@
         <h2>Discover creators</h2>
         <p>Discover creators, their content categories, rates and collaboration options.</p>
       </div>
-      <div class="demo-note">Demo/placeholder profiles shown below — not real creators.</div>
       <div class="toolbar">
         <input class="search-input" id="creatorSearch" placeholder="Search name, username, category, platform…" oninput="CreatorHub.render()">
         <button class="btn btn-outline btn-sm" onclick="CreatorHub.openFilters()">Filter</button>
@@ -586,7 +587,7 @@
     </div>
     <div class="wrap footer-bottom">
       <span>© <span id="footYear"></span> CollabFlow. All demo content is fictional.</span>
-      <span id="footerModePill" class="mode-pill mode-demo">Demo Mode</span>
+      <span id="footerModePill" class="mode-pill mode-connecting">Connecting…</span>
     </div>
   </footer>
 </div>
@@ -597,15 +598,23 @@
 <div class="app-shell" id="adminShell">
   <div id="adminLoginScreen" class="login-shell">
     <div class="login-card">
-      <span class="login-tag">Admin Panel</span>
-      <h2>Sign in</h2>
-      <p class="sub">Authorized CollabFlow staff only.</p>
-      <div class="form-field"><label>Email</label><input type="email" id="adminEmail" autocomplete="username"></div>
-      <div class="form-field"><label>Password</label><input type="password" id="adminPassword" autocomplete="current-password"></div>
-      <div class="form-error" id="adminLoginError" style="display:none;"></div>
-      <button class="btn btn-primary btn-block" onclick="Auth.loginAdmin()">Log in</button>
-      <button class="btn btn-ghost btn-block" onclick="Nav.goHome()" style="margin-top:6px;">Back to homepage</button>
-      <p style="font-size:12px; color:var(--ink-soft); margin-top:16px;">This prototype's authentication runs in your browser only — see the note in Settings for what production security requires.</p>
+      <div id="adminLoginForm">
+        <span class="login-tag">Admin Panel</span>
+        <h2>Sign in</h2>
+        <p class="sub">Authorized CollabFlow staff only.</p>
+        <div class="form-field"><label>Email</label><input type="email" id="adminEmail" autocomplete="username"></div>
+        <div class="form-field"><label>Password</label><input type="password" id="adminPassword" autocomplete="current-password"></div>
+        <div class="form-error" id="adminLoginError" style="display:none;"></div>
+        <button class="btn btn-primary btn-block" onclick="Auth.loginAdmin()">Log in</button>
+        <button class="btn btn-ghost btn-block" onclick="Nav.goHome()" style="margin-top:6px;">Back to homepage</button>
+      </div>
+      <div id="adminAccessDenied" style="display:none;">
+        <span class="login-tag">Admin Panel</span>
+        <h2>Access denied</h2>
+        <p class="sub">Your account isn't authorized for the Admin Panel.</p>
+        <button class="btn btn-outline btn-block" onclick="Auth.logout()">Log out and try a different account</button>
+        <button class="btn btn-ghost btn-block" onclick="Nav.goHome()" style="margin-top:6px;">Back to homepage</button>
+      </div>
     </div>
   </div>
 
@@ -617,9 +626,9 @@
           CollabFlow <span class="panel-name">Admin</span>
         </div>
         <div class="app-header-actions">
-          <span class="mode-pill mode-demo" id="adminModePill">Demo</span>
+          <span class="mode-pill mode-connecting" id="adminModePill">Connecting…</span>
           <button class="icon-btn" onclick="Notifications.open('ADMIN')" aria-label="Notifications">🔔<span class="dot-badge" id="adminNotifDot" style="display:none;"></span></button>
-          <button class="btn btn-ghost btn-sm" onclick="Auth.logout('admin')">Log out</button>
+          <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">Log out</button>
         </div>
       </div>
     </div>
@@ -649,16 +658,25 @@
 <div class="app-shell" id="brandsShell">
   <div id="brandsLoginScreen" class="login-shell">
     <div class="login-card">
-      <span class="login-tag">Brands Panel</span>
-      <h2 id="brandsAuthTitle">Sign in</h2>
-      <p class="sub" id="brandsAuthSub">Manage your campaigns and creator discovery.</p>
-      <div class="form-field" id="brandsNameField" style="display:none;"><label>Brand name</label><input type="text" id="brandsSignupName"></div>
-      <div class="form-field"><label>Email</label><input type="email" id="brandsEmail" autocomplete="username"></div>
-      <div class="form-field"><label>Password</label><input type="password" id="brandsPassword" autocomplete="current-password"></div>
-      <div class="form-error" id="brandsLoginError" style="display:none;"></div>
-      <button class="btn btn-primary btn-block" id="brandsAuthBtn" onclick="Auth.brandSubmit()">Log in</button>
-      <button class="btn btn-ghost btn-block" onclick="Auth.toggleBrandMode()" id="brandsToggleBtn" style="margin-top:6px;">New brand? Sign up</button>
-      <button class="btn btn-ghost btn-block" onclick="Nav.goHome()">Back to homepage</button>
+      <div id="brandsLoginForm">
+        <span class="login-tag">Brands Panel</span>
+        <h2 id="brandsAuthTitle">Sign in</h2>
+        <p class="sub" id="brandsAuthSub">Manage your campaigns and creator discovery.</p>
+        <div class="form-field" id="brandsNameField" style="display:none;"><label>Brand name</label><input type="text" id="brandsSignupName"></div>
+        <div class="form-field"><label>Email</label><input type="email" id="brandsEmail" autocomplete="username"></div>
+        <div class="form-field"><label>Password</label><input type="password" id="brandsPassword" autocomplete="current-password"></div>
+        <div class="form-error" id="brandsLoginError" style="display:none;"></div>
+        <button class="btn btn-primary btn-block" id="brandsAuthBtn" onclick="Auth.brandSubmit()">Log in</button>
+        <button class="btn btn-ghost btn-block" onclick="Auth.toggleBrandMode()" id="brandsToggleBtn" style="margin-top:6px;">New brand? Sign up</button>
+        <button class="btn btn-ghost btn-block" onclick="Nav.goHome()">Back to homepage</button>
+      </div>
+      <div id="brandsAccessDenied" style="display:none;">
+        <span class="login-tag">Brands Panel</span>
+        <h2>Access denied</h2>
+        <p class="sub">Your account isn't a Brand account.</p>
+        <button class="btn btn-outline btn-block" onclick="Auth.logout()">Log out and try a different account</button>
+        <button class="btn btn-ghost btn-block" onclick="Nav.goHome()" style="margin-top:6px;">Back to homepage</button>
+      </div>
     </div>
   </div>
   <div id="brandsApp" style="display:none;">
@@ -669,9 +687,9 @@
           CollabFlow <span class="panel-name">Brands</span>
         </div>
         <div class="app-header-actions">
-          <span class="mode-pill mode-demo" id="brandsModePill">Demo</span>
+          <span class="mode-pill mode-connecting" id="brandsModePill">Connecting…</span>
           <button class="icon-btn" onclick="Notifications.open('BRAND')" aria-label="Notifications">🔔<span class="dot-badge" id="brandsNotifDot" style="display:none;"></span></button>
-          <button class="btn btn-ghost btn-sm" onclick="Auth.logout('brands')">Log out</button>
+          <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">Log out</button>
         </div>
       </div>
     </div>
@@ -697,17 +715,26 @@
 <div class="app-shell" id="creatorShell">
   <div id="creatorLoginScreen" class="login-shell">
     <div class="login-card">
-      <span class="login-tag">Creator Panel</span>
-      <h2 id="creatorAuthTitle">Sign in</h2>
-      <p class="sub" id="creatorAuthSub">Manage your profile, rates and collaborations.</p>
-      <div class="form-field" id="creatorNameField" style="display:none;"><label>Creator name</label><input type="text" id="creatorSignupName"></div>
-      <div class="form-field" id="creatorUsernameField" style="display:none;"><label>Username</label><input type="text" id="creatorSignupUsername" placeholder="@handle"></div>
-      <div class="form-field"><label>Email</label><input type="email" id="creatorEmail" autocomplete="username"></div>
-      <div class="form-field"><label>Password</label><input type="password" id="creatorPassword" autocomplete="current-password"></div>
-      <div class="form-error" id="creatorLoginError" style="display:none;"></div>
-      <button class="btn btn-primary btn-block" id="creatorAuthBtn" onclick="Auth.creatorSubmit()">Log in</button>
-      <button class="btn btn-ghost btn-block" onclick="Auth.toggleCreatorMode()" id="creatorToggleBtn" style="margin-top:6px;">New creator? Sign up</button>
-      <button class="btn btn-ghost btn-block" onclick="Nav.goHome()">Back to homepage</button>
+      <div id="creatorLoginForm">
+        <span class="login-tag">Creator Panel</span>
+        <h2 id="creatorAuthTitle">Sign in</h2>
+        <p class="sub" id="creatorAuthSub">Manage your profile, rates and collaborations.</p>
+        <div class="form-field" id="creatorNameField" style="display:none;"><label>Creator name</label><input type="text" id="creatorSignupName"></div>
+        <div class="form-field" id="creatorUsernameField" style="display:none;"><label>Username</label><input type="text" id="creatorSignupUsername" placeholder="@handle"></div>
+        <div class="form-field"><label>Email</label><input type="email" id="creatorEmail" autocomplete="username"></div>
+        <div class="form-field"><label>Password</label><input type="password" id="creatorPassword" autocomplete="current-password"></div>
+        <div class="form-error" id="creatorLoginError" style="display:none;"></div>
+        <button class="btn btn-primary btn-block" id="creatorAuthBtn" onclick="Auth.creatorSubmit()">Log in</button>
+        <button class="btn btn-ghost btn-block" onclick="Auth.toggleCreatorMode()" id="creatorToggleBtn" style="margin-top:6px;">New creator? Sign up</button>
+        <button class="btn btn-ghost btn-block" onclick="Nav.goHome()">Back to homepage</button>
+      </div>
+      <div id="creatorAccessDenied" style="display:none;">
+        <span class="login-tag">Creator Panel</span>
+        <h2>Access denied</h2>
+        <p class="sub">Your account isn't a Creator account.</p>
+        <button class="btn btn-outline btn-block" onclick="Auth.logout()">Log out and try a different account</button>
+        <button class="btn btn-ghost btn-block" onclick="Nav.goHome()" style="margin-top:6px;">Back to homepage</button>
+      </div>
     </div>
   </div>
   <div id="creatorApp" style="display:none;">
@@ -718,9 +745,9 @@
           CollabFlow <span class="panel-name">Creator</span>
         </div>
         <div class="app-header-actions">
-          <span class="mode-pill mode-demo" id="creatorModePill">Demo</span>
+          <span class="mode-pill mode-connecting" id="creatorModePill">Connecting…</span>
           <button class="icon-btn" onclick="Notifications.open('CREATOR')" aria-label="Notifications">🔔<span class="dot-badge" id="creatorNotifDot" style="display:none;"></span></button>
-          <button class="btn btn-ghost btn-sm" onclick="Auth.logout('creator')">Log out</button>
+          <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">Log out</button>
         </div>
       </div>
     </div>
@@ -764,20 +791,11 @@
 
 <div class="toast-stack" id="toastStack"></div>
 
-<script>
+<script type="module">
 /* ==================================================
-   DATA MODELS  (demo data — see FUTURE DATABASE INTEGRATION)
+   LIVE DATA CACHES (populated only from Firestore — no demo/mock data)
    ================================================== */
-const DEMO = true; // flipped to false automatically once Firebase Auth+Firestore init succeeds and user proceeds in LIVE MODE
-let LIVE_MODE = false;
-
-const siteSettings = {
-  heroImage:"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80",
-  brandHubCover:"https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80",
-  creatorHubCover:"https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?w=900&q=80",
-  aboutHeading:"A managed layer between brands and creators",
-  aboutDescription:"CollabFlow is an agency-run platform: every campaign and every creator profile is reviewed before it becomes public."
-};
+let siteSettings = { heroImage:"", brandHubCover:"", creatorHubCover:"", aboutHeading:"", aboutDescription:"", rules:[] };
 
 const brandFlow = [
   {t:"Contact CollabFlow", d:"Reach out to our team to get started."},
@@ -794,106 +812,195 @@ const creatorFlow = [
   {t:"Collaboration happens", d:"We coordinate the handoff and the work begins."}
 ];
 
-const rules = [
-  "Provide accurate information about your brand or creator profile.",
-  "Clearly state campaign requirements and deliverables up front.",
-  "Respect the content requirements both sides agree to.",
-  "Discuss payment terms clearly before work begins.",
-  "Meet agreed content deadlines.",
-  "Communicate professionally at every stage.",
-  "CollabFlow reviews and approves all public listings.",
-  "Detailed policies are available on our legal pages."
-];
+// Public caches — always filtered to publicStatus === true, loaded from Firestore.
+let campaigns = [];
+let creators = [];
 
-// campaigns — publicStatus true => visible in Brand Hub
-let campaigns = [
-  {id:"c1", brandId:"b1", brandName:"Solace Skincare", campaignName:"Summer Glow Launch", coverImage:"https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80",
-   description:"Looking for lifestyle creators to showcase our new SPF serum in a natural morning-routine style video.",
-   budget:"₹8,000 – ₹15,000", budgetType:"Range", contentTypes:["Reel","Story"], platforms:["Instagram"],
-   deliverables:"1 Reel + 2 Stories", requirements:"Natural lighting, no heavy filters, mention key ingredient.",
-   location:"Mumbai (remote OK)", deadline:"2026-10-30", targetCategories:["Beauty","Lifestyle"], status:"REVIEW", publicStatus:true, createdAt:"2026-08-01"},
-  {id:"c2", brandId:"b2", brandName:"Kicksmith Footwear", campaignName:"Street Style Drop", coverImage:"https://images.unsplash.com/photo-1549298916-b41d501d3772?w=800&q=80",
-   description:"Sneaker brand seeking fashion/streetwear creators for our new drop.", budget:"₹5,000 – ₹10,000", budgetType:"Range",
-   contentTypes:["Post","Reel"], platforms:["Instagram","YouTube"], deliverables:"1 Post + 1 Reel", requirements:"Outdoor urban setting, tag brand handle.",
-   location:"Delhi NCR", deadline:"2026-11-15", targetCategories:["Fashion"], status:"REVIEW", publicStatus:true, createdAt:"2026-08-10"},
-  {id:"c3", brandId:"b3", brandName:"Nourish Foods", campaignName:"Protein Bar UGC", coverImage:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=800&q=80",
-   description:"UGC-style unboxing and taste-test content for our new protein bar line.", budget:"Under ₹1,000", budgetType:"Fixed",
-   contentTypes:["UGC"], platforms:["Instagram"], deliverables:"1 UGC video", requirements:"Honest review, casual tone, product must be visible.",
-   location:"Remote", deadline:"2026-09-25", targetCategories:["Food","Fitness"], status:"PUBLISHED", publicStatus:true, createdAt:"2026-07-20"}
-];
+// Admin-only oversight caches — full collections, only populated while an ADMIN session is active.
+let adminBrands = [], adminCreators = [], adminCampaigns = [], adminApplications = [], adminCollabRequests = [];
 
-// creators — publicStatus true => visible in Creator Hub
-let creators = [
-  {id:"cr1", name:"Aanya Kapoor", username:"@aanyacreates", profileImage:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80",
-   coverImage:"https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=900&q=80",
-   bio:"Lifestyle & beauty creator sharing honest routines and reviews.", categories:["Beauty","Lifestyle"], platforms:["Instagram"],
-   followers:42000, location:"Mumbai", rates:{reel:6000,story:2000,post:4000,video:0,ugc:3000}, negotiable:true,
-   packages:[{name:"Starter", desc:"1 Reel + 2 Stories", price:9000}], status:"REVIEW", publicStatus:true, createdAt:"2026-06-01"},
-  {id:"cr2", name:"Rahul Mehta", username:"@rahulfitlife", profileImage:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
-   coverImage:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80",
-   bio:"Fitness creator focused on home workouts and nutrition.", categories:["Fitness","Food"], platforms:["YouTube","Instagram"],
-   followers:118000, location:"Bengaluru", rates:{reel:9000,story:2500,post:5000,video:15000,ugc:5000}, negotiable:false,
-   packages:[{name:"Video Package", desc:"1 YouTube Video + 2 Reels", price:22000}], status:"PUBLISHED", publicStatus:true, createdAt:"2026-05-15"},
-  {id:"cr3", name:"Simran Kaur", username:"@simranstyles", profileImage:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80",
-   coverImage:"https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900&q=80",
-   bio:"Streetwear and fashion content, weekly outfit breakdowns.", categories:["Fashion"], platforms:["Instagram"],
-   followers:8600, location:"Delhi", rates:{reel:3000,story:1200,post:2000,video:0,ugc:1500}, negotiable:true,
-   packages:[], status:"REVIEW", publicStatus:true, createdAt:"2026-08-05"}
-];
+// Brand/creator scoped caches — only the signed-in account's own records.
+let brandOwnCampaigns = [], brandApplications = [], brandRequests = [];
+let creatorApplications = [], creatorRequests = [];
 
-let brands = [
-  {id:"b1", name:"Solace Skincare", status:"APPROVED", publicStatus:true, category:"Beauty", location:"Mumbai", email:"contact@solace.demo", phone:"9800000001"},
-  {id:"b2", name:"Kicksmith Footwear", status:"APPROVED", publicStatus:true, category:"Fashion", location:"Delhi", email:"hello@kicksmith.demo", phone:"9800000002"},
-  {id:"b3", name:"Nourish Foods", status:"PENDING", publicStatus:false, category:"Food", location:"Remote", email:"team@nourish.demo", phone:"9800000003"}
-];
+let notifications = { ADMIN:[], BRAND:[], CREATOR:[] };
 
-let applications = [
-  {id:"a1", campaignId:"c1", brandName:"Solace Skincare", creatorId:"cr1", creatorName:"Aanya Kapoor", status:"SUBMITTED", proposedRate:9000, createdAt:"2026-09-01"}
-];
-let collaborationRequests = [
-  {id:"r1", brandName:"Kicksmith Footwear", creatorId:"cr3", creatorName:"Simran Kaur", campaign:"Street Style Drop", status:"PENDING", proposedBudget:6000, createdAt:"2026-09-05"}
-];
-let notifications = {
-  ADMIN:[{title:"New creator submitted", message:"Simran Kaur submitted a profile for review.", read:false, ts:"2026-09-05"}],
-  BRAND:[{title:"Application received", message:"Aanya Kapoor applied to Summer Glow Launch.", read:false, ts:"2026-09-01"}],
-  CREATOR:[{title:"Collaboration request", message:"Kicksmith Footwear sent you a request.", read:false, ts:"2026-09-05"}]
-};
-
-// Auth state — DEMO ONLY. Roles are stored client-side for this prototype;
-// production must verify role server-side (Firestore rules / custom claims).
+// Auth/session state. Role is authoritative from Firestore users/{uid}.role,
+// never from the URL hash — see App.route() and handleAuthChange() below.
 const session = { admin:false, brand:null, creator:null };
 let brandAuthMode = 'login';
 let creatorAuthMode = 'login';
+let connectionState = 'connecting'; // 'connecting' | 'live' | 'error'
 
 /* ==================================================
-   FIREBASE (LIVE MODE) — see window.__FIREBASE_CONFIG__ above.
-   Loaded lazily; the whole app works fully in DEMO MODE without it.
-   Admin accounts must be created in the Firebase Console (Authentication),
-   never hardcoded here — see the note in Admin → Settings.
+   FIREBASE BOOTSTRAP (this app has no offline/demo fallback by design —
+   every read and write below talks to the real Firebase project configured
+   in window.__FIREBASE_CONFIG__ at the top of this file)
    ================================================== */
-const Backend = {
-  app:null, auth:null, db:null, storage:null, ready:false,
-  async init(){
-    if(this.ready) return true;
-    try{
-      const appMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-      const authMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-      const fsMod = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-      this.app = appMod.initializeApp(window.__FIREBASE_CONFIG__);
-      this.auth = authMod.getAuth(this.app);
-      this.db = fsMod.getFirestore(this.app);
-      this._mods = {authMod, fsMod};
-      this.ready = true;
-      return true;
-    }catch(e){
-      console.warn("Firebase unavailable — staying in Demo Mode.", e);
-      return false;
-    }
+const Backend = { app:null, auth:null, db:null, storage:null, authMod:null, fsMod:null, storageMod:null, ready:false };
+
+async function bootstrap(){
+  try{
+    const [appMod, authMod, fsMod, storageMod] = await Promise.all([
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js")
+    ]);
+    Backend.app = appMod.initializeApp(window.__FIREBASE_CONFIG__);
+    Backend.auth = authMod.getAuth(Backend.app);
+    Backend.db = fsMod.getFirestore(Backend.app);
+    Backend.storage = storageMod.getStorage(Backend.app);
+    Backend.authMod = authMod; Backend.fsMod = fsMod; Backend.storageMod = storageMod;
+    Backend.ready = true;
+    connectionState = 'live';
+    UI.setAllModePills('live');
+    wirePublicListeners();
+    Backend.authMod.onAuthStateChanged(Backend.auth, handleAuthChange);
+  }catch(e){
+    console.error("Firebase initialization failed:", e);
+    connectionState = 'error';
+    UI.setAllModePills('error');
+    ConnBanner.show();
+    App.route();
   }
+}
+
+function mapAuthError(e){
+  const code = e && e.code || '';
+  if(code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) return "Invalid email or password.";
+  if(code.includes('email-already-in-use')) return "An account already exists with that email.";
+  if(code.includes('weak-password')) return "Password should be at least 6 characters.";
+  if(code.includes('too-many-requests')) return "Too many attempts. Please try again later.";
+  if(code.includes('network')) return "Unable to connect to CollabFlow. Please check your connection and try again.";
+  return "Something went wrong. Please try again.";
+}
+function showErr(id,msg){ const el=document.getElementById(id); el.style.display='block'; el.textContent=msg; }
+function hideErr(id){ const el=document.getElementById(id); if(el) el.style.display='none'; }
+
+const ConnBanner = {
+  show(){ const el=document.getElementById('globalConnError'); if(el) el.style.display='block'; },
+  hide(){ const el=document.getElementById('globalConnError'); if(el) el.style.display='none'; }
 };
-// FUTURE: replace demo arrays above with fsMod.onSnapshot() listeners against
-// Firestore collections (campaigns, creators, brands, applications,
-// collaborationRequests, notifications, website) once Security Rules are deployed.
+
+/* ==================================================
+   LISTENER REGISTRY — prevents duplicate onSnapshot listeners / memory leaks
+   ================================================== */
+const Listeners = {
+  map:{},
+  set(key,unsub){ this.clear(key); this.map[key]=unsub; },
+  clear(key){ if(this.map[key]){ try{ this.map[key](); }catch(e){} delete this.map[key]; } },
+  clearRoleListeners(){ Object.keys(this.map).forEach(k=>{ if(k!=='publicCampaigns' && k!=='publicCreators' && k!=='siteSettings') this.clear(k); }); }
+};
+
+/* ==================================================
+   PUBLIC REALTIME LISTENERS (always active once connected — no login required)
+   ================================================== */
+function wirePublicListeners(){
+  const {collection, query, where, onSnapshot, doc} = Backend.fsMod;
+  Listeners.set('publicCampaigns', onSnapshot(
+    query(collection(Backend.db,'campaigns'), where('publicStatus','==',true)),
+    snap=>{ campaigns = snap.docs.map(d=>({id:d.id,...d.data()})); BrandHub.render(); if(session.creator) CreatorPanel.refreshIfVisible('campaigns'); },
+    err=>{ console.error(err); Toast.show('Unable to connect to CollabFlow. Please check your connection and try again.','error'); }
+  ));
+  Listeners.set('publicCreators', onSnapshot(
+    query(collection(Backend.db,'creators'), where('publicStatus','==',true)),
+    snap=>{ creators = snap.docs.map(d=>({id:d.id,...d.data()})); CreatorHub.render(); if(session.brand) BrandsPanel.refreshIfVisible('find'); },
+    err=>{ console.error(err); Toast.show('Unable to connect to CollabFlow. Please check your connection and try again.','error'); }
+  ));
+  Listeners.set('siteSettings', onSnapshot(
+    doc(Backend.db,'website','home'),
+    snap=>{ if(snap.exists()) Object.assign(siteSettings, snap.data()); applySiteSettingsToDom(); },
+    err=>{ console.error(err); }
+  ));
+}
+
+function applySiteSettingsToDom(){
+  document.getElementById('heroImg').src = siteSettings.heroImage || '';
+  document.getElementById('rulesList').innerHTML = (siteSettings.rules||[]).length
+    ? siteSettings.rules.map((r,i)=>`<div class="rule-item"><div class="rule-mark">${i+1}</div><p>${UI.escapeHtml(r)}</p></div>`).join('')
+    : `<p style="color:var(--ink-soft);">Guidelines will appear here once published by CollabFlow.</p>`;
+  if(siteSettings.aboutHeading){
+    const h = document.getElementById('aboutSection').querySelector('.section-head h2');
+    const p = document.getElementById('aboutSection').querySelector('.section-head p');
+    if(h) h.textContent = siteSettings.aboutHeading;
+    if(p) p.textContent = siteSettings.aboutDescription || '';
+  }
+}
+
+/* ==================================================
+   ROLE-SCOPED REALTIME LISTENERS
+   ================================================== */
+function wireAdminListeners(){
+  const {collection, query, where, onSnapshot} = Backend.fsMod;
+  Listeners.set('adminBrands', onSnapshot(collection(Backend.db,'brands'), snap=>{ adminBrands=snap.docs.map(d=>({id:d.id,...d.data()})); AdminPanel.refreshIfVisible(['brands','dashboard','approvals']); },
+    err=>{ console.error(err); Toast.show("You don't have permission to perform this action.",'error'); }));
+  Listeners.set('adminCreators', onSnapshot(collection(Backend.db,'creators'), snap=>{ adminCreators=snap.docs.map(d=>({id:d.id,...d.data()})); AdminPanel.refreshIfVisible(['creators','dashboard','approvals']); }));
+  Listeners.set('adminCampaigns', onSnapshot(collection(Backend.db,'campaigns'), snap=>{ adminCampaigns=snap.docs.map(d=>({id:d.id,...d.data()})); AdminPanel.refreshIfVisible(['campaigns','dashboard','approvals']); }));
+  Listeners.set('adminApplications', onSnapshot(collection(Backend.db,'applications'), snap=>{ adminApplications=snap.docs.map(d=>({id:d.id,...d.data()})); AdminPanel.refreshIfVisible(['applications']); }));
+  Listeners.set('adminCollabRequests', onSnapshot(collection(Backend.db,'collaborationRequests'), snap=>{ adminCollabRequests=snap.docs.map(d=>({id:d.id,...d.data()})); AdminPanel.refreshIfVisible(['collabs']); }));
+  Listeners.set('adminNotifications', onSnapshot(query(collection(Backend.db,'notifications'), where('audience','==','ADMIN')), snap=>{
+    notifications.ADMIN = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    UI.updateNotifDots(); AdminPanel.refreshIfVisible(['dashboard']);
+  }));
+}
+function wireBrandListeners(uid){
+  const {collection, query, where, onSnapshot} = Backend.fsMod;
+  Listeners.set('brandCampaigns', onSnapshot(query(collection(Backend.db,'campaigns'), where('brandId','==',uid)), snap=>{ brandOwnCampaigns=snap.docs.map(d=>({id:d.id,...d.data()})); BrandsPanel.refreshIfVisible(['campaigns','dashboard']); },
+    err=>{ console.error(err); Toast.show("You don't have permission to perform this action.",'error'); }));
+  Listeners.set('brandApplications', onSnapshot(query(collection(Backend.db,'applications'), where('brandId','==',uid)), snap=>{ brandApplications=snap.docs.map(d=>({id:d.id,...d.data()})); BrandsPanel.refreshIfVisible(['applications']); }));
+  Listeners.set('brandRequests', onSnapshot(query(collection(Backend.db,'collaborationRequests'), where('brandId','==',uid)), snap=>{ brandRequests=snap.docs.map(d=>({id:d.id,...d.data()})); BrandsPanel.refreshIfVisible(['requests']); }));
+  Listeners.set('brandNotifications', onSnapshot(query(collection(Backend.db,'notifications'), where('userId','==',uid)), snap=>{
+    notifications.BRAND = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    UI.updateNotifDots();
+  }));
+}
+function wireCreatorListeners(uid){
+  const {collection, query, where, onSnapshot} = Backend.fsMod;
+  Listeners.set('creatorApplications', onSnapshot(query(collection(Backend.db,'applications'), where('creatorId','==',uid)), snap=>{ creatorApplications=snap.docs.map(d=>({id:d.id,...d.data()})); CreatorPanel.refreshIfVisible(['applications','dashboard']); },
+    err=>{ console.error(err); Toast.show("You don't have permission to perform this action.",'error'); }));
+  Listeners.set('creatorRequests', onSnapshot(query(collection(Backend.db,'collaborationRequests'), where('creatorId','==',uid)), snap=>{ creatorRequests=snap.docs.map(d=>({id:d.id,...d.data()})); CreatorPanel.refreshIfVisible(['requests','dashboard']); }));
+  Listeners.set('creatorNotifications', onSnapshot(query(collection(Backend.db,'notifications'), where('userId','==',uid)), snap=>{
+    notifications.CREATOR = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    UI.updateNotifDots();
+  }));
+}
+
+/* ==================================================
+   AUTH STATE HANDLER — the single source of truth for role.
+   The URL hash (#admin/#brands/#creator) is navigation only; it never
+   grants access on its own. Access is decided here, from the
+   authenticated user's users/{uid}.role document in Firestore.
+   ================================================== */
+async function handleAuthChange(user){
+  session.admin = false; session.brand = null; session.creator = null;
+  Listeners.clearRoleListeners();
+  if(!user){ App.route(); return; }
+  try{
+    const {doc, getDoc} = Backend.fsMod;
+    const uSnap = await getDoc(doc(Backend.db,'users',user.uid));
+    if(!uSnap.exists()){
+      Toast.show("Account not found.", 'error');
+      await Backend.authMod.signOut(Backend.auth);
+      return; // triggers handleAuthChange(null) via onAuthStateChanged
+    }
+    const role = uSnap.data().role;
+    if(role === 'ADMIN'){ session.admin = true; wireAdminListeners(); }
+    else if(role === 'BRAND'){
+      const bSnap = await getDoc(doc(Backend.db,'brands',user.uid));
+      session.brand = {id:user.uid, ...(bSnap.exists()?bSnap.data():{})};
+      wireBrandListeners(user.uid);
+    } else if(role === 'CREATOR'){
+      const cSnap = await getDoc(doc(Backend.db,'creators',user.uid));
+      session.creator = {id:user.uid, ...(cSnap.exists()?cSnap.data():{ rates:{reel:0,story:0,post:0,video:0,ugc:0}, packages:[], categories:[], platforms:[] })};
+      wireCreatorListeners(user.uid);
+    }
+  }catch(e){
+    console.error(e);
+    Toast.show("Unable to connect to CollabFlow. Please check your connection and try again.", 'error');
+  }
+  App.route();
+}
 
 /* ==================================================
    TOASTS
@@ -905,7 +1012,7 @@ const Toast = {
     el.className = 'toast' + (type ? ' '+type : '');
     el.textContent = msg;
     stack.appendChild(el);
-    setTimeout(()=>el.remove(), 3200);
+    setTimeout(()=>el.remove(), 3800);
   }
 };
 
@@ -943,11 +1050,22 @@ const UI = {
     document.getElementById(panel+'Sidebar').classList.toggle('open', open);
     document.getElementById(panel+'DrawerOverlay').classList.toggle('open', open);
   },
-  escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); },
+  updateNotifDots(){
+    document.getElementById('adminNotifDot').style.display = (notifications.ADMIN||[]).some(n=>!n.read) ? 'block':'none';
+    document.getElementById('brandsNotifDot').style.display = (notifications.BRAND||[]).some(n=>!n.read) ? 'block':'none';
+    document.getElementById('creatorNotifDot').style.display = (notifications.CREATOR||[]).some(n=>!n.read) ? 'block':'none';
+  },
+  setAllModePills(state){
+    const labelMap = {connecting:'Connecting…', live:'Live', error:'Connection error'};
+    const classMap = {connecting:'mode-connecting', live:'mode-live', error:'mode-error'};
+    ['adminModePill','brandsModePill','creatorModePill','footerModePill'].forEach(id=>{
+      const el = document.getElementById(id); if(!el) return;
+      el.textContent = labelMap[state]; el.className = 'mode-pill ' + classMap[state];
+    });
+  }
 };
-document.addEventListener('keydown', e=>{
-  if(e.key==='Escape'){ UI.closeModal(); UI.closeConfirm(); }
-});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ UI.closeModal(); UI.closeConfirm(); } });
 document.getElementById('genericModalOverlay').addEventListener('click', e=>{ if(e.target.id==='genericModalOverlay') UI.closeModal(); });
 document.getElementById('confirmOverlay').addEventListener('click', e=>{ if(e.target.id==='confirmOverlay') UI.closeConfirm(); });
 
@@ -961,25 +1079,19 @@ const Nav = {
 };
 
 /* ==================================================
-   HOMEPAGE RENDER (How it works, Rules)
+   STATIC HOMEPAGE SECTIONS (process steps aren't per-brand data — kept as
+   fixed platform copy; hero/covers/about/rules load live from Firestore)
    ================================================== */
 function renderFlow(list, containerId){
   document.getElementById(containerId).innerHTML = list.map((s,i)=>`
-    <div class="step-card">
-      <div class="step-num">${i+1}</div>
-      <h4>${UI.escapeHtml(s.t)}</h4>
-      <p>${UI.escapeHtml(s.d)}</p>
-    </div>`).join('');
+    <div class="step-card"><div class="step-num">${i+1}</div><h4>${UI.escapeHtml(s.t)}</h4><p>${UI.escapeHtml(s.d)}</p></div>`).join('');
 }
 renderFlow(brandFlow,'brandFlowSteps');
 renderFlow(creatorFlow,'creatorFlowSteps');
-document.getElementById('rulesList').innerHTML = rules.map((r,i)=>`
-  <div class="rule-item"><div class="rule-mark">${i+1}</div><p>${UI.escapeHtml(r)}</p></div>`).join('');
 document.getElementById('footYear').textContent = new Date().getFullYear();
-document.getElementById('heroImg').src = siteSettings.heroImage;
 
 /* ==================================================
-   LEGAL PAGES (placeholder — mark for legal review)
+   LEGAL PAGES (static placeholder copy — mark for legal review)
    ================================================== */
 const Legal = {
   content:{
@@ -987,44 +1099,37 @@ const Legal = {
     privacy:["Privacy Policy","Placeholder privacy notice. CollabFlow collects information you submit (profile, campaign and contact details) to operate the matching and review workflow. This copy requires final legal review before launch."],
     brandGuidelines:["Brand Guidelines","Provide accurate campaign requirements, respond to applications in a timely manner, and honor agreed payment terms."],
     creatorGuidelines:["Creator Guidelines","Provide accurate rates and audience data, meet agreed deliverables and deadlines, and communicate professionally."],
-    contact:["Contact CollabFlow","Reach our team through the channel shared with you during onboarding. Public contact details will appear here once configured in Admin → Settings."]
+    contact:["Contact CollabFlow","Reach our team through the channel shared with you during onboarding."]
   },
-  open(key){
-    const [title, body] = this.content[key];
-    UI.openModal(`<h3>${title}</h3><div class="modal-section"><p>${body}</p></div>`);
-  }
+  open(key){ const [title, body] = this.content[key]; UI.openModal(`<h3>${title}</h3><div class="modal-section"><p>${body}</p></div>`); }
 };
 
 /* ==================================================
-   BRAND HUB (public)
+   BRAND HUB (public — reads only publicStatus === true campaigns)
    ================================================== */
-let campaignFilters = { contentType:[], platform:[], budget:'' };
+let campaignFilters = { contentType:[], platform:[] };
 const BrandHub = {
   render(){
-    const q = (document.getElementById('campaignSearch').value||'').toLowerCase().trim();
-    let list = campaigns.filter(c=>c.publicStatus);
-    if(q){
-      list = list.filter(c => [c.brandName,c.campaignName,...(c.contentTypes||[]),...(c.platforms||[]),c.description].join(' ').toLowerCase().includes(q));
-    }
-    if(campaignFilters.contentType.length) list = list.filter(c=>c.contentTypes.some(t=>campaignFilters.contentType.includes(t)));
-    if(campaignFilters.platform.length) list = list.filter(c=>c.platforms.some(p=>campaignFilters.platform.includes(p)));
     const grid = document.getElementById('campaignGrid');
-    if(!list.length){
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><h3>No active campaigns right now.</h3><p>New opportunities will appear here when they are approved by CollabFlow.</p></div>`;
-      return;
-    }
+    if(connectionState==='error'){ grid.innerHTML = `<div class="status-banner error" style="grid-column:1/-1;">Unable to connect to CollabFlow. Please check your connection and try again.</div>`; return; }
+    const q = (document.getElementById('campaignSearch').value||'').toLowerCase().trim();
+    let list = campaigns.slice();
+    if(q) list = list.filter(c => [c.brandName,c.campaignName,...(c.contentTypes||[]),...(c.platforms||[]),c.description].join(' ').toLowerCase().includes(q));
+    if(campaignFilters.contentType.length) list = list.filter(c=>(c.contentTypes||[]).some(t=>campaignFilters.contentType.includes(t)));
+    if(campaignFilters.platform.length) list = list.filter(c=>(c.platforms||[]).some(p=>campaignFilters.platform.includes(p)));
+    if(!list.length){ grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><h3>No active campaigns right now.</h3><p>New opportunities will appear here when they are approved by CollabFlow.</p></div>`; return; }
     grid.innerHTML = list.map(c=>{
-      const closed = new Date(c.deadline) < new Date();
+      const closed = c.deadline && new Date(c.deadline) < new Date();
       return `
       <div class="item-card">
-        <div class="item-cover"><img src="${c.coverImage}" alt="${UI.escapeHtml(c.campaignName)} cover"><span class="badge badge-demo">Demo listing</span></div>
+        <div class="item-cover"><img src="${c.coverImage||''}" alt="${UI.escapeHtml(c.campaignName)} cover"></div>
         <div class="item-body">
           <h4>${UI.escapeHtml(c.campaignName)}</h4>
           <p class="item-desc" style="font-weight:600; color:var(--green-deep);">${UI.escapeHtml(c.brandName)}</p>
-          <div class="item-meta">${c.contentTypes.map(t=>`<span class="chip">${t}</span>`).join('')}${c.platforms.map(p=>`<span class="chip">${p}</span>`).join('')}</div>
+          <div class="item-meta">${(c.contentTypes||[]).map(t=>`<span class="chip">${t}</span>`).join('')}${(c.platforms||[]).map(p=>`<span class="chip">${p}</span>`).join('')}</div>
           <p class="item-desc">${UI.escapeHtml(c.description)}</p>
           <div class="item-foot">
-            <span class="price">${UI.escapeHtml(c.budget)}</span>
+            <span class="price">${UI.escapeHtml(c.budget||'')}</span>
             <button class="btn btn-primary btn-sm" onclick="BrandHub.viewDetails('${c.id}')">${closed?'Closed — view details':'View details'}</button>
           </div>
         </div>
@@ -1033,27 +1138,25 @@ const BrandHub = {
   },
   viewDetails(id){
     const c = campaigns.find(x=>x.id===id); if(!c) return;
-    const closed = new Date(c.deadline) < new Date();
+    const closed = c.deadline && new Date(c.deadline) < new Date();
     UI.openModal(`
       <h3>${UI.escapeHtml(c.campaignName)}</h3>
-      <div class="modal-cover"><img src="${c.coverImage}" alt=""></div>
+      <div class="modal-cover"><img src="${c.coverImage||''}" alt=""></div>
       <div class="detail-row"><span>Brand</span><span>${UI.escapeHtml(c.brandName)}</span></div>
-      <div class="detail-row"><span>Budget</span><span>${UI.escapeHtml(c.budget)}</span></div>
-      <div class="detail-row"><span>Content</span><span>${c.contentTypes.join(', ')}</span></div>
-      <div class="detail-row"><span>Platform</span><span>${c.platforms.join(', ')}</span></div>
-      <div class="detail-row"><span>Deliverables</span><span>${UI.escapeHtml(c.deliverables)}</span></div>
+      <div class="detail-row"><span>Budget</span><span>${UI.escapeHtml(c.budget||'—')}</span></div>
+      <div class="detail-row"><span>Content</span><span>${(c.contentTypes||[]).join(', ')}</span></div>
+      <div class="detail-row"><span>Platform</span><span>${(c.platforms||[]).join(', ')}</span></div>
+      <div class="detail-row"><span>Deliverables</span><span>${UI.escapeHtml(c.deliverables||'—')}</span></div>
       <div class="detail-row"><span>Location</span><span>${UI.escapeHtml(c.location||'—')}</span></div>
-      <div class="detail-row"><span>Deadline</span><span>${closed?'Closed':UI.escapeHtml(c.deadline)}</span></div>
+      <div class="detail-row"><span>Deadline</span><span>${closed?'Closed':UI.escapeHtml(c.deadline||'—')}</span></div>
       <div class="modal-section"><h5>Description</h5><p>${UI.escapeHtml(c.description)}</p></div>
-      <div class="modal-section"><h5>Requirements</h5><p>${UI.escapeHtml(c.requirements)}</p></div>
+      <div class="modal-section"><h5>Requirements</h5><p>${UI.escapeHtml(c.requirements||'—')}</p></div>
       <div style="margin-top:18px;">
-        ${closed
-          ? `<button class="btn btn-outline btn-block" disabled>Campaign closed</button>`
-          : session.creator
-            ? `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); CreatorPanel.openApply('${c.id}')">Apply for campaign</button>`
-            : `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); Auth.openLoginChooser()">Connect with CollabFlow</button>`}
+        ${closed ? `<button class="btn btn-outline btn-block" disabled>Campaign closed</button>`
+          : session.creator ? `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); CreatorPanel.openApply('${c.id}')">Apply for campaign</button>`
+          : `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); Auth.openLoginChooser()">Connect with CollabFlow</button>`}
       </div>
-      <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">CollabFlow coordinates the introduction — we don't share private contact details automatically.</p>
+      <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">CollabFlow coordinates the introduction — private contact details are never shown here.</p>
     `);
   },
   openFilters(){
@@ -1067,59 +1170,44 @@ const BrandHub = {
           <button class="btn btn-primary btn-block" onclick="BrandHub.applyFilters()">Apply filters</button>
         </div>
       </div>`);
-    const cts = ["Reel","Post","Story","Video","UGC","Other"];
-    const plats = ["Instagram","YouTube","Other"];
-    document.getElementById('fContentType').innerHTML = cts.map(c=>pill('ct',c,campaignFilters.contentType.includes(c))).join('');
-    document.getElementById('fPlatform').innerHTML = plats.map(c=>pill('pl',c,campaignFilters.platform.includes(c))).join('');
+    document.getElementById('fContentType').innerHTML = ["Reel","Post","Story","Video","UGC","Other"].map(c=>pill('ct',c,campaignFilters.contentType.includes(c))).join('');
+    document.getElementById('fPlatform').innerHTML = ["Instagram","YouTube","Other"].map(c=>pill('pl',c,campaignFilters.platform.includes(c))).join('');
   },
-  applyFilters(){
-    campaignFilters.contentType = getCheckedPills('ct');
-    campaignFilters.platform = getCheckedPills('pl');
-    UI.closeModal(); this.render();
-  },
-  clearFilters(){ campaignFilters={contentType:[],platform:[],budget:''}; UI.closeModal(); this.render(); }
+  applyFilters(){ campaignFilters.contentType = getCheckedPills('ct'); campaignFilters.platform = getCheckedPills('pl'); UI.closeModal(); this.render(); },
+  clearFilters(){ campaignFilters={contentType:[],platform:[]}; UI.closeModal(); this.render(); }
 };
-function pill(group,label,checked){
-  return `<label class="checkbox-pill${checked?' checked':''}"><input type="checkbox" data-group="${group}" value="${label}" ${checked?'checked':''} onchange="this.parentNode.classList.toggle('checked',this.checked)"> ${label}</label>`;
-}
-function getCheckedPills(group){
-  return Array.from(document.querySelectorAll(`input[data-group="${group}"]:checked`)).map(i=>i.value);
-}
-BrandHub.render();
+function pill(group,label,checked){ return `<label class="checkbox-pill${checked?' checked':''}"><input type="checkbox" data-group="${group}" value="${label}" ${checked?'checked':''} onchange="this.parentNode.classList.toggle('checked',this.checked)"> ${label}</label>`; }
+function getCheckedPills(group){ return Array.from(document.querySelectorAll(`input[data-group="${group}"]:checked`)).map(i=>i.value); }
 
 /* ==================================================
-   CREATOR HUB (public)
+   CREATOR HUB (public — reads only publicStatus === true creators)
    ================================================== */
 let creatorFilters = { category:[], platform:[] };
 const CreatorHub = {
   render(){
-    const q = (document.getElementById('creatorSearch').value||'').toLowerCase().trim();
-    let list = creators.filter(c=>c.publicStatus);
-    if(q){ list = list.filter(c => [c.name,c.username,...(c.categories||[]),...(c.platforms||[]),c.bio].join(' ').toLowerCase().includes(q)); }
-    if(creatorFilters.category.length) list = list.filter(c=>c.categories.some(cat=>creatorFilters.category.includes(cat)));
-    if(creatorFilters.platform.length) list = list.filter(c=>c.platforms.some(p=>creatorFilters.platform.includes(p)));
-    const sort = document.getElementById('creatorSort').value;
-    const startRate = c => Math.min(...Object.values(c.rates).filter(v=>v>0), Infinity);
-    if(sort==='followers') list = [...list].sort((a,b)=>b.followers-a.followers);
-    else if(sort==='rate-low') list = [...list].sort((a,b)=>startRate(a)-startRate(b));
-    else if(sort==='rate-high') list = [...list].sort((a,b)=>startRate(b)-startRate(a));
-    else list = [...list].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
-
     const grid = document.getElementById('creatorGrid');
-    if(!list.length){
-      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><h3>No creators found.</h3><p>Try another search or adjust your filters.</p></div>`;
-      return;
-    }
+    if(connectionState==='error'){ grid.innerHTML = `<div class="status-banner error" style="grid-column:1/-1;">Unable to connect to CollabFlow. Please check your connection and try again.</div>`; return; }
+    const q = (document.getElementById('creatorSearch').value||'').toLowerCase().trim();
+    let list = creators.slice();
+    if(q) list = list.filter(c => [c.name,c.username,...(c.categories||[]),...(c.platforms||[]),c.bio].join(' ').toLowerCase().includes(q));
+    if(creatorFilters.category.length) list = list.filter(c=>(c.categories||[]).some(cat=>creatorFilters.category.includes(cat)));
+    if(creatorFilters.platform.length) list = list.filter(c=>(c.platforms||[]).some(p=>creatorFilters.platform.includes(p)));
+    const sort = document.getElementById('creatorSort').value;
+    const startRate = c => Math.min(...Object.values(c.rates||{}).filter(v=>v>0), Infinity);
+    if(sort==='followers') list.sort((a,b)=>(b.followers||0)-(a.followers||0));
+    else if(sort==='rate-low') list.sort((a,b)=>startRate(a)-startRate(b));
+    else if(sort==='rate-high') list.sort((a,b)=>startRate(b)-startRate(a));
+    if(!list.length){ grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><h3>No creators found.</h3><p>Try another search or adjust your filters.</p></div>`; return; }
     grid.innerHTML = list.map(c=>{
       const rate = startRate(c);
       return `
       <div class="item-card">
-        <div class="item-cover"><img src="${c.coverImage}" alt="${UI.escapeHtml(c.name)} cover"><span class="badge badge-demo">Demo profile</span></div>
+        <div class="item-cover"><img src="${c.coverImage||''}" alt="${UI.escapeHtml(c.name)} cover"></div>
         <div class="item-body">
           <h4>${UI.escapeHtml(c.name)}</h4>
-          <p class="item-desc" style="font-weight:600;">${UI.escapeHtml(c.username)} · ${c.followers.toLocaleString()} followers</p>
-          <div class="item-meta">${c.categories.map(t=>`<span class="chip">${t}</span>`).join('')}${c.platforms.map(p=>`<span class="chip">${p}</span>`).join('')}</div>
-          <p class="item-desc">${UI.escapeHtml(c.bio)}</p>
+          <p class="item-desc" style="font-weight:600;">${UI.escapeHtml(c.username||'')} · ${(c.followers||0).toLocaleString()} followers</p>
+          <div class="item-meta">${(c.categories||[]).map(t=>`<span class="chip">${t}</span>`).join('')}${(c.platforms||[]).map(p=>`<span class="chip">${p}</span>`).join('')}</div>
+          <p class="item-desc">${UI.escapeHtml(c.bio||'')}</p>
           <div class="item-foot">
             <span class="price">${rate===Infinity? 'Rate on request' : 'From ₹'+rate.toLocaleString()}</span>
             <button class="btn btn-primary btn-sm" onclick="CreatorHub.viewProfile('${c.id}')">View profile</button>
@@ -1130,24 +1218,22 @@ const CreatorHub = {
   },
   viewProfile(id){
     const c = creators.find(x=>x.id===id); if(!c) return;
+    const rates = c.rates||{};
     UI.openModal(`
       <h3>${UI.escapeHtml(c.name)}</h3>
-      <div class="modal-cover"><img src="${c.coverImage}" alt=""></div>
-      <div class="detail-row"><span>Username</span><span>${UI.escapeHtml(c.username)}</span></div>
-      <div class="detail-row"><span>Category</span><span>${c.categories.join(', ')}</span></div>
-      <div class="detail-row"><span>Platform</span><span>${c.platforms.join(', ')}</span></div>
-      <div class="detail-row"><span>Followers</span><span>${c.followers.toLocaleString()}</span></div>
+      <div class="modal-cover"><img src="${c.coverImage||''}" alt=""></div>
+      <div class="detail-row"><span>Username</span><span>${UI.escapeHtml(c.username||'')}</span></div>
+      <div class="detail-row"><span>Category</span><span>${(c.categories||[]).join(', ')}</span></div>
+      <div class="detail-row"><span>Platform</span><span>${(c.platforms||[]).join(', ')}</span></div>
+      <div class="detail-row"><span>Followers</span><span>${(c.followers||0).toLocaleString()}</span></div>
       <div class="detail-row"><span>Location</span><span>${UI.escapeHtml(c.location||'—')}</span></div>
-      <div class="modal-section"><h5>Bio</h5><p>${UI.escapeHtml(c.bio)}</p></div>
+      <div class="modal-section"><h5>Bio</h5><p>${UI.escapeHtml(c.bio||'')}</p></div>
       <div class="modal-section"><h5>Rates ${c.negotiable?'(negotiable)':''}</h5>
-        <div class="rate-grid">
-          ${Object.entries(c.rates).filter(([,v])=>v>0).map(([k,v])=>`<div class="rate-box"><label>${k}</label><strong>₹${v.toLocaleString()}</strong></div>`).join('') || '<p>Rate on request</p>'}
-        </div>
+        <div class="rate-grid">${Object.entries(rates).filter(([,v])=>v>0).map(([k,v])=>`<div class="rate-box"><label>${k}</label><strong>₹${v.toLocaleString()}</strong></div>`).join('') || '<p>Rate on request</p>'}</div>
       </div>
-      ${c.packages.length? `<div class="modal-section"><h5>Packages</h5>${c.packages.map(p=>`<div class="pkg-card"><div class="pkg-head"><strong>${UI.escapeHtml(p.name)}</strong><span class="price">₹${p.price.toLocaleString()}</span></div><p style="font-size:13.5px;color:var(--ink-soft);margin-top:4px;">${UI.escapeHtml(p.desc)}</p></div>`).join('')}</div>` : ''}
+      ${(c.packages||[]).length? `<div class="modal-section"><h5>Packages</h5>${c.packages.map(p=>`<div class="pkg-card"><div class="pkg-head"><strong>${UI.escapeHtml(p.name)}</strong><span class="price">₹${p.price.toLocaleString()}</span></div><p style="font-size:13.5px;color:var(--ink-soft);margin-top:4px;">${UI.escapeHtml(p.desc)}</p></div>`).join('')}</div>` : ''}
       <div style="margin-top:18px;">
-        ${session.brand
-          ? `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); BrandsPanel.openConnect('${c.id}')">Connect with CollabFlow</button>`
+        ${session.brand ? `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); BrandsPanel.openConnect('${c.id}')">Connect with CollabFlow</button>`
           : `<button class="btn btn-primary btn-block" onclick="UI.closeModal(); Auth.openLoginChooser()">Connect with CollabFlow</button>`}
       </div>
       <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">Private contact details aren't shown here — CollabFlow coordinates the introduction.</p>
@@ -1164,19 +1250,12 @@ const CreatorHub = {
           <button class="btn btn-primary btn-block" onclick="CreatorHub.applyFilters()">Apply filters</button>
         </div>
       </div>`);
-    const cats = ["Fashion","Lifestyle","Fitness","Gaming","Beauty","Food","Travel","Tech","Entertainment","Other"];
-    const plats = ["Instagram","YouTube","Other"];
-    document.getElementById('fCategory').innerHTML = cats.map(c=>pill('cat',c,creatorFilters.category.includes(c))).join('');
-    document.getElementById('fCPlatform').innerHTML = plats.map(c=>pill('cpl',c,creatorFilters.platform.includes(c))).join('');
+    document.getElementById('fCategory').innerHTML = ["Fashion","Lifestyle","Fitness","Gaming","Beauty","Food","Travel","Tech","Entertainment","Other"].map(c=>pill('cat',c,creatorFilters.category.includes(c))).join('');
+    document.getElementById('fCPlatform').innerHTML = ["Instagram","YouTube","Other"].map(c=>pill('cpl',c,creatorFilters.platform.includes(c))).join('');
   },
-  applyFilters(){
-    creatorFilters.category = getCheckedPills('cat');
-    creatorFilters.platform = getCheckedPills('cpl');
-    UI.closeModal(); this.render();
-  },
+  applyFilters(){ creatorFilters.category = getCheckedPills('cat'); creatorFilters.platform = getCheckedPills('cpl'); UI.closeModal(); this.render(); },
   clearFilters(){ creatorFilters={category:[],platform:[]}; UI.closeModal(); this.render(); }
 };
-CreatorHub.render();
 
 /* ==================================================
    NOTIFICATIONS
@@ -1186,34 +1265,19 @@ const Notifications = {
     const list = notifications[role] || [];
     UI.openModal(`
       <h3>Notifications</h3>
-      <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-        <button class="btn btn-ghost btn-sm" onclick="Notifications.markAll('${role}')">Mark all as read</button>
-      </div>
-      <div class="notif-list">
-        ${list.length? list.map(n=>`
-          <div class="notif-item ${n.read?'read':''}">
-            <div class="t">${UI.escapeHtml(n.title)}</div>
-            <div class="m">${UI.escapeHtml(n.message)}</div>
-            <div class="ts">${n.ts}</div>
-          </div>`).join('') : '<p style="color:var(--ink-soft); font-size:14px;">No notifications yet.</p>'}
-      </div>
+      <div style="display:flex; justify-content:flex-end; margin-bottom:10px;"><button class="btn btn-ghost btn-sm" onclick="Notifications.markAll('${role}')">Mark all as read</button></div>
+      <div class="notif-list">${list.length? list.map(n=>`<div class="notif-item ${n.read?'read':''}"><div class="t">${UI.escapeHtml(n.title)}</div><div class="m">${UI.escapeHtml(n.message)}</div></div>`).join('') : '<p style="color:var(--ink-soft); font-size:14px;">No notifications yet.</p>'}</div>
     `);
   },
-  markAll(role){
-    (notifications[role]||[]).forEach(n=>n.read=true);
-    UI.closeModal();
-    UI.updateNotifDots();
+  async markAll(role){
+    const list = notifications[role]||[];
+    const {doc, updateDoc} = Backend.fsMod;
+    try{
+      await Promise.all(list.filter(n=>!n.read).map(n=>updateDoc(doc(Backend.db,'notifications',n.id),{read:true})));
+      UI.closeModal();
+    }catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   }
 };
-UI.updateNotifDots = function(){
-  const map = {admin:'ADMIN', brands:'BRAND', creator:'CREATOR'};
-  Object.entries(map).forEach(([panel,role])=>{
-    const has = (notifications[role]||[]).some(n=>!n.read);
-    const dot = document.getElementById(panel+'NotifDot');
-    if(dot) dot.style.display = has ? 'block':'none';
-  });
-};
-UI.updateNotifDots();
 
 /* ==================================================
    ROUTING / APP SHELL SWITCHING
@@ -1223,9 +1287,7 @@ const App = {
     const hash = location.hash.replace('#','');
     const panels = ['admin','brands','creator'];
     document.getElementById('publicSite').style.display = panels.includes(hash) ? 'none' : 'block';
-    panels.forEach(p=>{
-      document.getElementById(p+'Shell').classList.toggle('active', hash===p);
-    });
+    panels.forEach(p=> document.getElementById(p+'Shell').classList.toggle('active', hash===p));
     if(hash==='admin') Auth.renderAdminGate();
     if(hash==='brands') Auth.renderBrandsGate();
     if(hash==='creator') Auth.renderCreatorGate();
@@ -1233,10 +1295,10 @@ const App = {
   }
 };
 window.addEventListener('hashchange', App.route);
-App.route();
 
 /* ==================================================
-   AUTH (DEMO — client-side only, see Settings for production notes)
+   AUTH — real Firebase Authentication. No hardcoded credentials anywhere
+   in this file; roles are verified against Firestore users/{uid}.
    ================================================== */
 const Auth = {
   openLoginChooser(){
@@ -1251,23 +1313,37 @@ const Auth = {
     `);
   },
   renderAdminGate(){
-    document.getElementById('adminLoginScreen').style.display = session.admin ? 'none':'flex';
-    document.getElementById('adminApp').style.display = session.admin ? 'block':'none';
-    if(session.admin) AdminPanel.setTab(AdminPanel.currentTab||'dashboard');
+    const loginEl = document.getElementById('adminLoginScreen'), appEl = document.getElementById('adminApp');
+    const denied = document.getElementById('adminAccessDenied'), form = document.getElementById('adminLoginForm');
+    if(session.admin){ loginEl.style.display='none'; appEl.style.display='block'; AdminPanel.setTab(AdminPanel.currentTab||'dashboard'); return; }
+    loginEl.style.display='flex'; appEl.style.display='none';
+    if(Backend.auth && Backend.auth.currentUser){ form.style.display='none'; denied.style.display='block'; }
+    else { form.style.display='block'; denied.style.display='none'; }
   },
-  loginAdmin(){
+  renderBrandsGate(){
+    const loginEl = document.getElementById('brandsLoginScreen'), appEl = document.getElementById('brandsApp');
+    const denied = document.getElementById('brandsAccessDenied'), form = document.getElementById('brandsLoginForm');
+    if(session.brand){ loginEl.style.display='none'; appEl.style.display='block'; BrandsPanel.setTab(BrandsPanel.currentTab||'dashboard'); return; }
+    loginEl.style.display='flex'; appEl.style.display='none';
+    if(Backend.auth && Backend.auth.currentUser){ form.style.display='none'; denied.style.display='block'; }
+    else { form.style.display='block'; denied.style.display='none'; }
+  },
+  renderCreatorGate(){
+    const loginEl = document.getElementById('creatorLoginScreen'), appEl = document.getElementById('creatorApp');
+    const denied = document.getElementById('creatorAccessDenied'), form = document.getElementById('creatorLoginForm');
+    if(session.creator){ loginEl.style.display='none'; appEl.style.display='block'; CreatorPanel.setTab(CreatorPanel.currentTab||'dashboard'); return; }
+    loginEl.style.display='flex'; appEl.style.display='none';
+    if(Backend.auth && Backend.auth.currentUser){ form.style.display='none'; denied.style.display='block'; }
+    else { form.style.display='block'; denied.style.display='none'; }
+  },
+  async loginAdmin(){
+    if(connectionState!=='live'){ showErr('adminLoginError','Unable to connect to CollabFlow. Please check your connection and try again.'); return; }
     const email = document.getElementById('adminEmail').value.trim();
     const pass = document.getElementById('adminPassword').value;
-    const err = document.getElementById('adminLoginError');
-    // DEMO MODE: any non-empty credential signs into the demo admin console.
-    // LIVE MODE (once Firebase is wired up by you): this should call
-    // signInWithEmailAndPassword(Backend.auth, email, pass) and then read
-    // /users/{uid}.role === 'ADMIN' from Firestore before granting access.
-    if(!email || !pass){ err.style.display='block'; err.textContent='Enter your email and password.'; return; }
-    err.style.display='none';
-    session.admin = true;
-    Toast.show('Signed in to Admin Panel (Demo Mode).');
-    this.renderAdminGate();
+    if(!email || !pass){ showErr('adminLoginError','Enter your email and password.'); return; }
+    hideErr('adminLoginError');
+    try{ await Backend.authMod.signInWithEmailAndPassword(Backend.auth, email, pass); Toast.show('Signed in.'); }
+    catch(e){ showErr('adminLoginError', mapAuthError(e)); }
   },
   toggleBrandMode(){
     brandAuthMode = brandAuthMode==='login' ? 'signup':'login';
@@ -1276,28 +1352,27 @@ const Auth = {
     document.getElementById('brandsAuthBtn').textContent = brandAuthMode==='login' ? 'Log in' : 'Sign up';
     document.getElementById('brandsToggleBtn').textContent = brandAuthMode==='login' ? "New brand? Sign up" : "Already have an account? Log in";
   },
-  brandSubmit(){
+  async brandSubmit(){
+    if(connectionState!=='live'){ showErr('brandsLoginError','Unable to connect to CollabFlow. Please check your connection and try again.'); return; }
     const email = document.getElementById('brandsEmail').value.trim();
     const pass = document.getElementById('brandsPassword').value;
-    const err = document.getElementById('brandsLoginError');
-    if(!email || !pass){ err.style.display='block'; err.textContent='Enter your email and password.'; return; }
-    err.style.display='none';
-    if(brandAuthMode==='signup'){
-      const name = document.getElementById('brandsSignupName').value.trim() || 'New Brand';
-      const b = {id:'b'+(brands.length+1), name, status:'PENDING', publicStatus:false, category:'', location:'', email, phone:''};
-      brands.push(b);
-      session.brand = b;
-      Toast.show('Brand account created — pending CollabFlow review.');
-    } else {
-      session.brand = brands[0]; // demo: log in as first demo brand
-      Toast.show('Signed in to Brands Panel (Demo Mode).');
-    }
-    this.renderBrandsGate();
-  },
-  renderBrandsGate(){
-    document.getElementById('brandsLoginScreen').style.display = session.brand ? 'none':'flex';
-    document.getElementById('brandsApp').style.display = session.brand ? 'block':'none';
-    if(session.brand) BrandsPanel.setTab(BrandsPanel.currentTab||'dashboard');
+    if(!email || !pass){ showErr('brandsLoginError','Enter your email and password.'); return; }
+    hideErr('brandsLoginError');
+    const {doc, setDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      if(brandAuthMode==='signup'){
+        const name = document.getElementById('brandsSignupName').value.trim();
+        if(!name){ showErr('brandsLoginError','Enter your brand name.'); return; }
+        const cred = await Backend.authMod.createUserWithEmailAndPassword(Backend.auth, email, pass);
+        const uid = cred.user.uid;
+        await setDoc(doc(Backend.db,'users',uid), {email, role:'BRAND', status:'PENDING', createdAt:serverTimestamp()});
+        await setDoc(doc(Backend.db,'brands',uid), {name, ownerUid:uid, email, phone:'', website:'', socialLinks:[], category:'', location:'', logo:'', cover:'', description:'', status:'PENDING', publicStatus:false, createdAt:serverTimestamp(), updatedAt:serverTimestamp()});
+        Toast.show('Brand account created — pending CollabFlow review.');
+      } else {
+        await Backend.authMod.signInWithEmailAndPassword(Backend.auth, email, pass);
+        Toast.show('Signed in.');
+      }
+    }catch(e){ showErr('brandsLoginError', mapAuthError(e)); }
   },
   toggleCreatorMode(){
     creatorAuthMode = creatorAuthMode==='login' ? 'signup':'login';
@@ -1307,42 +1382,56 @@ const Auth = {
     document.getElementById('creatorAuthBtn').textContent = creatorAuthMode==='login' ? 'Log in' : 'Sign up';
     document.getElementById('creatorToggleBtn').textContent = creatorAuthMode==='login' ? "New creator? Sign up" : "Already have an account? Log in";
   },
-  creatorSubmit(){
+  async creatorSubmit(){
+    if(connectionState!=='live'){ showErr('creatorLoginError','Unable to connect to CollabFlow. Please check your connection and try again.'); return; }
     const email = document.getElementById('creatorEmail').value.trim();
     const pass = document.getElementById('creatorPassword').value;
-    const err = document.getElementById('creatorLoginError');
-    if(!email || !pass){ err.style.display='block'; err.textContent='Enter your email and password.'; return; }
-    err.style.display='none';
-    if(creatorAuthMode==='signup'){
-      const name = document.getElementById('creatorSignupName').value.trim() || 'New Creator';
-      const username = document.getElementById('creatorSignupUsername').value.trim() || '@newcreator';
-      const c = {id:'cr'+(creators.length+1), name, username, profileImage:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
-        coverImage:'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=900&q=80', bio:'', categories:[], platforms:[], followers:0,
-        location:'', rates:{reel:0,story:0,post:0,video:0,ugc:0}, negotiable:true, packages:[], status:'PENDING', publicStatus:false, createdAt:new Date().toISOString().slice(0,10)};
-      creators.push(c); session.creator = c;
-      Toast.show('Creator account created — pending CollabFlow review.');
-    } else {
-      session.creator = creators[0];
-      Toast.show('Signed in to Creator Panel (Demo Mode).');
-    }
-    this.renderCreatorGate();
+    if(!email || !pass){ showErr('creatorLoginError','Enter your email and password.'); return; }
+    hideErr('creatorLoginError');
+    const {doc, setDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      if(creatorAuthMode==='signup'){
+        const name = document.getElementById('creatorSignupName').value.trim();
+        const username = document.getElementById('creatorSignupUsername').value.trim();
+        if(!name || !username){ showErr('creatorLoginError','Enter your name and username.'); return; }
+        const cred = await Backend.authMod.createUserWithEmailAndPassword(Backend.auth, email, pass);
+        const uid = cred.user.uid;
+        await setDoc(doc(Backend.db,'users',uid), {email, role:'CREATOR', status:'PENDING', createdAt:serverTimestamp()});
+        await setDoc(doc(Backend.db,'creators',uid), {name, username, ownerUid:uid, privateEmail:email, privatePhone:'', profileImage:'', coverImage:'', bio:'', categories:[], platforms:[], followers:0, following:0, averageViews:0, engagementRate:0, location:'', socialLinks:[], rates:{reel:0,story:0,post:0,video:0,ugc:0}, negotiable:true, packages:[], preferences:{}, status:'PENDING', publicStatus:false, createdAt:serverTimestamp(), updatedAt:serverTimestamp()});
+        Toast.show('Creator account created — pending CollabFlow review.');
+      } else {
+        await Backend.authMod.signInWithEmailAndPassword(Backend.auth, email, pass);
+        Toast.show('Signed in.');
+      }
+    }catch(e){ showErr('creatorLoginError', mapAuthError(e)); }
   },
-  renderCreatorGate(){
-    document.getElementById('creatorLoginScreen').style.display = session.creator ? 'none':'flex';
-    document.getElementById('creatorApp').style.display = session.creator ? 'block':'none';
-    if(session.creator) CreatorPanel.setTab(CreatorPanel.currentTab||'dashboard');
-  },
-  logout(panel){
-    if(panel==='admin') session.admin=false;
-    if(panel==='brands') session.brand=null;
-    if(panel==='creator') session.creator=null;
-    Toast.show('Logged out.');
-    App.route();
+  async logout(){
+    try{ await Backend.authMod.signOut(Backend.auth); Toast.show('Logged out.'); }
+    catch(e){ console.error(e); }
   }
 };
 
 /* ==================================================
-   ADMIN PANEL LOGIC
+   STORAGE UPLOAD HELPER — real Firebase Storage, no fake/local URLs
+   ================================================== */
+async function uploadImageFile(fileInputId, targetUrlInputId){
+  const input = document.getElementById(fileInputId);
+  const file = input && input.files[0];
+  if(!file) return;
+  if(connectionState!=='live'){ Toast.show('Unable to connect to CollabFlow. Please check your connection and try again.','error'); return; }
+  Toast.show('Uploading…','info');
+  try{
+    const path = `uploads/${Date.now()}_${file.name}`;
+    const storageRef = Backend.storageMod.ref(Backend.storage, path);
+    await Backend.storageMod.uploadBytes(storageRef, file);
+    const url = await Backend.storageMod.getDownloadURL(storageRef);
+    document.getElementById(targetUrlInputId).value = url;
+    Toast.show('Image uploaded. Click Save to publish it.');
+  }catch(e){ console.error(e); Toast.show('Upload failed. Please try again.','error'); }
+}
+
+/* ==================================================
+   ADMIN PANEL — every action below reads/writes real Firestore documents
    ================================================== */
 const AdminPanel = {
   currentTab:'dashboard',
@@ -1352,223 +1441,192 @@ const AdminPanel = {
     UI.toggleAppSidebar('admin', false);
     document.getElementById('adminMain').innerHTML = this['render_'+tab] ? this['render_'+tab]() : '<p>Coming soon.</p>';
   },
+  refreshIfVisible(tabs){ if(document.getElementById('adminApp').style.display!=='none' && tabs.includes(this.currentTab)) this.setTab(this.currentTab); },
   render_dashboard(){
-    const pending = brands.filter(b=>b.status==='PENDING').length + creators.filter(c=>c.status==='REVIEW').length + campaigns.filter(c=>c.status==='REVIEW').length;
+    const pending = adminBrands.filter(b=>b.status==='PENDING').length + adminCreators.filter(c=>c.status==='REVIEW').length + adminCampaigns.filter(c=>c.status==='REVIEW').length;
     return `
       <div class="stat-grid">
-        <div class="stat-card"><div class="stat-num">${brands.length}</div><div class="stat-label">Total brands</div></div>
-        <div class="stat-card"><div class="stat-num">${creators.length}</div><div class="stat-label">Total creators</div></div>
-        <div class="stat-card"><div class="stat-num">${campaigns.length}</div><div class="stat-label">Total campaigns</div></div>
+        <div class="stat-card"><div class="stat-num">${adminBrands.length}</div><div class="stat-label">Total brands</div></div>
+        <div class="stat-card"><div class="stat-num">${adminCreators.length}</div><div class="stat-label">Total creators</div></div>
+        <div class="stat-card"><div class="stat-num">${adminCampaigns.length}</div><div class="stat-label">Total campaigns</div></div>
         <div class="stat-card"><div class="stat-num">${pending}</div><div class="stat-label">Pending reviews</div></div>
       </div>
-      <div class="panel-block">
-        <h3>Recent activity</h3><p class="sub">Demo activity feed — future: backed by an auditLogs collection.</p>
-        <div class="notif-list">
-          ${(notifications.ADMIN||[]).map(n=>`<div class="notif-item read"><div class="t">${UI.escapeHtml(n.title)}</div><div class="m">${UI.escapeHtml(n.message)}</div><div class="ts">${n.ts}</div></div>`).join('') || '<p style="color:var(--ink-soft)">No recent activity.</p>'}
-        </div>
+      <div class="panel-block"><h3>Recent notifications</h3>
+        <div class="notif-list">${(notifications.ADMIN||[]).slice(0,8).map(n=>`<div class="notif-item read"><div class="t">${UI.escapeHtml(n.title)}</div><div class="m">${UI.escapeHtml(n.message)}</div></div>`).join('') || '<p style="color:var(--ink-soft)">No activity yet.</p>'}</div>
       </div>`;
   },
   render_website(){
     return `
-      <div class="panel-block">
-        <h3>Hero section</h3><p class="sub">Controls the homepage hero image and copy.</p>
-        <div class="form-field"><label>Hero image URL</label><input id="wHero" value="${siteSettings.heroImage}"></div>
+      <div class="panel-block"><h3>Hero section</h3>
+        <div class="form-field"><label>Hero image URL</label><input id="wHero" value="${UI.escapeHtml(siteSettings.heroImage||'')}"></div>
+        <div class="form-field"><label>Or upload an image</label><input type="file" accept="image/*" id="wHeroFile"><button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="uploadImageFile('wHeroFile','wHero')">Upload</button></div>
         <button class="btn btn-primary btn-sm" onclick="AdminPanel.saveWebsite()">Save changes</button>
       </div>
-      <div class="panel-block">
-        <h3>Brand Hub cover</h3>
-        <div class="form-field"><label>Cover image URL</label><input id="wBrandCover" value="${siteSettings.brandHubCover}"></div>
+      <div class="panel-block"><h3>Brand Hub cover</h3>
+        <div class="form-field"><label>Cover image URL</label><input id="wBrandCover" value="${UI.escapeHtml(siteSettings.brandHubCover||'')}"></div>
+        <div class="form-field"><label>Or upload an image</label><input type="file" accept="image/*" id="wBrandCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="uploadImageFile('wBrandCoverFile','wBrandCover')">Upload</button></div>
         <button class="btn btn-primary btn-sm" onclick="AdminPanel.saveWebsite()">Save changes</button>
       </div>
-      <div class="panel-block">
-        <h3>Creator Hub cover</h3>
-        <div class="form-field"><label>Cover image URL</label><input id="wCreatorCover" value="${siteSettings.creatorHubCover}"></div>
+      <div class="panel-block"><h3>Creator Hub cover</h3>
+        <div class="form-field"><label>Cover image URL</label><input id="wCreatorCover" value="${UI.escapeHtml(siteSettings.creatorHubCover||'')}"></div>
+        <div class="form-field"><label>Or upload an image</label><input type="file" accept="image/*" id="wCreatorCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="uploadImageFile('wCreatorCoverFile','wCreatorCover')">Upload</button></div>
         <button class="btn btn-primary btn-sm" onclick="AdminPanel.saveWebsite()">Save changes</button>
       </div>
-      <div class="panel-block">
-        <h3>About Us</h3>
-        <div class="form-field"><label>Heading</label><input id="wAboutHeading" value="${UI.escapeHtml(siteSettings.aboutHeading)}"></div>
-        <div class="form-field"><label>Description</label><textarea id="wAboutDesc">${UI.escapeHtml(siteSettings.aboutDescription)}</textarea></div>
+      <div class="panel-block"><h3>About Us</h3>
+        <div class="form-field"><label>Heading</label><input id="wAboutHeading" value="${UI.escapeHtml(siteSettings.aboutHeading||'')}"></div>
+        <div class="form-field"><label>Description</label><textarea id="wAboutDesc">${UI.escapeHtml(siteSettings.aboutDescription||'')}</textarea></div>
         <button class="btn btn-primary btn-sm" onclick="AdminPanel.saveWebsite()">Save changes</button>
+      </div>
+      <div class="panel-block"><h3>Rules / guidelines</h3>
+        <div id="wRulesList">${(siteSettings.rules||[]).map((r,i)=>`<div class="rule-item"><p style="flex:1;">${UI.escapeHtml(r)}</p><button class="row-actions" style="border:none;background:none;color:var(--danger);" onclick="AdminPanel.removeRule(${i})">Remove</button></div>`).join('') || '<p style="color:var(--ink-soft)">No rules published yet.</p>'}</div>
+        <div class="form-field" style="margin-top:12px;"><label>Add a rule</label><input id="wNewRule" placeholder="e.g. Respect agreed content deadlines"></div>
+        <button class="btn btn-outline btn-sm" onclick="AdminPanel.addRule()">Add rule</button>
       </div>`;
   },
-  saveWebsite(){
-    const hero=document.getElementById('wHero'), bc=document.getElementById('wBrandCover'), cc=document.getElementById('wCreatorCover');
-    if(hero) siteSettings.heroImage = hero.value;
-    if(bc) siteSettings.brandHubCover = bc.value;
-    if(cc) siteSettings.creatorHubCover = cc.value;
-    const ah=document.getElementById('wAboutHeading'), ad=document.getElementById('wAboutDesc');
-    if(ah) siteSettings.aboutHeading = ah.value;
-    if(ad) siteSettings.aboutDescription = ad.value;
-    document.getElementById('heroImg').src = siteSettings.heroImage;
-    Toast.show(LIVE_MODE ? 'Website settings saved.' : 'Demo change saved locally. Connect Firebase for permanent live storage.');
+  async saveWebsite(){
+    const {doc, setDoc, serverTimestamp} = Backend.fsMod;
+    const data = {
+      heroImage: document.getElementById('wHero')?.value ?? siteSettings.heroImage,
+      brandHubCover: document.getElementById('wBrandCover')?.value ?? siteSettings.brandHubCover,
+      creatorHubCover: document.getElementById('wCreatorCover')?.value ?? siteSettings.creatorHubCover,
+      aboutHeading: document.getElementById('wAboutHeading')?.value ?? siteSettings.aboutHeading,
+      aboutDescription: document.getElementById('wAboutDesc')?.value ?? siteSettings.aboutDescription,
+      rules: siteSettings.rules || [],
+      updatedAt: serverTimestamp()
+    };
+    try{ await setDoc(doc(Backend.db,'website','home'), data, {merge:true}); Toast.show('Website settings saved.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
+  addRule(){
+    const val = document.getElementById('wNewRule').value.trim();
+    if(!val) return;
+    siteSettings.rules = [...(siteSettings.rules||[]), val];
+    this.saveWebsite(); this.setTab('website');
+  },
+  removeRule(i){ siteSettings.rules = (siteSettings.rules||[]).filter((_,idx)=>idx!==i); this.saveWebsite(); this.setTab('website'); },
   render_brands(){
-    return `<div class="panel-block"><h3>Brands</h3><p class="sub">Review and manage brand accounts.</p>
+    return `<div class="panel-block"><h3>Brands</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Name</th><th>Category</th><th>Status</th><th>Public</th><th>Actions</th></tr></thead>
-        <tbody>${brands.map(b=>`
-          <tr>
-            <td data-label="Name">${UI.escapeHtml(b.name)}</td>
-            <td data-label="Category">${UI.escapeHtml(b.category||'—')}</td>
-            <td data-label="Status"><span class="status-badge status-${b.status.toLowerCase()}">${b.status}</span></td>
-            <td data-label="Public">${b.publicStatus?'Yes':'No'}</td>
-            <td data-label="Actions"><div class="row-actions">
-              <button onclick="AdminPanel.approveBrand('${b.id}')">Approve</button>
-              <button onclick="AdminPanel.togglePublic('brand','${b.id}')">${b.publicStatus?'Unpublish':'Publish'}</button>
-              <button class="danger" onclick="AdminPanel.deleteRecord('brand','${b.id}')">Delete</button>
-            </div></td>
-          </tr>`).join('')}</tbody>
+        <tbody>${adminBrands.map(b=>`
+          <tr><td data-label="Name">${UI.escapeHtml(b.name)}</td><td data-label="Category">${UI.escapeHtml(b.category||'—')}</td>
+          <td data-label="Status"><span class="status-badge status-${(b.status||'pending').toLowerCase()}">${b.status||'PENDING'}</span></td>
+          <td data-label="Public">${b.publicStatus?'Yes':'No'}</td>
+          <td data-label="Actions"><div class="row-actions">
+            <button onclick="AdminPanel.approveBrand('${b.id}')">Approve</button>
+            <button onclick="AdminPanel.togglePublic('brands','${b.id}',${!!b.publicStatus})">${b.publicStatus?'Unpublish':'Publish'}</button>
+            <button class="danger" onclick="AdminPanel.deleteRecord('brands','${b.id}')">Delete</button>
+          </div></td></tr>`).join('') || `<tr><td colspan="5">No brands yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  approveBrand(id){ const b=brands.find(x=>x.id===id); if(b){ b.status='APPROVED'; this.setTab('brands'); Toast.show('Brand approved.'); } },
+  async approveBrand(id){ await this.updateDoc('brands', id, {status:'APPROVED'}); Toast.show('Brand approved.'); },
   render_creators(){
-    return `<div class="panel-block"><h3>Creators</h3><p class="sub">Review and manage creator profiles.</p>
+    return `<div class="panel-block"><h3>Creators</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Name</th><th>Category</th><th>Followers</th><th>Status</th><th>Public</th><th>Actions</th></tr></thead>
-        <tbody>${creators.map(c=>`
-          <tr>
-            <td data-label="Name">${UI.escapeHtml(c.name)}</td>
-            <td data-label="Category">${c.categories.join(', ')||'—'}</td>
-            <td data-label="Followers">${c.followers.toLocaleString()}</td>
-            <td data-label="Status"><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
-            <td data-label="Public">${c.publicStatus?'Yes':'No'}</td>
-            <td data-label="Actions"><div class="row-actions">
-              <button onclick="AdminPanel.approveCreator('${c.id}')">Approve</button>
-              <button onclick="AdminPanel.togglePublic('creator','${c.id}')">${c.publicStatus?'Unpublish':'Publish'}</button>
-              <button class="danger" onclick="AdminPanel.deleteRecord('creator','${c.id}')">Delete</button>
-            </div></td>
-          </tr>`).join('')}</tbody>
+        <tbody>${adminCreators.map(c=>`
+          <tr><td data-label="Name">${UI.escapeHtml(c.name)}</td><td data-label="Category">${(c.categories||[]).join(', ')||'—'}</td><td data-label="Followers">${(c.followers||0).toLocaleString()}</td>
+          <td data-label="Status"><span class="status-badge status-${(c.status||'pending').toLowerCase()}">${c.status||'PENDING'}</span></td>
+          <td data-label="Public">${c.publicStatus?'Yes':'No'}</td>
+          <td data-label="Actions"><div class="row-actions">
+            <button onclick="AdminPanel.approveCreator('${c.id}')">Approve</button>
+            <button onclick="AdminPanel.togglePublic('creators','${c.id}',${!!c.publicStatus})">${c.publicStatus?'Unpublish':'Publish'}</button>
+            <button class="danger" onclick="AdminPanel.deleteRecord('creators','${c.id}')">Delete</button>
+          </div></td></tr>`).join('') || `<tr><td colspan="6">No creators yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  approveCreator(id){ const c=creators.find(x=>x.id===id); if(c){ c.status='PUBLISHED'; this.setTab('creators'); Toast.show('Creator approved.'); } },
+  async approveCreator(id){ await this.updateDoc('creators', id, {status:'APPROVED'}); Toast.show('Creator approved.'); },
   render_campaigns(){
-    return `<div class="panel-block"><h3>Campaigns</h3><p class="sub">Review and manage campaign listings.</p>
+    return `<div class="panel-block"><h3>Campaigns</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Campaign</th><th>Brand</th><th>Budget</th><th>Status</th><th>Public</th><th>Actions</th></tr></thead>
-        <tbody>${campaigns.map(c=>`
-          <tr>
-            <td data-label="Campaign">${UI.escapeHtml(c.campaignName)}</td>
-            <td data-label="Brand">${UI.escapeHtml(c.brandName)}</td>
-            <td data-label="Budget">${UI.escapeHtml(c.budget)}</td>
-            <td data-label="Status"><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
-            <td data-label="Public">${c.publicStatus?'Yes':'No'}</td>
-            <td data-label="Actions"><div class="row-actions">
-              <button onclick="AdminPanel.approveCampaign('${c.id}')">Approve</button>
-              <button onclick="AdminPanel.togglePublic('campaign','${c.id}')">${c.publicStatus?'Unpublish':'Publish'}</button>
-              <button class="danger" onclick="AdminPanel.deleteRecord('campaign','${c.id}')">Delete</button>
-            </div></td>
-          </tr>`).join('')}</tbody>
+        <tbody>${adminCampaigns.map(c=>`
+          <tr><td data-label="Campaign">${UI.escapeHtml(c.campaignName)}</td><td data-label="Brand">${UI.escapeHtml(c.brandName)}</td><td data-label="Budget">${UI.escapeHtml(c.budget||'')}</td>
+          <td data-label="Status"><span class="status-badge status-${(c.status||'draft').toLowerCase()}">${c.status||'DRAFT'}</span></td>
+          <td data-label="Public">${c.publicStatus?'Yes':'No'}</td>
+          <td data-label="Actions"><div class="row-actions">
+            <button onclick="AdminPanel.approveCampaign('${c.id}')">Approve &amp; publish</button>
+            <button onclick="AdminPanel.togglePublic('campaigns','${c.id}',${!!c.publicStatus})">${c.publicStatus?'Unpublish':'Publish'}</button>
+            <button class="danger" onclick="AdminPanel.deleteRecord('campaigns','${c.id}')">Delete</button>
+          </div></td></tr>`).join('') || `<tr><td colspan="6">No campaigns yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  approveCampaign(id){ const c=campaigns.find(x=>x.id===id); if(c){ c.status='PUBLISHED'; this.setTab('campaigns'); Toast.show('Campaign approved.'); } },
-  togglePublic(type,id){
-    const list = type==='brand'?brands:type==='creator'?creators:campaigns;
-    const rec = list.find(x=>x.id===id); if(!rec) return;
-    rec.publicStatus = !rec.publicStatus;
-    this.setTab(this.currentTab);
-    BrandHub.render(); CreatorHub.render();
-    Toast.show(rec.publicStatus ? 'Published.' : 'Unpublished.');
+  async approveCampaign(id){ await this.updateDoc('campaigns', id, {status:'PUBLISHED', publicStatus:true}); Toast.show('Campaign approved and published.'); },
+  async updateDoc(collectionName, id, data){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,collectionName,id), {...data, updatedAt:serverTimestamp()}); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
-  deleteRecord(type,id){
-    UI.confirm('Delete this record?','This action cannot be undone.', ()=>{
-      if(type==='brand') brands = brands.filter(x=>x.id!==id);
-      if(type==='creator') creators = creators.filter(x=>x.id!==id);
-      if(type==='campaign') campaigns = campaigns.filter(x=>x.id!==id);
-      this.setTab(this.currentTab); BrandHub.render(); CreatorHub.render();
-      Toast.show('Deleted.');
+  async togglePublic(collectionName, id, current){ await this.updateDoc(collectionName, id, {publicStatus: !current}); Toast.show(!current ? 'Published.' : 'Unpublished.'); },
+  deleteRecord(collectionName, id){
+    UI.confirm('Delete this record?','This action cannot be undone.', async ()=>{
+      const {doc, deleteDoc} = Backend.fsMod;
+      try{ await deleteDoc(doc(Backend.db,collectionName,id)); Toast.show('Deleted.'); }
+      catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
     });
   },
   render_approvals(){
-    const pendingBrands = brands.filter(b=>b.status==='PENDING');
-    const pendingCreators = creators.filter(c=>c.status==='REVIEW');
-    const pendingCampaigns = campaigns.filter(c=>c.status==='REVIEW');
+    const pendingBrands = adminBrands.filter(b=>b.status==='PENDING');
+    const pendingCreators = adminCreators.filter(c=>c.status==='REVIEW' || c.status==='PENDING');
+    const pendingCampaigns = adminCampaigns.filter(c=>c.status==='REVIEW');
     return `
-      <div class="panel-block"><h3>Pending brands</h3>
-        ${pendingBrands.length? pendingBrands.map(b=>`<div class="rule-item"><div style="flex:1;"><strong>${UI.escapeHtml(b.name)}</strong></div><button class="btn btn-sm btn-primary" onclick="AdminPanel.approveBrand('${b.id}'); AdminPanel.setTab('approvals')">Approve</button></div>`).join('') : '<p style="color:var(--ink-soft)">Nothing pending.</p>'}
-      </div>
-      <div class="panel-block"><h3>Pending creators</h3>
-        ${pendingCreators.length? pendingCreators.map(c=>`<div class="rule-item"><div style="flex:1;"><strong>${UI.escapeHtml(c.name)}</strong></div><button class="btn btn-sm btn-primary" onclick="AdminPanel.approveCreator('${c.id}'); AdminPanel.setTab('approvals')">Approve</button></div>`).join('') : '<p style="color:var(--ink-soft)">Nothing pending.</p>'}
-      </div>
-      <div class="panel-block"><h3>Pending campaigns</h3>
-        ${pendingCampaigns.length? pendingCampaigns.map(c=>`<div class="rule-item"><div style="flex:1;"><strong>${UI.escapeHtml(c.campaignName)}</strong></div><button class="btn btn-sm btn-primary" onclick="AdminPanel.approveCampaign('${c.id}'); AdminPanel.setTab('approvals')">Approve &amp; publish</button></div>`).join('') : '<p style="color:var(--ink-soft)">Nothing pending.</p>'}
-      </div>`;
+      <div class="panel-block"><h3>Pending brands</h3>${pendingBrands.length? pendingBrands.map(b=>`<div class="rule-item"><div style="flex:1;"><strong>${UI.escapeHtml(b.name)}</strong></div><button class="btn btn-sm btn-primary" onclick="AdminPanel.approveBrand('${b.id}')">Approve</button></div>`).join('') : '<p style="color:var(--ink-soft)">Nothing pending.</p>'}</div>
+      <div class="panel-block"><h3>Pending creators</h3>${pendingCreators.length? pendingCreators.map(c=>`<div class="rule-item"><div style="flex:1;"><strong>${UI.escapeHtml(c.name)}</strong></div><button class="btn btn-sm btn-primary" onclick="AdminPanel.approveCreator('${c.id}')">Approve</button></div>`).join('') : '<p style="color:var(--ink-soft)">Nothing pending.</p>'}</div>
+      <div class="panel-block"><h3>Pending campaigns</h3>${pendingCampaigns.length? pendingCampaigns.map(c=>`<div class="rule-item"><div style="flex:1;"><strong>${UI.escapeHtml(c.campaignName)}</strong></div><button class="btn btn-sm btn-primary" onclick="AdminPanel.approveCampaign('${c.id}')">Approve &amp; publish</button></div>`).join('') : '<p style="color:var(--ink-soft)">Nothing pending.</p>'}</div>`;
   },
   render_applications(){
     return `<div class="panel-block"><h3>Applications</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Creator</th><th>Brand</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${applications.map(a=>`
+        <tbody>${adminApplications.map(a=>`
           <tr><td data-label="Creator">${UI.escapeHtml(a.creatorName)}</td><td data-label="Brand">${UI.escapeHtml(a.brandName)}</td>
           <td data-label="Status"><span class="status-badge status-review">${a.status}</span></td>
-          <td data-label="Actions"><div class="row-actions"><button onclick="AdminPanel.updateAppStatus('${a.id}','SHORTLISTED')">Shortlist</button><button onclick="AdminPanel.updateAppStatus('${a.id}','ACCEPTED')">Accept</button><button class="danger" onclick="AdminPanel.updateAppStatus('${a.id}','DECLINED')">Decline</button></div></td></tr>`).join('') || `<tr><td colspan="4">No applications yet.</td></tr>`}</tbody>
+          <td data-label="Actions"><div class="row-actions"><button onclick="AdminPanel.updateDoc('applications','${a.id}',{status:'SHORTLISTED'})">Shortlist</button><button onclick="AdminPanel.updateDoc('applications','${a.id}',{status:'ACCEPTED'})">Accept</button><button class="danger" onclick="AdminPanel.updateDoc('applications','${a.id}',{status:'DECLINED'})">Decline</button></div></td></tr>`).join('') || `<tr><td colspan="4">No applications yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  updateAppStatus(id,status){ const a=applications.find(x=>x.id===id); if(a){ a.status=status; this.setTab('applications'); Toast.show('Application updated.'); } },
   render_collabs(){
     return `<div class="panel-block"><h3>Collaboration requests</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Brand</th><th>Creator</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${collaborationRequests.map(r=>`
+        <tbody>${adminCollabRequests.map(r=>`
           <tr><td data-label="Brand">${UI.escapeHtml(r.brandName)}</td><td data-label="Creator">${UI.escapeHtml(r.creatorName)}</td>
           <td data-label="Status"><span class="status-badge status-pending">${r.status}</span></td>
-          <td data-label="Actions"><button class="row-actions" onclick="AdminPanel.cancelRequest('${r.id}')">Cancel</button></td></tr>`).join('') || `<tr><td colspan="4">No requests yet.</td></tr>`}</tbody>
+          <td data-label="Actions">${r.status==='PENDING'?`<button onclick="AdminPanel.updateDoc('collaborationRequests','${r.id}',{status:'CANCELLED'})">Cancel</button>`:'—'}</td></tr>`).join('') || `<tr><td colspan="4">No requests yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  cancelRequest(id){ const r=collaborationRequests.find(x=>x.id===id); if(r){ r.status='CANCELLED'; this.setTab('collabs'); Toast.show('Request cancelled.'); } },
   render_media(){
-    const items = [
-      {name:'Hero image', url:siteSettings.heroImage},
-      {name:'Brand Hub cover', url:siteSettings.brandHubCover},
-      {name:'Creator Hub cover', url:siteSettings.creatorHubCover}
-    ];
-    return `<div class="panel-block"><h3>Media</h3><p class="sub">Local uploads preview only in this prototype — see comment for cloud storage integration.</p>
-      <div class="card-grid">${items.map(m=>`<div class="item-card"><div class="item-cover"><img src="${m.url}" alt=""></div><div class="item-body"><h4>${m.name}</h4></div></div>`).join('')}</div>
+    const items = [{name:'Hero image', url:siteSettings.heroImage},{name:'Brand Hub cover', url:siteSettings.brandHubCover},{name:'Creator Hub cover', url:siteSettings.creatorHubCover}].filter(m=>m.url);
+    return `<div class="panel-block"><h3>Media</h3><p class="sub">Site-level images currently in use. Manage them from the Website tab.</p>
+      <div class="card-grid">${items.map(m=>`<div class="item-card"><div class="item-cover"><img src="${m.url}" alt=""></div><div class="item-body"><h4>${m.name}</h4></div></div>`).join('') || '<p style="color:var(--ink-soft)">No media set yet.</p>'}</div>
     </div>`;
   },
   render_users(){
-    return `<div class="panel-block"><h3>Users</h3><p class="sub">Demo user directory — production reads this from Firebase Authentication + a users collection.</p>
+    return `<div class="panel-block"><h3>Users</h3><p class="sub">Approved accounts, read from Firestore.</p>
       <div class="table-wrap"><table class="data-table">
-        <thead><tr><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+        <thead><tr><th>Name</th><th>Role</th><th>Status</th></tr></thead>
         <tbody>
-          <tr><td data-label="Email">${brands[0]?.email||'—'}</td><td data-label="Role">BRAND</td><td data-label="Status"><span class="status-badge status-approved">APPROVED</span></td></tr>
-          <tr><td data-label="Email">${creators[0]?.username||'—'}</td><td data-label="Role">CREATOR</td><td data-label="Status"><span class="status-badge status-approved">APPROVED</span></td></tr>
+          ${adminBrands.map(b=>`<tr><td data-label="Name">${UI.escapeHtml(b.name)}</td><td data-label="Role">BRAND</td><td data-label="Status"><span class="status-badge status-${(b.status||'pending').toLowerCase()}">${b.status||'PENDING'}</span></td></tr>`).join('')}
+          ${adminCreators.map(c=>`<tr><td data-label="Name">${UI.escapeHtml(c.name)}</td><td data-label="Role">CREATOR</td><td data-label="Status"><span class="status-badge status-${(c.status||'pending').toLowerCase()}">${c.status||'PENDING'}</span></td></tr>`).join('')}
         </tbody>
       </table></div></div>`;
   },
   render_settings(){
     return `
-      <div class="panel-block">
-        <h3>Platform status</h3>
-        <p class="sub">Currently running in <strong>${LIVE_MODE?'Live':'Demo'}</strong> mode.</p>
-        <button class="btn btn-outline btn-sm" onclick="AdminPanel.tryLiveMode()">Attempt Firebase connection</button>
+      <div class="panel-block"><h3>Platform status</h3>
+        <p class="sub">Connection: <strong>${connectionState==='live'?'Live — connected to Firebase':connectionState==='error'?'Connection error':'Connecting…'}</strong></p>
       </div>
-      <div class="panel-block">
-        <h3>Admin account &amp; security</h3>
-        <p class="sub">Important production notes — read before going live.</p>
+      <div class="panel-block"><h3>Admin account &amp; security</h3>
         <ul style="font-size:13.5px; color:var(--ink-soft); padding-left:18px; line-height:1.7;">
-          <li>This prototype's login form accepts any non-empty email/password — it is <strong>not</strong> secure authentication.</li>
-          <li>A real admin account must be created directly in the <strong>Firebase Console → Authentication</strong>, not written into this file. Never hardcode a real password into client-side JavaScript — anyone can read it via "View Source".</li>
-          <li>After creating the account, set that user's role to <code>ADMIN</code> in a <code>users/&#123;uid&#125;</code> Firestore document, and enforce it with Firestore Security Rules — not just this frontend check.</li>
-          <li>The Firebase Web config object (apiKey, projectId, etc.) is safe to keep in this file — that's how Firebase's client SDK is designed to work. Real protection comes from Security Rules, not from hiding that object.</li>
+          <li>Admin accounts are created directly in <strong>Firebase Console → Authentication</strong>, never hardcoded in this file.</li>
+          <li>After creating the account, add a matching <code>users/&#123;uid&#125;</code> Firestore document with <code>role: "ADMIN"</code> — this file reads that field to decide access.</li>
+          <li>Real protection comes from Firestore &amp; Storage Security Rules, deployed in the Firebase Console — not from anything in this frontend.</li>
         </ul>
       </div>`;
-  },
-  async tryLiveMode(){
-    const ok = await Backend.init();
-    if(ok){ LIVE_MODE = true; UI.setAllModePills('Live'); Toast.show('Connected to Firebase — Live Mode active.'); this.setTab(this.currentTab); }
-    else { Toast.show('Live data connection unavailable. Showing demo data.', 'error'); }
   }
-};
-UI.setAllModePills = function(label){
-  ['adminModePill','brandsModePill','creatorModePill','footerModePill'].forEach(id=>{
-    const el = document.getElementById(id); if(!el) return;
-    el.textContent = label; el.className = 'mode-pill ' + (label==='Live'?'mode-live':'mode-demo');
-  });
 };
 
 /* ==================================================
-   BRANDS PANEL LOGIC
+   BRANDS PANEL
    ================================================== */
 const BrandsPanel = {
   currentTab:'dashboard',
@@ -1578,26 +1636,32 @@ const BrandsPanel = {
     UI.toggleAppSidebar('brands', false);
     document.getElementById('brandsMain').innerHTML = this['render_'+tab] ? this['render_'+tab]() : '<p>Coming soon.</p>';
   },
-  ownCampaigns(){ return campaigns.filter(c=>c.brandId===session.brand.id); },
+  refreshIfVisible(tabs){ if(document.getElementById('brandsApp').style.display!=='none' && tabs.includes(this.currentTab)) this.setTab(this.currentTab); },
   render_dashboard(){
-    const own = this.ownCampaigns();
     return `<div class="stat-grid">
-      <div class="stat-card"><div class="stat-num">${own.length}</div><div class="stat-label">Total campaigns</div></div>
-      <div class="stat-card"><div class="stat-num">${own.filter(c=>c.status==='DRAFT').length}</div><div class="stat-label">Draft</div></div>
-      <div class="stat-card"><div class="stat-num">${own.filter(c=>c.status==='REVIEW').length}</div><div class="stat-label">In review</div></div>
-      <div class="stat-card"><div class="stat-num">${own.filter(c=>c.publicStatus).length}</div><div class="stat-label">Published</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.length}</div><div class="stat-label">Total campaigns</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.filter(c=>c.status==='DRAFT').length}</div><div class="stat-label">Draft</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.filter(c=>c.status==='REVIEW').length}</div><div class="stat-label">In review</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.filter(c=>c.publicStatus).length}</div><div class="stat-label">Published</div></div>
     </div>
-    <div class="panel-block"><h3>Welcome, ${UI.escapeHtml(session.brand.name)}</h3><p class="sub">Manage your profile and campaigns from the sidebar.</p></div>`;
+    <div class="panel-block"><h3>Welcome, ${UI.escapeHtml(session.brand.name||'')}</h3><p class="sub">Manage your profile and campaigns from the sidebar.</p></div>`;
   },
   render_profile(){
     const b = session.brand;
-    return `<div class="panel-block">
-      <h3>Brand profile</h3>
+    return `<div class="panel-block"><h3>Brand profile</h3>
       <div class="two-col">
-        <div class="form-field"><label>Brand name</label><input id="bpName" value="${UI.escapeHtml(b.name)}"></div>
+        <div class="form-field"><label>Brand name</label><input id="bpName" value="${UI.escapeHtml(b.name||'')}"></div>
         <div class="form-field"><label>Category</label><input id="bpCategory" value="${UI.escapeHtml(b.category||'')}"></div>
       </div>
       <div class="form-field"><label>Description</label><textarea id="bpDesc">${UI.escapeHtml(b.description||'')}</textarea></div>
+      <div class="two-col">
+        <div class="form-field"><label>Logo URL</label><input id="bpLogo" value="${UI.escapeHtml(b.logo||'')}"></div>
+        <div class="form-field"><label>Cover URL</label><input id="bpCover" value="${UI.escapeHtml(b.cover||'')}"></div>
+      </div>
+      <div class="two-col">
+        <div class="form-field"><label>Upload logo</label><input type="file" accept="image/*" id="bpLogoFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('bpLogoFile','bpLogo')">Upload</button></div>
+        <div class="form-field"><label>Upload cover</label><input type="file" accept="image/*" id="bpCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('bpCoverFile','bpCover')">Upload</button></div>
+      </div>
       <div class="two-col">
         <div class="form-field"><label>Mobile number <span class="private-note">Private</span></label><input id="bpPhone" value="${UI.escapeHtml(b.phone||'')}"></div>
         <div class="form-field"><label>Email <span class="private-note">Private</span></label><input id="bpEmail" value="${UI.escapeHtml(b.email||'')}"></div>
@@ -1605,105 +1669,104 @@ const BrandsPanel = {
       <button class="btn btn-primary" onclick="BrandsPanel.saveProfile()">Save brand details</button>
     </div>`;
   },
-  saveProfile(){
-    const b = session.brand;
-    b.name = document.getElementById('bpName').value;
-    b.category = document.getElementById('bpCategory').value;
-    b.description = document.getElementById('bpDesc').value;
-    b.phone = document.getElementById('bpPhone').value;
-    b.email = document.getElementById('bpEmail').value;
-    Toast.show('Brand details saved.');
+  async saveProfile(){
+    const data = {
+      name: document.getElementById('bpName').value, category: document.getElementById('bpCategory').value,
+      description: document.getElementById('bpDesc').value, logo: document.getElementById('bpLogo').value,
+      cover: document.getElementById('bpCover').value, phone: document.getElementById('bpPhone').value, email: document.getElementById('bpEmail').value
+    };
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'brands',session.brand.id), {...data, updatedAt:serverTimestamp()}); session.brand = {...session.brand, ...data}; Toast.show('Brand details saved.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
   render_campaigns(){
-    const own = this.ownCampaigns();
     return `<div class="panel-block">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-        <h3 style="margin:0;">My campaigns</h3>
-        <button class="btn btn-primary btn-sm" onclick="BrandsPanel.openCampaignForm()">Create campaign</button>
+        <h3 style="margin:0;">My campaigns</h3><button class="btn btn-primary btn-sm" onclick="BrandsPanel.openCampaignForm()">Create campaign</button>
       </div>
       <div class="table-wrap" style="margin-top:16px;"><table class="data-table">
         <thead><tr><th>Campaign</th><th>Budget</th><th>Status</th><th>Public</th><th>Actions</th></tr></thead>
-        <tbody>${own.map(c=>`
-          <tr><td data-label="Campaign">${UI.escapeHtml(c.campaignName)}</td><td data-label="Budget">${UI.escapeHtml(c.budget)}</td>
-          <td data-label="Status"><span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span></td>
+        <tbody>${brandOwnCampaigns.map(c=>`
+          <tr><td data-label="Campaign">${UI.escapeHtml(c.campaignName)}</td><td data-label="Budget">${UI.escapeHtml(c.budget||'')}</td>
+          <td data-label="Status"><span class="status-badge status-${(c.status||'draft').toLowerCase()}">${c.status||'DRAFT'}</span></td>
           <td data-label="Public">${c.publicStatus?'Yes':'No'}</td>
           <td data-label="Actions"><div class="row-actions">
             <button onclick="BrandsPanel.openCampaignForm('${c.id}')">Edit</button>
-            <button onclick="BrandsPanel.submitForReview('${c.id}')">Submit for review</button>
+            ${c.status==='DRAFT'?`<button onclick="BrandsPanel.submitForReview('${c.id}')">Submit for review</button>`:''}
             <button class="danger" onclick="BrandsPanel.deleteCampaign('${c.id}')">Delete</button>
           </div></td></tr>`).join('') || `<tr><td colspan="5">No campaigns yet — create your first one above.</td></tr>`}</tbody>
       </table></div>
     </div>`;
   },
-  submitForReview(id){ const c=campaigns.find(x=>x.id===id); if(c){ c.status='REVIEW'; this.setTab('campaigns'); Toast.show('Campaign submitted for review.'); } },
+  async submitForReview(id){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'campaigns',id), {status:'REVIEW', updatedAt:serverTimestamp()}); Toast.show('Campaign submitted for review.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
   deleteCampaign(id){
-    UI.confirm('Delete this campaign?','This action cannot be undone.', ()=>{
-      campaigns = campaigns.filter(x=>x.id!==id); this.setTab('campaigns'); BrandHub.render();
-      Toast.show('Campaign deleted.');
+    UI.confirm('Delete this campaign?','This action cannot be undone.', async ()=>{
+      const {doc, deleteDoc} = Backend.fsMod;
+      try{ await deleteDoc(doc(Backend.db,'campaigns',id)); Toast.show('Campaign deleted.'); }
+      catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
     });
   },
   openCampaignForm(id){
-    const c = id ? campaigns.find(x=>x.id===id) : null;
+    const c = id ? brandOwnCampaigns.find(x=>x.id===id) : null;
     UI.openModal(`
       <h3>${c?'Edit campaign':'Create campaign'}</h3>
       <div class="form-field"><label>Campaign name <span class="req">*</span></label><input id="cfName" value="${c?UI.escapeHtml(c.campaignName):''}"></div>
       <div class="form-field"><label>Description <span class="req">*</span></label><textarea id="cfDesc">${c?UI.escapeHtml(c.description):''}</textarea></div>
       <div class="two-col">
         <div class="form-field"><label>Budget <span class="req">*</span></label><input id="cfBudget" placeholder="e.g. ₹5,000 – ₹10,000" value="${c?UI.escapeHtml(c.budget):''}"></div>
-        <div class="form-field"><label>Deadline</label><input type="date" id="cfDeadline" value="${c?c.deadline:''}"></div>
+        <div class="form-field"><label>Deadline</label><input type="date" id="cfDeadline" value="${c?c.deadline||'':''}"></div>
       </div>
-      <div class="form-field"><label>Content type <span class="req">*</span></label>
-        <div class="checkbox-grid" id="cfContentTypes">${["Reel","Post","Story","Video","UGC","Other"].map(t=>pill('cfct',t,c?c.contentTypes.includes(t):false)).join('')}</div>
-      </div>
-      <div class="form-field"><label>Platform <span class="req">*</span></label>
-        <div class="checkbox-grid" id="cfPlatforms">${["Instagram","YouTube","Other"].map(t=>pill('cfpl',t,c?c.platforms.includes(t):false)).join('')}</div>
-      </div>
-      <div class="form-field"><label>Requirements</label><textarea id="cfReq">${c?UI.escapeHtml(c.requirements):''}</textarea></div>
-      <div class="form-field"><label>Cover image URL</label><input id="cfCover" value="${c?c.coverImage:'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80'}"></div>
+      <div class="form-field"><label>Content type <span class="req">*</span></label><div class="checkbox-grid" id="cfContentTypes">${["Reel","Post","Story","Video","UGC","Other"].map(t=>pill('cfct',t,c?(c.contentTypes||[]).includes(t):false)).join('')}</div></div>
+      <div class="form-field"><label>Platform <span class="req">*</span></label><div class="checkbox-grid" id="cfPlatforms">${["Instagram","YouTube","Other"].map(t=>pill('cfpl',t,c?(c.platforms||[]).includes(t):false)).join('')}</div></div>
+      <div class="form-field"><label>Requirements</label><textarea id="cfReq">${c?UI.escapeHtml(c.requirements||''):''}</textarea></div>
+      <div class="form-field"><label>Poster image URL</label><input id="cfCover" value="${c?c.coverImage||'':''}"></div>
+      <div class="form-field"><label>Or upload a poster</label><input type="file" accept="image/*" id="cfCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('cfCoverFile','cfCover')">Upload</button></div>
       <button class="btn btn-primary btn-block" onclick="BrandsPanel.saveCampaign('${id||''}')">Save as draft</button>
     `);
   },
-  saveCampaign(id){
+  async saveCampaign(id){
     const name = document.getElementById('cfName').value.trim();
     const desc = document.getElementById('cfDesc').value.trim();
     const budget = document.getElementById('cfBudget').value.trim();
     const cts = getCheckedPills('cfct'), pls = getCheckedPills('cfpl');
     if(!name || !desc || !budget || !cts.length || !pls.length){ Toast.show('Please fill all required fields.','error'); return; }
     const data = {
-      campaignName:name, description:desc, budget, budgetType:'Range',
-      contentTypes:cts, platforms:pls, requirements:document.getElementById('cfReq').value,
-      coverImage:document.getElementById('cfCover').value, deadline:document.getElementById('cfDeadline').value || '2026-12-31',
-      deliverables: cts.join(' + '), location:'', targetCategories:[]
+      campaignName:name, description:desc, budget, budgetType:'Range', contentTypes:cts, platforms:pls,
+      requirements:document.getElementById('cfReq').value, coverImage:document.getElementById('cfCover').value,
+      deadline:document.getElementById('cfDeadline').value, deliverables: cts.join(' + ')
     };
-    if(id){ Object.assign(campaigns.find(x=>x.id===id), data); Toast.show('Campaign updated.'); }
-    else{
-      campaigns.push({id:'c'+(campaigns.length+1), brandId:session.brand.id, brandName:session.brand.name, status:'DRAFT', publicStatus:false, createdAt:new Date().toISOString().slice(0,10), ...data});
-      Toast.show('Campaign saved as draft.');
-    }
-    UI.closeModal(); this.setTab('campaigns');
+    const {collection, doc, addDoc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      if(id){ await updateDoc(doc(Backend.db,'campaigns',id), {...data, updatedAt:serverTimestamp()}); Toast.show('Campaign updated.'); }
+      else{
+        await addDoc(collection(Backend.db,'campaigns'), {...data, brandId:session.brand.id, brandName:session.brand.name, status:'DRAFT', publicStatus:false, createdAt:serverTimestamp(), updatedAt:serverTimestamp()});
+        Toast.show('Campaign saved as draft.');
+      }
+      UI.closeModal();
+    }catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
   render_applications(){
-    const ownIds = this.ownCampaigns().map(c=>c.id);
-    const apps = applications.filter(a=>ownIds.includes(a.campaignId));
     return `<div class="panel-block"><h3>Applications to my campaigns</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Creator</th><th>Campaign</th><th>Proposed rate</th><th>Status</th></tr></thead>
-        <tbody>${apps.map(a=>{
-          const camp = campaigns.find(c=>c.id===a.campaignId);
-          return `<tr><td data-label="Creator">${UI.escapeHtml(a.creatorName)}</td><td data-label="Campaign">${camp?UI.escapeHtml(camp.campaignName):'—'}</td>
-          <td data-label="Proposed rate">₹${a.proposedRate.toLocaleString()}</td><td data-label="Status"><span class="status-badge status-review">${a.status}</span></td></tr>`;
+        <tbody>${brandApplications.map(a=>{
+          const camp = brandOwnCampaigns.find(c=>c.id===a.campaignId);
+          return `<tr><td data-label="Creator">${UI.escapeHtml(a.creatorName)}</td><td data-label="Campaign">${camp?UI.escapeHtml(camp.campaignName):'—'}</td><td data-label="Proposed rate">₹${(a.proposedRate||0).toLocaleString()}</td><td data-label="Status"><span class="status-badge status-review">${a.status}</span></td></tr>`;
         }).join('') || `<tr><td colspan="4">No applications yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
   render_find(){
-    const list = creators.filter(c=>c.publicStatus);
     return `<div class="panel-block"><h3>Find creators</h3>
-      <div class="card-grid">${list.map(c=>`
-        <div class="item-card"><div class="item-cover"><img src="${c.profileImage}" alt=""></div>
-        <div class="item-body"><h4>${UI.escapeHtml(c.name)}</h4><p class="item-desc">${c.username} · ${c.followers.toLocaleString()} followers</p>
-        <div class="item-meta">${c.categories.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+      <div class="card-grid">${creators.map(c=>`
+        <div class="item-card"><div class="item-cover"><img src="${c.profileImage||c.coverImage||''}" alt=""></div>
+        <div class="item-body"><h4>${UI.escapeHtml(c.name)}</h4><p class="item-desc">${UI.escapeHtml(c.username||'')} · ${(c.followers||0).toLocaleString()} followers</p>
+        <div class="item-meta">${(c.categories||[]).map(t=>`<span class="chip">${t}</span>`).join('')}</div>
         <div class="item-foot"><button class="btn btn-sm btn-outline" onclick="CreatorHub.viewProfile('${c.id}')">View profile</button><button class="btn btn-sm btn-primary" onclick="BrandsPanel.openConnect('${c.id}')">Connect</button></div>
-        </div></div>`).join('')}</div>
+        </div></div>`).join('') || '<p style="color:var(--ink-soft)">No published creators yet.</p>'}</div>
     </div>`;
   },
   openConnect(creatorId){
@@ -1716,36 +1779,43 @@ const BrandsPanel = {
       <button class="btn btn-primary btn-block" onclick="BrandsPanel.sendRequest('${creatorId}')">Send collaboration request</button>
     `);
   },
-  sendRequest(creatorId){
+  async sendRequest(creatorId){
     const c = creators.find(x=>x.id===creatorId);
-    const dup = collaborationRequests.find(r=>r.creatorId===creatorId && r.brandName===session.brand.name && r.status==='PENDING');
+    const dup = brandRequests.find(r=>r.creatorId===creatorId && r.status==='PENDING');
     if(dup){ Toast.show('You already have an active request for this creator.', 'error'); return; }
-    collaborationRequests.push({id:'r'+(collaborationRequests.length+1), brandName:session.brand.name, creatorId, creatorName:c.name, campaign:'', status:'PENDING', proposedBudget:document.getElementById('reqBudget').value, createdAt:new Date().toISOString().slice(0,10)});
-    (notifications.CREATOR = notifications.CREATOR||[]).unshift({title:'New collaboration request', message:`${session.brand.name} sent you a request.`, read:false, ts:new Date().toISOString().slice(0,10)});
-    UI.updateNotifDots();
-    UI.closeModal();
-    Toast.show('Your request has been submitted to CollabFlow.');
+    const {collection, addDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      await addDoc(collection(Backend.db,'collaborationRequests'), {
+        brandId:session.brand.id, brandName:session.brand.name, creatorId, creatorName:c.name, campaign:'',
+        message:document.getElementById('reqMessage').value, proposedBudget:document.getElementById('reqBudget').value,
+        status:'PENDING', createdAt:serverTimestamp(), updatedAt:serverTimestamp()
+      });
+      await addDoc(collection(Backend.db,'notifications'), {userId:creatorId, type:'COLLAB_REQUEST', title:'New collaboration request', message:`${session.brand.name} sent you a request.`, read:false, createdAt:serverTimestamp()});
+      UI.closeModal(); Toast.show('Your request has been submitted to CollabFlow.');
+    }catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
   render_requests(){
-    const own = collaborationRequests.filter(r=>r.brandName===session.brand.name);
     return `<div class="panel-block"><h3>Sent requests</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Creator</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${own.map(r=>`<tr><td data-label="Creator">${UI.escapeHtml(r.creatorName)}</td><td data-label="Budget">${UI.escapeHtml(r.proposedBudget||'—')}</td>
+        <tbody>${brandRequests.map(r=>`<tr><td data-label="Creator">${UI.escapeHtml(r.creatorName)}</td><td data-label="Budget">${UI.escapeHtml(r.proposedBudget||'—')}</td>
         <td data-label="Status"><span class="status-badge status-pending">${r.status}</span></td>
         <td data-label="Actions">${r.status==='PENDING'?`<button onclick="BrandsPanel.cancelRequest('${r.id}')">Cancel</button>`:'—'}</td></tr>`).join('') || `<tr><td colspan="4">No requests sent yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  cancelRequest(id){ const r=collaborationRequests.find(x=>x.id===id); if(r){ r.status='CANCELLED'; this.setTab('requests'); Toast.show('Request cancelled.'); } },
+  async cancelRequest(id){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'collaborationRequests',id), {status:'CANCELLED', updatedAt:serverTimestamp()}); Toast.show('Request cancelled.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
   render_settings(){
-    return `<div class="panel-block"><h3>Account settings</h3><p class="sub">Demo account settings for ${UI.escapeHtml(session.brand.email||'')}.</p>
-      <p style="font-size:13px; color:var(--ink-soft);">Password changes and account deletion will be available once Firebase Authentication is connected.</p>
-    </div>`;
+    return `<div class="panel-block"><h3>Account settings</h3><p class="sub">Signed in as ${UI.escapeHtml(session.brand.email||'')}.</p>
+      <p style="font-size:13px; color:var(--ink-soft);">Password changes are managed through Firebase Authentication.</p></div>`;
   }
 };
 
 /* ==================================================
-   CREATOR PANEL LOGIC
+   CREATOR PANEL
    ================================================== */
 const CreatorPanel = {
   currentTab:'dashboard',
@@ -1755,79 +1825,93 @@ const CreatorPanel = {
     UI.toggleAppSidebar('creator', false);
     document.getElementById('creatorMain').innerHTML = this['render_'+tab] ? this['render_'+tab]() : '<p>Coming soon.</p>';
   },
+  refreshIfVisible(tabs){ if(document.getElementById('creatorApp').style.display!=='none' && tabs.includes(this.currentTab)) this.setTab(this.currentTab); },
   render_dashboard(){
     const own = session.creator;
-    const myApps = applications.filter(a=>a.creatorId===own.id);
     return `<div class="stat-grid">
-      <div class="stat-card"><div class="stat-num">${own.status}</div><div class="stat-label">Profile status</div></div>
-      <div class="stat-card"><div class="stat-num">${myApps.length}</div><div class="stat-label">Applications sent</div></div>
-      <div class="stat-card"><div class="stat-num">${collaborationRequests.filter(r=>r.creatorId===own.id).length}</div><div class="stat-label">Collab requests</div></div>
-      <div class="stat-card"><div class="stat-num">${own.followers.toLocaleString()}</div><div class="stat-label">Followers (self-reported)</div></div>
+      <div class="stat-card"><div class="stat-num">${own.status||'PENDING'}</div><div class="stat-label">Profile status</div></div>
+      <div class="stat-card"><div class="stat-num">${creatorApplications.length}</div><div class="stat-label">Applications sent</div></div>
+      <div class="stat-card"><div class="stat-num">${creatorRequests.length}</div><div class="stat-label">Collab requests</div></div>
+      <div class="stat-card"><div class="stat-num">${(own.followers||0).toLocaleString()}</div><div class="stat-label">Followers (self-reported)</div></div>
     </div>
-    <div class="panel-block"><h3>Welcome, ${UI.escapeHtml(own.name)}</h3><p class="sub">Manage your profile, rates and collaboration requests from the sidebar.</p></div>`;
+    <div class="panel-block"><h3>Welcome, ${UI.escapeHtml(own.name||'')}</h3><p class="sub">Manage your profile, rates and collaboration requests from the sidebar.</p></div>`;
   },
   render_profile(){
     const c = session.creator;
     return `<div class="panel-block"><h3>Profile</h3>
       <div class="two-col">
-        <div class="form-field"><label>Name <span class="req">*</span></label><input id="cpName" value="${UI.escapeHtml(c.name)}"></div>
-        <div class="form-field"><label>Username <span class="req">*</span></label><input id="cpUsername" value="${UI.escapeHtml(c.username)}"></div>
+        <div class="form-field"><label>Name <span class="req">*</span></label><input id="cpName" value="${UI.escapeHtml(c.name||'')}"></div>
+        <div class="form-field"><label>Username <span class="req">*</span></label><input id="cpUsername" value="${UI.escapeHtml(c.username||'')}"></div>
       </div>
-      <div class="form-field"><label>Bio</label><textarea id="cpBio">${UI.escapeHtml(c.bio)}</textarea></div>
-      <div class="form-field"><label>Category</label>
-        <div class="checkbox-grid" id="cpCategories">${["Fashion","Lifestyle","Fitness","Gaming","Beauty","Food","Travel","Tech","Entertainment","Other"].map(t=>pill('cpcat',t,c.categories.includes(t))).join('')}</div>
-      </div>
-      <div class="form-field"><label>Platform</label>
-        <div class="checkbox-grid" id="cpPlatforms">${["Instagram","YouTube","Other"].map(t=>pill('cppl',t,c.platforms.includes(t))).join('')}</div>
-      </div>
+      <div class="form-field"><label>Bio</label><textarea id="cpBio">${UI.escapeHtml(c.bio||'')}</textarea></div>
+      <div class="form-field"><label>Category</label><div class="checkbox-grid" id="cpCategories">${["Fashion","Lifestyle","Fitness","Gaming","Beauty","Food","Travel","Tech","Entertainment","Other"].map(t=>pill('cpcat',t,(c.categories||[]).includes(t))).join('')}</div></div>
+      <div class="form-field"><label>Platform</label><div class="checkbox-grid" id="cpPlatforms">${["Instagram","YouTube","Other"].map(t=>pill('cppl',t,(c.platforms||[]).includes(t))).join('')}</div></div>
       <div class="two-col">
-        <div class="form-field"><label>Followers</label><input type="number" id="cpFollowers" value="${c.followers}"></div>
+        <div class="form-field"><label>Followers</label><input type="number" id="cpFollowers" value="${c.followers||0}"></div>
         <div class="form-field"><label>Location</label><input id="cpLocation" value="${UI.escapeHtml(c.location||'')}"></div>
       </div>
       <div class="two-col">
-        <div class="form-field"><label>Mobile number <span class="private-note">Private</span></label><input id="cpPhone" value="${UI.escapeHtml(c.phone||'')}"></div>
-        <div class="form-field"><label>Email <span class="private-note">Private</span></label><input id="cpEmail" value="${UI.escapeHtml(c.email||'')}"></div>
+        <div class="form-field"><label>Profile image URL</label><input id="cpProfileImg" value="${UI.escapeHtml(c.profileImage||'')}"></div>
+        <div class="form-field"><label>Cover image URL</label><input id="cpCoverImg" value="${UI.escapeHtml(c.coverImage||'')}"></div>
+      </div>
+      <div class="two-col">
+        <div class="form-field"><label>Upload profile image</label><input type="file" accept="image/*" id="cpProfileFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('cpProfileFile','cpProfileImg')">Upload</button></div>
+        <div class="form-field"><label>Upload cover image</label><input type="file" accept="image/*" id="cpCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('cpCoverFile','cpCoverImg')">Upload</button></div>
+      </div>
+      <div class="two-col">
+        <div class="form-field"><label>Mobile number <span class="private-note">Private</span></label><input id="cpPhone" value="${UI.escapeHtml(c.privatePhone||'')}"></div>
+        <div class="form-field"><label>Email <span class="private-note">Private</span></label><input id="cpEmail" value="${UI.escapeHtml(c.privateEmail||'')}"></div>
       </div>
       <button class="btn btn-outline btn-sm" onclick="CreatorPanel.previewProfile()">Preview profile</button>
       <div class="sticky-save"><button class="btn btn-primary" onclick="CreatorPanel.saveProfile()">Save profile</button><button class="btn btn-outline" onclick="CreatorPanel.submitForReview()">Submit for review</button></div>
     </div>`;
   },
-  saveProfile(){
-    const c = session.creator;
-    c.name = document.getElementById('cpName').value;
-    c.username = document.getElementById('cpUsername').value;
-    c.bio = document.getElementById('cpBio').value;
-    c.categories = getCheckedPills('cpcat');
-    c.platforms = getCheckedPills('cppl');
-    c.followers = Number(document.getElementById('cpFollowers').value)||0;
-    c.location = document.getElementById('cpLocation').value;
-    c.phone = document.getElementById('cpPhone').value;
-    c.email = document.getElementById('cpEmail').value;
-    Toast.show('Profile saved.');
+  async saveProfile(){
+    const data = {
+      name: document.getElementById('cpName').value, username: document.getElementById('cpUsername').value,
+      bio: document.getElementById('cpBio').value, categories: getCheckedPills('cpcat'), platforms: getCheckedPills('cppl'),
+      followers: Number(document.getElementById('cpFollowers').value)||0, location: document.getElementById('cpLocation').value,
+      profileImage: document.getElementById('cpProfileImg').value, coverImage: document.getElementById('cpCoverImg').value,
+      privatePhone: document.getElementById('cpPhone').value, privateEmail: document.getElementById('cpEmail').value
+    };
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'creators',session.creator.id), {...data, updatedAt:serverTimestamp()}); session.creator = {...session.creator, ...data}; Toast.show('Profile saved.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
-  submitForReview(){ session.creator.status='REVIEW'; Toast.show('Profile submitted for review.'); this.setTab('dashboard'); },
-  previewProfile(){ CreatorHub.viewProfile(session.creator.id); },
-  render_rates(){
+  async submitForReview(){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'creators',session.creator.id), {status:'REVIEW', updatedAt:serverTimestamp()}); session.creator.status='REVIEW'; Toast.show('Profile submitted for review.'); this.setTab('dashboard'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
+  previewProfile(){
     const c = session.creator;
+    UI.openModal(`<h3>${UI.escapeHtml(c.name||'')}</h3><div class="modal-cover"><img src="${c.coverImage||''}" alt=""></div>
+      <div class="detail-row"><span>Username</span><span>${UI.escapeHtml(c.username||'')}</span></div>
+      <div class="detail-row"><span>Category</span><span>${(c.categories||[]).join(', ')}</span></div>
+      <div class="modal-section"><h5>Bio</h5><p>${UI.escapeHtml(c.bio||'')}</p></div>
+      <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">This is how your profile will look once approved and published — private fields are never shown here.</p>`);
+  },
+  render_rates(){
+    const c = session.creator, rates = c.rates||{};
     const labels = {reel:'Instagram Reel', story:'Instagram Story', post:'Instagram Post', video:'YouTube Video', ugc:'UGC Video'};
     return `<div class="panel-block"><h3>Rates</h3>
-      <div class="rate-grid">
-        ${Object.entries(labels).map(([k,label])=>`<div class="rate-box"><label>${label} (₹)</label><input type="number" id="rate_${k}" value="${c.rates[k]||0}"></div>`).join('')}
-      </div>
+      <div class="rate-grid">${Object.entries(labels).map(([k,label])=>`<div class="rate-box"><label>${label} (₹)</label><input type="number" id="rate_${k}" value="${rates[k]||0}"></div>`).join('')}</div>
       <label class="checkbox-pill${c.negotiable?' checked':''}" style="margin-top:14px; width:fit-content;"><input type="checkbox" id="rateNegotiable" ${c.negotiable?'checked':''}> Rates negotiable</label>
       <div style="margin-top:16px;"><button class="btn btn-primary" onclick="CreatorPanel.saveRates()">Save rates</button></div>
     </div>`;
   },
-  saveRates(){
-    const c = session.creator;
-    ['reel','story','post','video','ugc'].forEach(k=> c.rates[k] = Number(document.getElementById('rate_'+k).value)||0);
-    c.negotiable = document.getElementById('rateNegotiable').checked;
-    Toast.show('Rates saved.');
+  async saveRates(){
+    const rates = {};
+    ['reel','story','post','video','ugc'].forEach(k=> rates[k] = Number(document.getElementById('rate_'+k).value)||0);
+    const negotiable = document.getElementById('rateNegotiable').checked;
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'creators',session.creator.id), {rates, negotiable, updatedAt:serverTimestamp()}); session.creator.rates=rates; session.creator.negotiable=negotiable; Toast.show('Rates saved.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
   render_packages(){
-    const c = session.creator;
+    const c = session.creator, packages = c.packages||[];
     return `<div class="panel-block"><h3>Packages</h3>
-      ${c.packages.map((p,i)=>`<div class="pkg-card"><div class="pkg-head"><strong>${UI.escapeHtml(p.name)}</strong><span class="price">₹${p.price.toLocaleString()}</span></div><p style="font-size:13.5px;color:var(--ink-soft);margin-top:4px;">${UI.escapeHtml(p.desc)}</p><button class="btn btn-sm btn-outline" style="margin-top:8px;" onclick="CreatorPanel.removePackage(${i})">Remove</button></div>`).join('') || '<p style="color:var(--ink-soft)">No packages yet.</p>'}
+      ${packages.map((p,i)=>`<div class="pkg-card"><div class="pkg-head"><strong>${UI.escapeHtml(p.name)}</strong><span class="price">₹${p.price.toLocaleString()}</span></div><p style="font-size:13.5px;color:var(--ink-soft);margin-top:4px;">${UI.escapeHtml(p.desc)}</p><button class="btn btn-sm btn-outline" style="margin-top:8px;" onclick="CreatorPanel.removePackage(${i})">Remove</button></div>`).join('') || '<p style="color:var(--ink-soft)">No packages yet.</p>'}
       <div class="panel-block" style="background:var(--paper); margin-top:14px;">
         <h3 style="font-size:15px;">Add package</h3>
         <div class="form-field"><label>Package name</label><input id="pkgName"></div>
@@ -1837,28 +1921,34 @@ const CreatorPanel = {
       </div>
     </div>`;
   },
-  addPackage(){
+  async addPackage(){
     const name = document.getElementById('pkgName').value.trim();
     const desc = document.getElementById('pkgDesc').value.trim();
     const price = Number(document.getElementById('pkgPrice').value)||0;
     if(!name || !price){ Toast.show('Package name and price are required.', 'error'); return; }
-    session.creator.packages.push({name,desc,price});
-    this.setTab('packages'); Toast.show('Package added.');
+    const packages = [...(session.creator.packages||[]), {name,desc,price}];
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'creators',session.creator.id), {packages, updatedAt:serverTimestamp()}); session.creator.packages=packages; this.setTab('packages'); Toast.show('Package added.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
-  removePackage(i){ session.creator.packages.splice(i,1); this.setTab('packages'); Toast.show('Package removed.'); },
+  async removePackage(i){
+    const packages = (session.creator.packages||[]).filter((_,idx)=>idx!==i);
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'creators',session.creator.id), {packages, updatedAt:serverTimestamp()}); session.creator.packages=packages; this.setTab('packages'); Toast.show('Package removed.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
   render_campaigns(){
-    const list = campaigns.filter(c=>c.publicStatus);
     return `<div class="panel-block"><h3>Available campaigns</h3>
-      <div class="card-grid">${list.map(c=>`
-        <div class="item-card"><div class="item-cover"><img src="${c.coverImage}" alt=""></div>
+      <div class="card-grid">${campaigns.map(c=>`
+        <div class="item-card"><div class="item-cover"><img src="${c.coverImage||''}" alt=""></div>
         <div class="item-body"><h4>${UI.escapeHtml(c.campaignName)}</h4><p class="item-desc">${UI.escapeHtml(c.brandName)}</p>
-        <div class="item-foot"><span class="price">${UI.escapeHtml(c.budget)}</span><button class="btn btn-sm btn-primary" onclick="CreatorPanel.openApply('${c.id}')">Apply</button></div>
-        </div></div>`).join('')}</div>
+        <div class="item-foot"><span class="price">${UI.escapeHtml(c.budget||'')}</span><button class="btn btn-sm btn-primary" onclick="CreatorPanel.openApply('${c.id}')">Apply</button></div>
+        </div></div>`).join('') || '<p style="color:var(--ink-soft)">No published campaigns yet.</p>'}</div>
     </div>`;
   },
   openApply(campaignId){
     const camp = campaigns.find(c=>c.id===campaignId); if(!camp) return;
-    if(new Date(camp.deadline) < new Date()){ Toast.show('This campaign is closed.', 'error'); return; }
+    if(camp.deadline && new Date(camp.deadline) < new Date()){ Toast.show('This campaign is closed.', 'error'); return; }
     UI.openModal(`
       <h3>Apply — ${UI.escapeHtml(camp.campaignName)}</h3>
       <div class="form-field"><label>Introduction</label><textarea id="apIntro" placeholder="Why are you a good fit?"></textarea></div>
@@ -1867,44 +1957,55 @@ const CreatorPanel = {
       <button class="btn btn-primary btn-block" onclick="CreatorPanel.submitApplication('${campaignId}')">Submit application</button>
     `);
   },
-  submitApplication(campaignId){
+  async submitApplication(campaignId){
     const c = session.creator;
-    const dup = applications.find(a=>a.campaignId===campaignId && a.creatorId===c.id && !['DECLINED','CANCELLED'].includes(a.status));
+    const dup = creatorApplications.find(a=>a.campaignId===campaignId && !['DECLINED','CANCELLED'].includes(a.status));
     if(dup){ Toast.show('You already have an active application for this campaign.', 'error'); return; }
     const camp = campaigns.find(x=>x.id===campaignId);
-    applications.push({id:'a'+(applications.length+1), campaignId, brandName:camp.brandName, creatorId:c.id, creatorName:c.name, status:'SUBMITTED', proposedRate:Number(document.getElementById('apRate').value)||0, createdAt:new Date().toISOString().slice(0,10)});
-    (notifications.BRAND = notifications.BRAND||[]).unshift({title:'New application', message:`${c.name} applied to ${camp.campaignName}.`, read:false, ts:new Date().toISOString().slice(0,10)});
-    UI.updateNotifDots();
-    UI.closeModal();
-    Toast.show('Application submitted.');
+    const {collection, addDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      await addDoc(collection(Backend.db,'applications'), {
+        campaignId, brandId:camp.brandId, brandName:camp.brandName, creatorId:c.id, creatorName:c.name,
+        introduction:document.getElementById('apIntro').value, proposedDeliverables:document.getElementById('apDeliverables').value,
+        proposedRate:Number(document.getElementById('apRate').value)||0, status:'SUBMITTED', createdAt:serverTimestamp(), updatedAt:serverTimestamp()
+      });
+      await addDoc(collection(Backend.db,'notifications'), {userId:camp.brandId, type:'APPLICATION', title:'New application', message:`${c.name} applied to ${camp.campaignName}.`, read:false, createdAt:serverTimestamp()});
+      await addDoc(collection(Backend.db,'notifications'), {audience:'ADMIN', type:'APPLICATION', title:'New application', message:`${c.name} applied to ${camp.campaignName}.`, read:false, createdAt:serverTimestamp()});
+      UI.closeModal(); Toast.show('Application submitted.');
+    }catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
   render_applications(){
-    const own = applications.filter(a=>a.creatorId===session.creator.id);
     return `<div class="panel-block"><h3>My applications</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Brand</th><th>Proposed rate</th><th>Status</th></tr></thead>
-        <tbody>${own.map(a=>`<tr><td data-label="Brand">${UI.escapeHtml(a.brandName)}</td><td data-label="Proposed rate">₹${a.proposedRate.toLocaleString()}</td><td data-label="Status"><span class="status-badge status-review">${a.status}</span></td></tr>`).join('') || `<tr><td colspan="3">No applications yet.</td></tr>`}</tbody>
+        <tbody>${creatorApplications.map(a=>`<tr><td data-label="Brand">${UI.escapeHtml(a.brandName)}</td><td data-label="Proposed rate">₹${(a.proposedRate||0).toLocaleString()}</td><td data-label="Status"><span class="status-badge status-review">${a.status}</span></td></tr>`).join('') || `<tr><td colspan="3">No applications yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
   render_requests(){
-    const own = collaborationRequests.filter(r=>r.creatorId===session.creator.id);
     return `<div class="panel-block"><h3>Collaboration requests</h3>
       <div class="table-wrap"><table class="data-table">
         <thead><tr><th>Brand</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody>${own.map(r=>`<tr><td data-label="Brand">${UI.escapeHtml(r.brandName)}</td><td data-label="Budget">${UI.escapeHtml(r.proposedBudget||'—')}</td>
+        <tbody>${creatorRequests.map(r=>`<tr><td data-label="Brand">${UI.escapeHtml(r.brandName)}</td><td data-label="Budget">${UI.escapeHtml(r.proposedBudget||'—')}</td>
         <td data-label="Status"><span class="status-badge status-pending">${r.status}</span></td>
         <td data-label="Actions">${r.status==='PENDING'?`<div class="row-actions"><button onclick="CreatorPanel.respondRequest('${r.id}','ACCEPTED')">Accept</button><button class="danger" onclick="CreatorPanel.respondRequest('${r.id}','DECLINED')">Decline</button></div>`:'—'}</td></tr>`).join('') || `<tr><td colspan="4">No requests yet.</td></tr>`}</tbody>
       </table></div></div>`;
   },
-  respondRequest(id,status){
-    const r = collaborationRequests.find(x=>x.id===id); if(r){ r.status=status; this.setTab('requests'); Toast.show('Request '+status.toLowerCase()+'.'); }
+  async respondRequest(id,status){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'collaborationRequests',id), {status, updatedAt:serverTimestamp()}); Toast.show('Request '+status.toLowerCase()+'.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
   },
   render_settings(){
-    return `<div class="panel-block"><h3>Account settings</h3><p class="sub">Demo account settings for ${UI.escapeHtml(session.creator.email||session.creator.username)}.</p>
-      <p style="font-size:13px; color:var(--ink-soft);">Password changes and account deletion will be available once Firebase Authentication is connected.</p>
-    </div>`;
+    return `<div class="panel-block"><h3>Account settings</h3><p class="sub">Signed in as ${UI.escapeHtml(session.creator.privateEmail||session.creator.username||'')}.</p>
+      <p style="font-size:13px; color:var(--ink-soft);">Password changes are managed through Firebase Authentication.</p></div>`;
   }
 };
+
+/* ==================================================
+   START
+   ================================================== */
+App.route();
+bootstrap();
 </script>
 </body>
 </html>

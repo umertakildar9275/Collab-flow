@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CollabFlow — Connect Brands With Creators</title>
+<meta name="description" content="CollabFlow is a managed collaboration platform connecting brands and influencers for premium sponsorship campaigns.">
+<meta property="og:title" content="CollabFlow — Connect Brands With Creators">
+<meta property="og:description" content="A professional, agency-managed platform where brands and creators discover and run collaborations together.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   THEME / DESIGN TOKENS
+   ============================================================ */
+:root{
+  --white:#ffffff;
+  --paper:#fbfbf9;
+  --ink:#16211c;
+  --ink-soft:#526056;
+  --ink-faint:#8b978d;
+  --green-dark:#173626;
+  --green:#2f6b4f;
+  --green-mid:#3f7a5e;
+  --green-soft:#e6efe8;
+  --green-mist:#f2f7f3;
+  --line:#dfe7e1;
+  --line-soft:#ecf1ee;
+  --danger:#a83a3a;
+  --danger-soft:#f7e9e9;
+  --warn:#8a6d1d;
+  --warn-soft:#f7f0dc;
+  --radius-sm:10px;
+  --radius-md:16px;
+  --radius-lg:26px;
+  --shadow-sm:0 1px 3px rgba(23,54,38,0.08);
+  --shadow-md:0 10px 30px rgba(23,54,38,0.10);
+  --shadow-lg:0 20px 60px rgba(23,54,38,0.16);
+  --serif:'Fraunces', Georgia, serif;
+  --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0; background:var(--white); color:var(--ink);
+  font-family:var(--sans); line-height:1.55; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%; display:block;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer;}
+input,select,textarea{font-family:inherit; font-size:16px;}
+h1,h2,h3,h4{font-family:var(--serif); margin:0; color:var(--green-dark); font-weight:600; letter-spacing:-0.01em;}
+p{margin:0;}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 20px;}
+@media(min-width:640px){.container{padding:0 32px;}}
+
+::selection{background:var(--green-soft); color:var(--green-dark);}
+:focus-visible{outline:2.5px solid var(--green-mid); outline-offset:2px;}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+
+.hidden{display:none !important;}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:13px 22px; border-radius:999px; border:1.5px solid transparent;
+  font-weight:600; font-size:15px; transition:transform .15s ease, background .2s ease, box-shadow .2s ease;
+  white-space:nowrap;
+}
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:var(--green-dark); color:var(--white);}
+.btn-primary:hover{background:var(--green);}
+.btn-outline{background:transparent; border-color:var(--green-dark); color:var(--green-dark);}
+.btn-outline:hover{background:var(--green-mist);}
+.btn-ghost{background:transparent; color:var(--ink-soft);}
+.btn-ghost:hover{color:var(--ink);}
+.btn-danger{background:var(--danger); color:var(--white);}
+.btn-sm{padding:9px 16px; font-size:13.5px;}
+.btn-block{width:100%;}
+.btn[disabled]{opacity:0.5; cursor:not-allowed;}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+header.site-header{
+  position:sticky; top:0; z-index:200; background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line-soft);
+  transition:box-shadow .25s ease;
+}
+header.site-header.scrolled{box-shadow:0 2px 18px rgba(23,54,38,0.07);}
+.header-inner{display:flex; align-items:center; justify-content:space-between; height:64px;}
+.brand-logo{display:flex; align-items:center; gap:9px; font-family:var(--serif); font-weight:700; font-size:21px; color:var(--green-dark);}
+.brand-logo .dot{width:9px; height:9px; border-radius:50%; background:var(--green-mid);}
+nav.main-nav{display:none; align-items:center; gap:30px;}
+nav.main-nav a{font-size:14.5px; font-weight:500; color:var(--ink-soft); padding:6px 0; position:relative;}
+nav.main-nav a:hover{color:var(--green-dark);}
+.header-actions{display:flex; align-items:center; gap:10px;}
+.user-chip{display:none; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:var(--green-dark); background:var(--green-soft); padding:7px 14px; border-radius:999px;}
+.hamburger{display:flex; flex-direction:column; gap:4px; width:38px; height:38px; align-items:center; justify-content:center; background:none; border:none;}
+.hamburger span{width:20px; height:2px; background:var(--green-dark); transition:.25s;}
+@media(min-width:900px){
+  nav.main-nav{display:flex;}
+  .hamburger{display:none;}
+}
+.mobile-drawer{
+  position:fixed; inset:0; z-index:300; display:none;
+}
+.mobile-drawer.open{display:block;}
+.mobile-drawer .overlay{position:absolute; inset:0; background:rgba(15,25,20,0.45);}
+.mobile-drawer .panel{
+  position:absolute; top:0; right:0; height:100%; width:82%; max-width:340px; background:var(--white);
+  padding:22px; overflow-y:auto; box-shadow:var(--shadow-lg);
+  display:flex; flex-direction:column; gap:4px;
+}
+.mobile-drawer .panel a, .mobile-drawer .panel button.drawer-link{
+  display:block; padding:14px 6px; font-size:16px; font-weight:600; color:var(--green-dark);
+  border-bottom:1px solid var(--line-soft); text-align:left; background:none; border-left:none; border-right:none; border-top:none; width:100%;
+}
+.drawer-close{align-self:flex-end; background:none; border:none; font-size:26px; color:var(--ink-soft); padding:6px;}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:56px 0 60px; background:linear-gradient(180deg, var(--green-mist) 0%, var(--white) 78%);}
+.hero-grid{display:grid; gap:34px;}
+@media(min-width:900px){.hero-grid{grid-template-columns:1.05fr 0.95fr; align-items:center; gap:52px;}}
+.hero-eyebrow{font-size:13px; font-weight:600; color:var(--green-mid); letter-spacing:0.02em; margin-bottom:14px;}
+.hero h1{font-size:clamp(32px,6vw,54px); line-height:1.08; font-weight:600;}
+.hero h1 em{font-style:italic; color:var(--green-mid); font-weight:500;}
+.hero p.lead{margin-top:18px; font-size:17px; color:var(--ink-soft); max-width:52ch;}
+.hero-ctas{display:flex; flex-wrap:wrap; gap:12px; margin-top:28px;}
+.hero-visual{
+  position:relative; border-radius:var(--radius-lg); overflow:hidden; aspect-ratio:4/3.1; background:var(--green-dark);
+  box-shadow:var(--shadow-lg);
+}
+.hero-visual img{width:100%; height:100%; object-fit:cover; opacity:0.92;}
+.hero-visual .tag{
+  position:absolute; left:18px; bottom:18px; background:rgba(255,255,255,0.94); color:var(--green-dark);
+  padding:10px 16px; border-radius:999px; font-size:13px; font-weight:700; box-shadow:var(--shadow-sm);
+}
+.hero-stats{display:flex; gap:26px; margin-top:32px; flex-wrap:wrap;}
+.hero-stat b{display:block; font-family:var(--serif); font-size:26px; color:var(--green-dark);}
+.hero-stat span{font-size:12.5px; color:var(--ink-faint);}
+
+/* ============================================================
+   SECTION SHELLS
+   ============================================================ */
+section.block{padding:64px 0;}
+.block-head{max-width:640px; margin-bottom:34px;}
+.block-head h2{font-size:clamp(24px,3.6vw,34px);}
+.block-head p{margin-top:10px; color:var(--ink-soft); font-size:15.5px;}
+
+/* How it works */
+.flows{display:grid; gap:22px;}
+@media(min-width:800px){.flows{grid-template-columns:1fr 1fr; gap:26px;}}
+.flow-card{background:var(--paper); border:1px solid var(--line-soft); border-radius:var(--radius-md); padding:26px;}
+.flow-card h3{font-size:19px; margin-bottom:16px; display:flex; align-items:center; gap:10px;}
+.flow-card h3 .chip{background:var(--green-dark); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; font-family:var(--sans); letter-spacing:0.03em;}
+.flow-steps{list-style:none; margin:0; padding:0; counter-reset:step;}
+.flow-steps li{counter-increment:step; display:flex; gap:14px; padding:11px 0; border-top:1px solid var(--line-soft); font-size:14.5px; color:var(--ink-soft);}
+.flow-steps li:first-child{border-top:none;}
+.flow-steps li::before{
+  content:counter(step); flex-shrink:0; width:26px; height:26px; border-radius:50%; background:var(--green-soft);
+  color:var(--green-dark); font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center;
+}
+
+/* Rules */
+.rules-grid{display:grid; gap:14px;}
+@media(min-width:700px){.rules-grid{grid-template-columns:1fr 1fr;}}
+.rule-item{display:flex; gap:12px; padding:16px; background:var(--green-mist); border-radius:var(--radius-sm);}
+.rule-item .mark{width:22px; height:22px; border-radius:50%; background:var(--green-dark); flex-shrink:0; margin-top:2px; position:relative;}
+.rule-item .mark::after{content:''; position:absolute; left:6px; top:4px; width:5px; height:9px; border-right:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(40deg);}
+.rule-item p{font-size:14px; color:var(--ink-soft);}
+.rule-note{margin-top:18px; font-size:13px; color:var(--ink-faint);}
+
+/* Hub selection cards */
+.hub-grid{display:grid; gap:22px;}
+@media(min-width:860px){.hub-grid{grid-template-columns:1fr 1fr;}}
+.hub-card{
+  position:relative; border-radius:var(--radius-lg); overflow:hidden; min-height:360px; display:flex; flex-direction:column;
+  justify-content:flex-end; box-shadow:var(--shadow-md); transition:transform .25s ease, box-shadow .25s ease;
+}
+.hub-card:hover, .hub-card:active{transform:translateY(-4px); box-shadow:var(--shadow-lg);}
+.hub-card img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.hub-card::before{content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(23,54,38,0) 30%, rgba(15,32,23,0.88) 100%);}
+.hub-card-content{position:relative; padding:28px; color:#fff;}
+.hub-card-content h3{color:#fff; font-size:26px; font-weight:700; text-transform:uppercase; letter-spacing:0.02em;}
+.hub-card-content p{margin-top:10px; font-size:14.5px; color:rgba(255,255,255,0.86); max-width:40ch;}
+.hub-card-content .btn{margin-top:18px;}
+
+/* About */
+.about-grid{display:grid; gap:30px;}
+@media(min-width:900px){.about-grid{grid-template-columns:0.9fr 1.1fr; align-items:start;}}
+.about-benefits{display:grid; gap:14px; margin-top:8px;}
+.benefit-row{display:flex; gap:14px; align-items:flex-start;}
+.benefit-row .ico{width:38px; height:38px; border-radius:10px; background:var(--green-soft); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--green-dark); font-weight:700; font-family:var(--serif);}
+.benefit-row h4{font-size:15.5px; margin-bottom:3px; color:var(--ink);}
+.benefit-row p{font-size:13.8px; color:var(--ink-soft);}
+
+/* Footer */
+footer.site-footer{background:var(--green-dark); color:rgba(255,255,255,0.82); padding:54px 0 26px; margin-top:20px;}
+.footer-grid{display:grid; gap:34px;}
+@media(min-width:760px){.footer-grid{grid-template-columns:1.4fr 1fr 1fr 1fr;}}
+footer.site-footer h4{color:#fff; font-family:var(--sans); font-size:13px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:14px;}
+footer.site-footer .flogo{font-family:var(--serif); font-size:20px; font-weight:700; color:#fff;}
+footer.site-footer p{font-size:13.5px; margin-top:10px; color:rgba(255,255,255,0.65); max-width:34ch;}
+footer.site-footer ul{list-style:none; margin:0; padding:0; display:grid; gap:9px;}
+footer.site-footer a{font-size:13.5px; color:rgba(255,255,255,0.75); background:none; border:none; padding:0; text-align:left;}
+footer.site-footer a:hover{color:#fff;}
+.footer-bottom{margin-top:40px; padding-top:22px; border-top:1px solid rgba(255,255,255,0.14); display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; font-size:12.5px; color:rgba(255,255,255,0.55);}
+
+/* ============================================================
+   HUB (Brand/Creator) SHARED LAYOUT
+   ============================================================ */
+.hub-header{background:var(--green-mist); border-bottom:1px solid var(--line-soft); padding:26px 0 20px;}
+.hub-header .back-row{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.hub-header .back-btn{display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:600; color:var(--green-dark); background:#fff; border:1px solid var(--line); padding:8px 14px; border-radius:999px;}
+.hub-header .badge{display:inline-block; background:var(--green-dark); color:#fff; font-size:11px; font-weight:700; padding:4px 11px; border-radius:999px; letter-spacing:0.03em; margin-bottom:8px;}
+.hub-header h2{font-size:clamp(22px,4vw,30px);}
+.hub-header p{color:var(--ink-soft); font-size:14.5px; margin-top:6px; max-width:56ch;}
+.hub-toolbar{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap;}
+.search-box{flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:10px 16px;}
+.search-box input{border:none; outline:none; flex:1; font-size:14.5px; background:none;}
+.filter-btn{display:flex; align-items:center; gap:6px; background:#fff; border:1.5px solid var(--line); border-radius:999px; padding:10px 16px; font-size:14px; font-weight:600; color:var(--green-dark);}
+.filter-btn .count{background:var(--green-dark); color:#fff; font-size:10.5px; width:17px; height:17px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;}
+.hub-results-meta{padding:16px 0 6px; font-size:13px; color:var(--ink-faint);}
+
+.card-grid{display:grid; gap:18px; padding-bottom:60px;}
+@media(min-width:640px){.card-grid{grid-template-columns:repeat(2,1fr);}}
+@media(min-width:1000px){.card-grid{grid-template-columns:repeat(3,1fr);}}
+
+.demo-flag{display:inline-flex; align-items:center; gap:5px; background:var(--warn-soft); color:var(--warn); font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:6px; letter-spacing:0.02em;}
+
+/* Campaign card */
+.camp-card, .creator-card{
+  background:#fff; border:1px solid var(--line-soft); border-radius:var(--radius-md); overflow:hidden;
+  box-shadow:var(--shadow-sm); transition:transform .18s ease, box-shadow .18s ease; display:flex; flex-direction:column;
+}
+.camp-card:hover, .creator-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-md);}
+.card-img{position:relative; aspect-ratio:16/10; background:var(--green-soft); overflow:hidden;}
+.card-img img{width:100%; height:100%; object-fit:cover;}
+.card-img .status-pill{position:absolute; top:10px; left:10px; background:rgba(255,255,255,0.95); color:var(--green-dark); font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;}
+.card-body{padding:18px; display:flex; flex-direction:column; gap:8px; flex:1;}
+.card-body .brandname{font-size:12px; color:var(--green-mid); font-weight:600;}
+.card-body h3{font-size:17px; line-height:1.3;}
+.card-meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:2px;}
+.meta-tag{font-size:11.5px; background:var(--green-mist); color:var(--green-dark); padding:4px 9px; border-radius:6px; font-weight:600;}
+.card-desc{font-size:13.5px; color:var(--ink-soft); flex:1;}
+.card-foot{display:flex; align-items:center; justify-content:space-between; margin-top:6px; padding-top:12px; border-top:1px solid var(--line-soft);}
+.budget{font-family:var(--serif); font-weight:700; color:var(--green-dark); font-size:15.5px;}
+
+.creator-card .card-img{aspect-ratio:1/1;}
+.creator-card .handle{font-size:12.5px; color:var(--ink-faint);}
+.follow-row{display:flex; gap:16px; font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+.follow-row b{color:var(--green-dark); font-family:var(--sans);}
+
+.empty-state{grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--ink-faint);}
+.empty-state .icon{width:56px; height:56px; margin:0 auto 16px; border-radius:50%; background:var(--green-mist); display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--green-mid);}
+.empty-state h4{color:var(--ink); font-size:17px; margin-bottom:6px;}
+.empty-state p{font-size:14px; max-width:40ch; margin:0 auto;}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+.modal-backdrop{position:fixed; inset:0; background:rgba(15,25,20,0.5); z-index:400; display:none; align-items:flex-end; justify-content:center;}
+.modal-backdrop.open{display:flex;}
+@media(min-width:760px){.modal-backdrop{align-items:center;}}
+.modal-box{
+  background:#fff; width:100%; max-width:640px; max-height:92vh; overflow-y:auto;
+  border-radius:22px 22px 0 0; box-shadow:var(--shadow-lg); animation:slideUp .28s ease;
+}
+@media(min-width:760px){.modal-box{border-radius:var(--radius-lg); max-height:86vh;}}
+@keyframes slideUp{from{transform:translateY(28px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+.modal-head{position:sticky; top:0; background:#fff; display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--line-soft); z-index:2;}
+.modal-head h3{font-size:19px;}
+.modal-close{background:var(--green-mist); border:none; width:34px; height:34px; border-radius:50%; font-size:18px; color:var(--green-dark); display:flex; align-items:center; justify-content:center;}
+.modal-body{padding:22px;}
+.modal-foot{padding:16px 22px 22px; display:flex; gap:10px; flex-wrap:wrap; border-top:1px solid var(--line-soft);}
+
+.detail-cover{width:100%; aspect-ratio:16/9; border-radius:var(--radius-md); overflow:hidden; margin-bottom:18px; background:var(--green-soft);}
+.detail-cover img{width:100%; height:100%; object-fit:cover;}
+.detail-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;}
+.detail-item span{display:block; font-size:11px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:4px;}
+.detail-item b{font-size:14.5px; color:var(--ink); font-weight:600;}
+.detail-block{margin-bottom:18px;}
+.detail-block h5{font-size:12.5px; color:var(--green-dark); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px;}
+.detail-block p{font-size:14.5px; color:var(--ink-soft); white-space:pre-line;}
+
+/* Forms */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block; font-size:13px; font-weight:600; color:var(--ink); margin-bottom:6px;}
+.form-group .req{color:var(--danger);}
+.form-group input, .form-group select, .form-group textarea{
+  width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:var(--radius-sm); background:#fff; color:var(--ink);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus{border-color:var(--green-mid);}
+.form-group textarea{resize:vertical; min-height:80px;}
+.form-row2{display:grid; gap:14px;}
+@media(min-width:560px){.form-row2{grid-template-columns:1fr 1fr;}}
+.form-error{font-size:12px; color:var(--danger); margin-top:5px;}
+.chip-select{display:flex; flex-wrap:wrap; gap:8px;}
+.chip-opt{padding:8px 14px; border:1.5px solid var(--line); border-radius:999px; font-size:13px; font-weight:600; color:var(--ink-soft); background:#fff;}
+.chip-opt.active{background:var(--green-dark); color:#fff; border-color:var(--green-dark);}
+.field-hint{font-size:12px; color:var(--ink-faint); margin-top:5px;}
+
+/* Filter sheet */
+.filter-section{margin-bottom:20px;}
+.filter-section h5{font-size:12.5px; text-transform:uppercase; letter-spacing:0.03em; color:var(--green-dark); margin-bottom:10px;}
+
+/* Toasts */
+#toast-stack{position:fixed; top:80px; right:16px; left:16px; z-index:600; display:flex; flex-direction:column; gap:10px; align-items:flex-end; pointer-events:none;}
+@media(min-width:640px){#toast-stack{left:auto; width:340px;}}
+.toast{
+  background:var(--green-dark); color:#fff; padding:13px 18px; border-radius:12px; font-size:13.5px; font-weight:500;
+  box-shadow:var(--shadow-md); display:flex; align-items:center; gap:10px; animation:toastIn .25s ease; max-width:100%; pointer-events:auto;
+}
+.toast.error{background:var(--danger);}
+.toast.warn{background:#5c4a13;}
+@keyframes toastIn{from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);}}
+
+/* Confirm modal */
+.confirm-box{max-width:400px;}
+
+/* ============================================================
+   PANELS (Admin / Brands / Creator)
+   ============================================================ */
+.panel-shell{display:flex; min-height:calc(100vh - 64px); background:var(--paper);}
+.panel-sidebar{
+  display:none; width:230px; flex-shrink:0; background:var(--green-dark); color:rgba(255,255,255,0.85); padding:22px 14px;
+}
+@media(min-width:900px){.panel-sidebar{display:block;}}
+.panel-sidebar .p-title{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:rgba(255,255,255,0.5); padding:0 10px 14px;}
+.panel-nav-item{
+  display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px; font-size:14px; font-weight:600;
+  color:rgba(255,255,255,0.78); margin-bottom:2px; background:none; border:none; width:100%; text-align:left;
+}
+.panel-nav-item:hover{background:rgba(255,255,255,0.06);}
+.panel-nav-item.active{background:rgba(255,255,255,0.14); color:#fff;}
+.panel-main{flex:1; min-width:0; padding:22px 18px 60px;}
+@media(min-width:640px){.panel-main{padding:28px 32px 70px;}}
+.panel-topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; gap:12px; flex-wrap:wrap;}
+.panel-topbar h2{font-size:24px;}
+.mode-pill{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; padding:6px 13px; border-radius:999px;}
+.mode-pill.demo{background:var(--warn-soft); color:var(--warn);}
+.mode-pill.live{background:var(--green-soft); color:var(--green-dark);}
+.panel-mobile-nav{display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; margin-bottom:18px; -webkit-overflow-scrolling:touch;}
+@media(min-width:900px){.panel-mobile-nav{display:none;}}
+.panel-mobile-nav button{flex-shrink:0; padding:9px 15px; border-radius:999px; border:1.5px solid var(--line); background:#fff; font-size:13px; font-weight:600; color:var(--ink-soft);}
+.panel-mobile-nav button.active{background:var(--green-dark); color:#fff; border-color:var(--green-dark);}
+
+.stat-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:28px;}
+@media(min-width:700px){.stat-grid{grid-template-columns:repeat(4,1fr);}}
+.stat-card{background:#fff; border:1px solid var(--line-soft); border-radius:var(--radius-md); padding:18px; box-shadow:var(--shadow-sm);}
+.stat-card b{display:block; font-family:var(--serif); font-size:28px; color:var(--green-dark);}
+.stat-card span{font-size:12px; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.02em;}
+
+.panel-card{background:#fff; border:1px solid var(--line-soft); border-radius:var(--radius-md); padding:20px; margin-bottom:18px; box-shadow:var(--shadow-sm);}
+.panel-card h3{font-size:16px; margin-bottom:14px;}
+
+.data-list{display:flex; flex-direction:column; gap:12px;}
+.data-row{
+  display:flex; align-items:center; gap:14px; padding:14px; border:1px solid var(--line-soft); border-radius:var(--radius-sm);
+  flex-wrap:wrap;
+}
+.data-row img.thumb{width:52px; height:52px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--green-soft);}
+.data-row .row-main{flex:1; min-width:160px;}
+.data-row .row-main h4{font-size:14.5px; color:var(--ink); margin-bottom:3px; font-family:var(--sans); font-weight:700;}
+.data-row .row-main .sub{font-size:12.5px; color:var(--ink-faint);}
+.status-badge{font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:0.02em;}
+.status-badge.draft{background:#eee; color:#777;}
+.status-badge.review, .status-badge.pending, .status-badge.under_review{background:var(--warn-soft); color:var(--warn);}
+.status-badge.published, .status-badge.approved, .status-badge.accepted, .status-badge.completed{background:var(--green-soft); color:var(--green-dark);}
+.status-badge.unpublished, .status-badge.declined, .status-badge.suspended, .status-badge.cancelled{background:var(--danger-soft); color:var(--danger);}
+.status-badge.shortlisted{background:#e3ecf7; color:#2a5aa0;}
+.row-actions{display:flex; gap:7px; flex-wrap:wrap;}
+.icon-btn{background:var(--green-mist); border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:600; color:var(--green-dark);}
+.icon-btn.danger{background:var(--danger-soft); color:var(--danger);}
+
+.tabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap;}
+.tab-btn{padding:9px 16px; border-radius:999px; border:1.5px solid var(--line); background:#fff; font-size:13px; font-weight:600; color:var(--ink-soft);}
+.tab-btn.active{background:var(--green-dark); color:#fff; border-color:var(--green-dark);}
+
+.upload-box{border:2px dashed var(--line); border-radius:var(--radius-sm); padding:20px; text-align:center; background:var(--green-mist);}
+.upload-box p{font-size:12.5px; color:var(--ink-faint); margin-top:8px;}
+.upload-preview{width:100%; max-width:280px; aspect-ratio:16/9; border-radius:var(--radius-sm); overflow:hidden; margin-top:12px; background:var(--green-soft);}
+.upload-preview img{width:100%; height:100%; object-fit:cover;}
+
+.notif-btn{position:relative; background:var(--green-mist); border:none; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--green-dark);}
+.notif-dot{position:absolute; top:5px; right:5px; width:9px; height:9px; border-radius:50%; background:var(--danger); border:2px solid #fff;}
+
+/* Auth */
+.auth-tabs{display:flex; gap:8px; margin-bottom:18px; background:var(--green-mist); padding:4px; border-radius:999px;}
+.auth-tab{flex:1; padding:9px; border-radius:999px; border:none; background:none; font-size:13.5px; font-weight:700; color:var(--ink-soft);}
+.auth-tab.active{background:#fff; color:var(--green-dark); box-shadow:var(--shadow-sm);}
+.role-select{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
+.role-opt{border:1.5px solid var(--line); border-radius:var(--radius-sm); padding:14px 10px; text-align:center; background:#fff;}
+.role-opt.active{border-color:var(--green-dark); background:var(--green-mist);}
+.role-opt b{display:block; font-size:13.5px; color:var(--green-dark);}
+.role-opt span{font-size:11px; color:var(--ink-faint);}
+
+.skeleton{background:linear-gradient(90deg, var(--line-soft) 25%, var(--green-mist) 37%, var(--line-soft) 63%); background-size:400% 100%; animation:sk 1.4s ease infinite; border-radius:var(--radius-sm);}
+@keyframes sk{0%{background-position:100% 50%;} 100%{background-position:0 50%;}}
+
+.policy-content{max-width:720px; margin:0 auto; padding:50px 0 80px;}
+.policy-content h2{margin-bottom:8px;}
+.policy-content .updated{font-size:12.5px; color:var(--ink-faint); margin-bottom:26px;}
+.policy-content h3{font-size:17px; margin:26px 0 8px;}
+.policy-content p, .policy-content li{font-size:14.5px; color:var(--ink-soft); margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div id="toast-stack" aria-live="polite"></div>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="#" class="brand-logo" data-nav="home"><span class="dot"></span>CollabFlow</a>
+    <nav class="main-nav">
+      <a href="#" data-nav="home">Home</a>
+      <a href="#" data-nav="brandHub">Brand Hub</a>
+      <a href="#" data-nav="creatorHub">Creator Hub</a>
+      <a href="#" data-nav="home" data-scroll="howworks">How It Works</a>
+      <a href="#" data-nav="home" data-scroll="about">About</a>
+    </nav>
+    <div class="header-actions">
+      <span class="user-chip" id="userChip"></span>
+      <button class="btn btn-ghost btn-sm" id="loginBtn">Log In</button>
+      <button class="btn btn-primary btn-sm" id="getStartedBtn">Get Started</button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="overlay" data-close-drawer></div>
+  <div class="panel">
+    <button class="drawer-close" data-close-drawer aria-label="Close menu">&times;</button>
+    <a href="#" data-nav="home" data-close-drawer>Home</a>
+    <a href="#" data-nav="brandHub" data-close-drawer>Brand Hub</a>
+    <a href="#" data-nav="creatorHub" data-close-drawer data-close-drawer>Creator Hub</a>
+    <a href="#" data-nav="home" data-scroll="howworks" data-close-drawer>How It Works</a>
+    <a href="#" data-nav="home" data-scroll="about" data-close-drawer>About</a>
+    <div id="drawerAuthArea" style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+      <button class="btn btn-outline btn-block" id="loginBtnDrawer">Log In</button>
+      <button class="btn btn-primary btn-block" id="getStartedBtnDrawer">Get Started</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     HOME VIEW
+     ============================================================ -->
+<main id="view-home">
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-eyebrow">MANAGED CREATOR COLLABORATIONS</div>
+        <h1>Where brands and <em>creators</em> build campaigns together.</h1>
+        <p class="lead">CollabFlow connects sponsorship budgets with the right creators — every campaign and profile reviewed and coordinated by our team, from first message to final deliverable.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" data-nav="brandHub">Explore Brand Hub</button>
+          <button class="btn btn-outline" data-nav="creatorHub">Explore Creator Hub</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b id="statCampaigns">–</b><span>Active campaigns</span></div>
+          <div class="hero-stat"><b id="statCreators">–</b><span>Listed creators</span></div>
+          <div class="hero-stat"><b id="statBrands">–</b><span>Partner brands</span></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img id="heroImage" src="https://images.unsplash.com/photo-1522199755839-a2bacb67c546?q=80&w=1200&auto=format&fit=crop" alt="Creator filming branded content in a bright studio">
+        <span class="tag">Demo visual — replaceable from Admin Panel</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="howworks">
+    <div class="container">
+      <div class="block-head">
+        <h2>How CollabFlow works</h2>
+        <p>One managed workflow, two sides of the table. Our team reviews every listing before it goes live.</p>
+      </div>
+      <div class="flows">
+        <div class="flow-card">
+          <h3><span class="chip">FOR BRANDS</span></h3>
+          <ol class="flow-steps">
+            <li>Contact CollabFlow with your campaign idea</li>
+            <li>Share campaign requirements and budget</li>
+            <li>CollabFlow reviews and approves the campaign</li>
+            <li>Suitable creators are connected to your brief</li>
+            <li>Collaboration happens, coordinated end to end</li>
+          </ol>
+        </div>
+        <div class="flow-card">
+          <h3><span class="chip">FOR CREATORS</span></h3>
+          <ol class="flow-steps">
+            <li>Contact CollabFlow to get listed</li>
+            <li>Share your details, categories and rates</li>
+            <li>CollabFlow reviews and approves your profile</li>
+            <li>View brand opportunities suited to you</li>
+            <li>Apply and collaborate, coordinated end to end</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="background:var(--green-mist);">
+    <div class="container">
+      <div class="block-head">
+        <h2>Collaboration guidelines</h2>
+        <p>General expectations for anyone using CollabFlow. Full policies live in the footer.</p>
+      </div>
+      <div class="rules-grid">
+        <div class="rule-item"><div class="mark"></div><p>Provide accurate brand, creator and campaign information.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>State campaign requirements and deliverables clearly upfront.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>Respect the content requirements both sides agree to.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>Discuss and confirm payment terms before work begins.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>Meet agreed content deadlines, or communicate early if that changes.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>Keep all communication professional and on-platform where possible.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>CollabFlow reviews and approves listings before they go public.</p></div>
+        <div class="rule-item"><div class="mark"></div><p>Detailed policies are available on our Terms and Guidelines pages.</p></div>
+      </div>
+      <p class="rule-note">These guidelines are general and don't constitute legal terms. See the full Terms of Service and Collaboration Rules for details.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="container">
+      <div class="block-head">
+        <h2>Choose your hub</h2>
+        <p>Two dedicated spaces — one for discovering campaigns, one for discovering creators.</p>
+      </div>
+      <div class="hub-grid">
+        <a href="#" class="hub-card" data-nav="brandHub">
+          <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=1000&auto=format&fit=crop" alt="Team reviewing a marketing campaign board">
+          <div class="hub-card-content">
+            <h3>Brand Hub</h3>
+            <p>Discover active collaboration opportunities and campaign requirements, browse creators, and manage your listings.</p>
+            <span class="btn btn-primary btn-sm">Enter Brand Hub</span>
+          </div>
+        </a>
+        <a href="#" class="hub-card" data-nav="creatorHub">
+          <img src="https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?q=80&w=1000&auto=format&fit=crop" alt="Creator recording content with ring light">
+          <div class="hub-card-content">
+            <h3>Creator Hub</h3>
+            <p>Discover brand opportunities, and showcase your content categories, rates and collaboration packages.</p>
+            <span class="btn btn-primary btn-sm">Enter Creator Hub</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="about" style="background:var(--green-mist);">
+    <div class="container about-grid">
+      <div>
+        <h2>About CollabFlow</h2>
+        <p style="margin-top:12px; color:var(--ink-soft); font-size:15px;">CollabFlow is a managed collaboration platform, not a self-serve marketplace. Every brand campaign and every creator profile is reviewed by our team before it becomes public — so both sides work from information that's been checked, not just submitted.</p>
+      </div>
+      <div class="about-benefits">
+        <div class="benefit-row"><div class="ico">B</div><div><h4>For brands</h4><p>Reach creators who already fit your category and budget, without sorting through unqualified inbound.</p></div></div>
+        <div class="benefit-row"><div class="ico">C</div><div><h4>For creators</h4><p>Get in front of real campaign budgets, with rates and packages presented the way you set them.</p></div></div>
+        <div class="benefit-row"><div class="ico">✓</div><div><h4>Why managed</h4><p>A reviewed, agency-coordinated process reduces the back-and-forth and mismatched expectations that self-serve platforms leave unresolved.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     BRAND HUB VIEW
+     ============================================================ -->
+<main id="view-brandHub" class="hidden">
+  <div class="hub-header">
+    <div class="container">
+      <div class="back-row">
+        <button class="back-btn" data-nav="home">← Home</button>
+      </div>
+      <span class="badge">BRAND HUB</span>
+      <h2>Active campaigns</h2>
+      <p>Discover active collaboration opportunities and campaign requirements. Listings marked below are demo data unless connected to a live campaign database.</p>
+      <div class="hub-toolbar">
+        <div class="search-box">
+          <span aria-hidden="true">🔍</span>
+          <input type="text" id="campaignSearch" placeholder="Search brand, campaign, platform, keyword...">
+        </div>
+        <button class="filter-btn" id="openCampaignFilters">Filter <span class="count hidden" id="campFilterCount">0</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="hub-results-meta" id="campaignResultsMeta"></div>
+    <div class="card-grid" id="campaignGrid"></div>
+  </div>
+</main>
+
+<!-- ============================================================
+     CREATOR HUB VIEW
+     ============================================================ -->
+<main id="view-creatorHub" class="hidden">
+  <div class="hub-header">
+    <div class="container">
+      <div class="back-row">
+        <button class="back-btn" data-nav="home">← Home</button>
+      </div>
+      <span class="badge">CREATOR HUB</span>
+      <h2>Discover creators</h2>
+      <p>Content categories, rates and collaboration options. Profiles below are demo data unless connected to a live creator database.</p>
+      <div class="hub-toolbar">
+        <div class="search-box">
+          <span aria-hidden="true">🔍</span>
+          <input type="text" id="creatorSearch" placeholder="Search name, category, platform, keyword...">
+        </div>
+        <button class="filter-btn" id="openCreatorFilters">Filter <span class="count hidden" id="creatorFilterCount">0</span></button>
+        <select id="creatorSort" class="filter-btn" style="appearance:none;">
+          <option value="recent">Recently Added</option>
+          <option value="followers">Followers</option>
+          <option value="rate-low">Lowest Starting Rate</option>
+          <option value="rate-high">Highest Starting Rate</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="hub-results-meta" id="creatorResultsMeta"></div>
+    <div class="card-grid" id="creatorGrid"></div>
+  </div>
+</main>
+
+<!-- ============================================================
+     POLICY / INFO VIEW
+     ============================================================ -->
+<main id="view-policy" class="hidden">
+  <div class="container policy-content" id="policyContent"></div>
+</main>
+
+<!-- ============================================================
+     ADMIN PANEL VIEW
+     ============================================================ -->
+<main id="view-admin" class="hidden panel-shell">
+  <aside class="panel-sidebar">
+    <div class="p-title">Admin Panel</div>
+    <button class="panel-nav-item active" data-panel-tab="dashboard">Dashboard</button>
+    <button class="panel-nav-item" data-panel-tab="website">Website</button>
+    <button class="panel-nav-item" data-panel-tab="brands">Brands</button>
+    <button class="panel-nav-item" data-panel-tab="creators">Creators</button>
+    <button class="panel-nav-item" data-panel-tab="campaigns">Campaigns</button>
+    <button class="panel-nav-item" data-panel-tab="approvals">Approvals</button>
+    <button class="panel-nav-item" data-panel-tab="applications">Applications</button>
+    <button class="panel-nav-item" data-panel-tab="collabs">Collaborations</button>
+    <button class="panel-nav-item" data-panel-tab="media">Media</button>
+    <button class="panel-nav-item" data-panel-tab="settings">Settings</button>
+    <button class="panel-nav-item" id="adminLogout" style="margin-top:14px; color:#f3c9c9;">Log Out</button>
+  </aside>
+  <div class="panel-main">
+    <div class="panel-topbar">
+      <h2>Admin Panel</h2>
+      <span class="mode-pill demo" id="modePillAdmin">DEMO MODE</span>
+    </div>
+    <div class="panel-mobile-nav" id="adminMobileNav"></div>
+    <div id="adminTabContent"></div>
+  </div>
+</main>
+
+<!-- ============================================================
+     BRANDS PANEL VIEW
+     ============================================================ -->
+<main id="view-brandsPanel" class="hidden panel-shell">
+  <aside class="panel-sidebar">
+    <div class="p-title">Brands Panel</div>
+    <button class="panel-nav-item active" data-panel-tab="bp-dashboard">Dashboard</button>
+    <button class="panel-nav-item" data-panel-tab="bp-profile">Brand Profile</button>
+    <button class="panel-nav-item" data-panel-tab="bp-campaigns">Campaigns</button>
+    <button class="panel-nav-item" data-panel-tab="bp-findcreators">Find Creators</button>
+    <button class="panel-nav-item" data-panel-tab="bp-applications">Applications</button>
+    <button class="panel-nav-item" data-panel-tab="bp-requests">Sent Requests</button>
+    <button class="panel-nav-item" id="brandLogout" style="margin-top:14px; color:#f3c9c9;">Log Out</button>
+  </aside>
+  <div class="panel-main">
+    <div class="panel-topbar">
+      <h2>Brands Panel</h2>
+      <span class="mode-pill demo">DEMO MODE</span>
+    </div>
+    <div class="panel-mobile-nav" id="brandMobileNav"></div>
+    <div id="brandTabContent"></div>
+  </div>
+</main>
+
+<!-- ============================================================
+     CREATOR PANEL VIEW
+     ============================================================ -->
+<main id="view-creatorPanel" class="hidden panel-shell">
+  <aside class="panel-sidebar">
+    <div class="p-title">Creator Panel</div>
+    <button class="panel-nav-item active" data-panel-tab="cp-dashboard">Dashboard</button>
+    <button class="panel-nav-item" data-panel-tab="cp-profile">Profile</button>
+    <button class="panel-nav-item" data-panel-tab="cp-rates">Rates & Packages</button>
+    <button class="panel-nav-item" data-panel-tab="cp-campaigns">Discover Campaigns</button>
+    <button class="panel-nav-item" data-panel-tab="cp-applications">My Applications</button>
+    <button class="panel-nav-item" data-panel-tab="cp-requests">Collaboration Requests</button>
+    <button class="panel-nav-item" id="creatorLogout" style="margin-top:14px; color:#f3c9c9;">Log Out</button>
+  </aside>
+  <div class="panel-main">
+    <div class="panel-topbar">
+      <h2>Creator Panel</h2>
+      <span class="mode-pill demo">DEMO MODE</span>
+    </div>
+    <div class="panel-mobile-nav" id="creatorMobileNav"></div>
+    <div id="creatorTabContent"></div>
+  </div>
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <div class="flogo">CollabFlow</div>
+      <p>A managed collaboration platform connecting brands and creators for reviewed, coordinated campaigns.</p>
+    </div>
+    <div>
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="#" data-nav="brandHub">Brand Hub</a></li>
+        <li><a href="#" data-nav="creatorHub">Creator Hub</a></li>
+        <li><a href="#" data-nav="home" data-scroll="about">About Us</a></li>
+        <li><a href="#" data-policy="contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#" data-policy="privacy">Privacy Policy</a></li>
+        <li><a href="#" data-policy="terms">Terms of Service</a></li>
+        <li><a href="#" data-policy="brandguidelines">Brand Guidelines</a></li>
+        <li><a href="#" data-policy="creatorguidelines">Creator Guidelines</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Account</h4>
+      <ul>
+        <li><a href="#" id="footerLogin">Log In</a></li>
+        <li><a href="#" id="footerSignup">Get Started</a></li>
+        <li><a href="#" data-policy="collabrules">Collaboration Rules</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <span>© 2026 CollabFlow. Demo prototype — not a live registered business.</span>
+    <span id="footerModeTag">Demo Mode</span>
+  </div>
+</footer>
+
+<!-- ============================================================
+     AUTH MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="authModal">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-head">
+      <h3 id="authModalTitle">Log In</h3>
+      <button class="modal-close" data-close-modal="authModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth-tab="login">Log In</button>
+        <button class="auth-tab" data-auth-tab="signup">Sign Up</button>
+      </div>
+
+      <div id="signupRoleArea" class="hidden">
+        <div class="role-select">
+          <button type="button" class="role-opt active" data-role="brand"><b>Brand</b><span>Run campaigns</span></button>
+          <button type="button" class="role-opt" data-role="creator"><b>Creator</b><span>List your profile</span></button>
+        </div>
+      </div>
+
+      <form id="authForm">
+        <div class="form-group" id="authNameGroup">
+          <label>Name <span class="req">*</span></label>
+          <input type="text" id="authName" placeholder="Your name or brand name">
+        </div>
+        <div class="form-group">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" id="authEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password <span class="req">*</span></label>
+          <input type="password" id="authPassword" placeholder="••••••••" required minlength="4">
+        </div>
+        <p class="field-hint" id="authAdminHint"></p>
+        <button type="submit" class="btn btn-primary btn-block" id="authSubmitBtn">Log In</button>
+        <p class="field-hint" style="margin-top:14px; text-align:center;">This is a prototype login. No real passwords are verified — data is stored locally in your browser for demo purposes.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CAMPAIGN DETAILS MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="campaignDetailModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Campaign details</h3>
+      <button class="modal-close" data-close-modal="campaignDetailModal">&times;</button>
+    </div>
+    <div class="modal-body" id="campaignDetailBody"></div>
+    <div class="modal-foot" id="campaignDetailFoot"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CREATOR PROFILE MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="creatorProfileModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Creator profile</h3>
+      <button class="modal-close" data-close-modal="creatorProfileModal">&times;</button>
+    </div>
+    <div class="modal-body" id="creatorProfileBody"></div>
+    <div class="modal-foot" id="creatorProfileFoot"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     APPLY TO CAMPAIGN MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="applyModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Apply for campaign</h3>
+      <button class="modal-close" data-close-modal="applyModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="applyForm">
+        <div class="form-row2">
+          <div class="form-group"><label>Creator name <span class="req">*</span></label><input type="text" id="appName" required></div>
+          <div class="form-group"><label>Username <span class="req">*</span></label><input type="text" id="appUsername" required></div>
+        </div>
+        <div class="form-row2">
+          <div class="form-group"><label>Platform <span class="req">*</span></label>
+            <select id="appPlatform" required><option value="">Select</option><option>Instagram</option><option>YouTube</option><option>Other</option></select>
+          </div>
+          <div class="form-group"><label>Profile link</label><input type="url" id="appLink" placeholder="https://"></div>
+        </div>
+        <div class="form-group"><label>Introduction <span class="req">*</span></label><textarea id="appIntro" required placeholder="Tell the brand a bit about yourself"></textarea></div>
+        <div class="form-group"><label>Why are you interested?</label><textarea id="appWhy"></textarea></div>
+        <div class="form-row2">
+          <div class="form-group"><label>Proposed deliverables</label><input type="text" id="appDeliv" placeholder="e.g. 1 Reel + 2 Stories"></div>
+          <div class="form-group"><label>Proposed rate (₹)</label><input type="number" id="appRate" min="0"></div>
+        </div>
+        <div class="form-group"><label>Additional note</label><textarea id="appNote"></textarea></div>
+        <input type="hidden" id="appCampaignId">
+        <button class="btn btn-primary btn-block" type="submit">Submit application</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CONNECT / COLLABORATION REQUEST MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="connectModal">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-head">
+      <h3>Connect with CollabFlow</h3>
+      <button class="modal-close" data-close-modal="connectModal">&times;</button>
+    </div>
+    <div class="modal-body" id="connectModalBody"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="requestModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Send collaboration request</h3>
+      <button class="modal-close" data-close-modal="requestModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="requestForm">
+        <div class="form-group"><label>Campaign / collaboration name <span class="req">*</span></label><input type="text" id="reqCampaign" required></div>
+        <div class="form-group"><label>Message <span class="req">*</span></label><textarea id="reqMessage" required placeholder="Introduce your brand and what you're proposing"></textarea></div>
+        <div class="form-row2">
+          <div class="form-group"><label>Content type</label>
+            <select id="reqContentType"><option>Reel</option><option>Post</option><option>Story</option><option>Video</option><option>UGC</option></select>
+          </div>
+          <div class="form-group"><label>Proposed budget (₹)</label><input type="number" id="reqBudget" min="0"></div>
+        </div>
+        <div class="form-row2">
+          <div class="form-group"><label>Deliverables</label><input type="text" id="reqDeliv" placeholder="e.g. 1 Reel"></div>
+          <div class="form-group"><label>Deadline</label><input type="date" id="reqDeadline"></div>
+        </div>
+        <div class="form-group"><label>Additional requirements</label><textarea id="reqReq"></textarea></div>
+        <input type="hidden" id="reqCreatorId">
+        <button class="btn btn-primary btn-block" type="submit">Send collaboration request</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FILTER SHEETS
+     ============================================================ -->
+<div class="modal-backdrop" id="campaignFilterModal">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-head"><h3>Filter campaigns</h3><button class="modal-close" data-close-modal="campaignFilterModal">&times;</button></div>
+    <div class="modal-body">
+      <div class="filter-section"><h5>Content type</h5><div class="chip-select" id="fContentType"></div></div>
+      <div class="filter-section"><h5>Platform</h5><div class="chip-select" id="fPlatform"></div></div>
+      <div class="filter-section"><h5>Budget</h5><div class="chip-select" id="fBudget"></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" id="clearCampaignFilters">Clear Filters</button>
+      <button class="btn btn-primary" id="applyCampaignFilters">Apply Filters</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="creatorFilterModal">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-head"><h3>Filter creators</h3><button class="modal-close" data-close-modal="creatorFilterModal">&times;</button></div>
+    <div class="modal-body">
+      <div class="filter-section"><h5>Category</h5><div class="chip-select" id="fCategory"></div></div>
+      <div class="filter-section"><h5>Platform</h5><div class="chip-select" id="fCreatorPlatform"></div></div>
+      <div class="filter-section"><h5>Followers</h5><div class="chip-select" id="fFollowers"></div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" id="clearCreatorFilters">Clear Filters</button>
+      <button class="btn btn-primary" id="applyCreatorFilters">Apply Filters</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CONFIRMATION MODAL
+     ============================================================ -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal-box confirm-box">
+    <div class="modal-head"><h3 id="confirmTitle">Are you sure?</h3><button class="modal-close" data-close-modal="confirmModal">&times;</button></div>
+    <div class="modal-body"><p id="confirmMessage" style="color:var(--ink-soft); font-size:14.5px;"></p></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" data-close-modal="confirmModal">Cancel</button>
+      <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ============================================================
+   FIREBASE PLACEHOLDER — FUTURE REAL-TIME BACKEND
+   ============================================================
+   Real Firebase project credentials go here. Left unconfigured on
+   purpose — the app runs fully in DEMO MODE (localStorage) until
+   these are filled in with a real project's values, at which point
+   FIREBASE_ENABLED should be set to true and the DATA LAYER section
+   below re-pointed at Firestore/Realtime Database + Firebase Auth
+   + Firebase Storage instead of localStorage.
+*/
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+const FIREBASE_ENABLED = false; // flip to true once firebaseConfig above is real and Firebase SDK is wired in
+
+/* ============================================================
+   DATA LAYER (DEMO / PROTOTYPE PERSISTENCE)
+   ============================================================
+   Everything below uses localStorage as PROTOTYPE persistence only.
+   It is not a real-time database and is scoped to this browser.
+   FUTURE REAL-TIME DATABASE: replace loadState/saveState with
+   Firestore reads/writes + onSnapshot listeners, keyed the same way
+   (siteSettings, brands, creators, campaigns, applications,
+   collaborationRequests, notifications, users, auditLogs).
+*/
+const STORAGE_KEY = "collabflow_demo_state_v1";
+
+function defaultState(){
+  return {
+    mode: "demo", // "demo" | "live" — becomes "live" automatically once FIREBASE_ENABLED is true and configured
+    currentUser: null,
+    users: [],
+    siteSettings: {
+      heroImage: "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?q=80&w=1200&auto=format&fit=crop",
+      aboutHeading: "About CollabFlow",
+      maintenanceMode: false
+    },
+    brands: [
+      {id:"b1", name:"Aether Sportswear", logo:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=300&auto=format&fit=crop", category:"Fashion", location:"Mumbai, IN", status:"approved", publicStatus:true, phone:"", email:""},
+      {id:"b2", name:"Nutriva Foods", logo:"https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=300&auto=format&fit=crop", category:"Food", location:"Bengaluru, IN", status:"approved", publicStatus:true, phone:"", email:""},
+      {id:"b3", name:"Pulse Fitness Gear", logo:"https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=300&auto=format&fit=crop", category:"Fitness", location:"Delhi, IN", status:"pending", publicStatus:false, phone:"", email:""}
+    ],
+    campaigns: [
+      {id:"c1", brandId:"b1", brandName:"Aether Sportswear", campaignName:"Monsoon Jersey Drop", promotionName:"Monsoon Collection Launch", coverImage:"https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=900&auto=format&fit=crop", description:"Showcase our new monsoon training jersey in a short lifestyle reel. Looking for creators who train outdoors.", budgetType:"range", budget:"₹8,000 – ₹15,000", contentTypes:["Reel"], platforms:["Instagram"], requirements:"Natural, unscripted feel. Product must be clearly visible in at least 2 shots.", deadline:"2026-10-15", location:"Mumbai / Remote", targetCategories:["Fitness","Fashion"], status:"published", publicStatus:true, createdAt:"2026-08-01"},
+      {id:"c2", brandId:"b2", brandName:"Nutriva Foods", campaignName:"Protein Bar Taste Test", promotionName:"New Flavor Launch", coverImage:"https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=900&auto=format&fit=crop", description:"Honest taste-test style UGC content for our new protein bar flavors.", budgetType:"fixed", budget:"₹5,000", contentTypes:["UGC","Post"], platforms:["Instagram","YouTube"], requirements:"Genuine reaction, no scripted lines. Mention flavor name clearly.", deadline:"2026-09-30", location:"Remote", targetCategories:["Food","Fitness"], status:"published", publicStatus:true, createdAt:"2026-08-10"},
+      {id:"c3", brandId:"b1", brandName:"Aether Sportswear", campaignName:"Gameday Jersey Feature", promotionName:"IPL Fan Collection", coverImage:"https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=900&auto=format&fit=crop", description:"Feature our fan jersey in a gameday-themed video.", budgetType:"negotiable", budget:"Negotiable", contentTypes:["Video","Reel"], platforms:["YouTube","Instagram"], requirements:"Include team colors, tag brand handle.", deadline:"2026-09-05", location:"Any", targetCategories:["Entertainment","Fashion"], status:"published", publicStatus:true, createdAt:"2026-07-20"}
+    ],
+    creators: [
+      {id:"cr1", name:"Simran Kaur", username:"@simrankaurfit", profileImage:"https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?q=80&w=400&auto=format&fit=crop", coverImage:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=900&auto=format&fit=crop", bio:"Fitness and lifestyle creator sharing daily training and honest gear reviews.", categories:["Fitness","Lifestyle"], platforms:["Instagram"], followers:42000, location:"Chandigarh, IN", rates:{reel:6000, story:1500, post:3500}, packages:[{name:"Starter", desc:"1 Reel + 2 Stories", price:8000}], socialLinks:["https://instagram.com"], status:"published", publicStatus:true, createdAt:"2026-06-01"},
+      {id:"cr2", name:"Rahul Verma", username:"@rahulstyles", profileImage:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop", coverImage:"https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=900&auto=format&fit=crop", bio:"Fashion and streetwear content, styling breakdowns and try-on hauls.", categories:["Fashion"], platforms:["Instagram","YouTube"], followers:87000, location:"Delhi, IN", rates:{reel:9000, story:2000, post:5000}, packages:[{name:"Launch Pack", desc:"2 Reels + 3 Stories", price:15000}], socialLinks:["https://instagram.com"], status:"published", publicStatus:true, createdAt:"2026-05-12"},
+      {id:"cr3", name:"Ananya Rao", username:"@ananyaeats", profileImage:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop", coverImage:"https://images.unsplash.com/photo-1466637574441-749b8f19452f?q=80&w=900&auto=format&fit=crop", bio:"Food creator — recipe reels, taste tests and restaurant features.", categories:["Food"], platforms:["Instagram","YouTube"], followers:23000, location:"Bengaluru, IN", rates:{reel:4000, story:1000, post:2500}, packages:[], socialLinks:["https://instagram.com"], status:"published", publicStatus:true, createdAt:"2026-07-02"},
+      {id:"cr4", name:"Kabir Sen", username:"@kabirplays", profileImage:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=400&auto=format&fit=crop", coverImage:"https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=900&auto=format&fit=crop", bio:"Gaming and entertainment creator, montages and reaction content.", categories:["Gaming","Entertainment"], platforms:["YouTube"], followers:150000, location:"Pune, IN", rates:{reel:12000, story:2500, post:7000}, packages:[], socialLinks:["https://youtube.com"], status:"review", publicStatus:false, createdAt:"2026-08-15"}
+    ],
+    applications: [],
+    collaborationRequests: [],
+    notifications: [],
+    auditLogs: []
+  };
+}
+
+let state = loadState();
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return {...defaultState(), ...JSON.parse(raw)};
+  }catch(e){ console.warn("Prototype storage read failed", e); }
+  return defaultState();
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){ console.warn("Prototype storage write failed", e); }
+}
+function uid(prefix){ return prefix + "_" + Math.random().toString(36).slice(2,9); }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+const $ = (sel, ctx=document) => ctx.querySelector(sel);
+const $$ = (sel, ctx=document) => [...ctx.querySelectorAll(sel)];
+
+function showToast(msg, type="success"){
+  const stack = $("#toast-stack");
+  const t = document.createElement("div");
+  t.className = "toast " + (type==="success"?"":type);
+  t.textContent = msg;
+  stack.appendChild(t);
+  setTimeout(()=>{ t.style.opacity="0"; t.style.transition="opacity .3s"; setTimeout(()=>t.remove(),300); }, 3200);
+}
+
+function openModal(id){ $("#"+id).classList.add("open"); document.body.style.overflow="hidden"; }
+function closeModal(id){ $("#"+id).classList.remove("open"); document.body.style.overflow=""; }
+$$("[data-close-modal]").forEach(btn=>{
+  btn.addEventListener("click", ()=> closeModal(btn.dataset.closeModal));
+});
+$$(".modal-backdrop").forEach(bd=>{
+  bd.addEventListener("click", (e)=>{ if(e.target===bd) closeModal(bd.id); });
+});
+
+function confirmAction(title, message, onConfirm){
+  $("#confirmTitle").textContent = title;
+  $("#confirmMessage").textContent = message;
+  const btn = $("#confirmActionBtn");
+  const newBtn = btn.cloneNode(true);
+  btn.parentNode.replaceChild(newBtn, btn);
+  newBtn.addEventListener("click", ()=>{ onConfirm(); closeModal("confirmModal"); });
+  openModal("confirmModal");
+}
+
+function fmtDate(d){
+  if(!d) return "—";
+  try{ return new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"}); }catch(e){ return d; }
+}
+function fmtFollowers(n){
+  if(n>=100000) return (n/100000).toFixed(1)+"L";
+  if(n>=1000) return (n/1000).toFixed(1)+"K";
+  return String(n);
+}
+function escapeHtml(str){
+  return String(str??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ============================================================
+   NAVIGATION / STATE MANAGEMENT
+   ============================================================ */
+const VIEWS = ["home","brandHub","creatorHub","policy","admin","brandsPanel","creatorPanel"];
+let currentView = "home";
+
+function showView(view, opts={}){
+  VIEWS.forEach(v=>{
+    const el = $("#view-"+v);
+    if(el) el.classList.toggle("hidden", v!==view);
+  });
+  currentView = view;
+  window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  if(view==="brandHub") renderBrandHub();
+  if(view==="creatorHub") renderCreatorHub();
+  if(view==="admin") { requireRole("admin") && renderAdminTab(currentAdminTab); }
+  if(view==="brandsPanel") { requireRole("brand") && renderBrandPanelTab(currentBrandTab); }
+  if(view==="creatorPanel") { requireRole("creator") && renderCreatorPanelTab(currentCreatorTab); }
+  if(opts.scrollTo){
+    setTimeout(()=>{ const t = document.getElementById(opts.scrollTo); if(t) t.scrollIntoView({behavior:"smooth"}); }, 60);
+  }
+}
+
+document.addEventListener("click", (e)=>{
+  const navEl = e.target.closest("[data-nav]");
+  if(navEl){
+    e.preventDefault();
+    const view = navEl.dataset.nav;
+    const scrollTo = navEl.dataset.scroll;
+    showView(view, {scrollTo});
+    closeDrawer();
+    return;
+  }
+  const policyEl = e.target.closest("[data-policy]");
+  if(policyEl){
+    e.preventDefault();
+    renderPolicy(policyEl.dataset.policy);
+    showView("policy");
+    closeDrawer();
+  }
+});
+
+/* ============================================================
+   HEADER SCROLL / DRAWER
+   ============================================================ */
+window.addEventListener("scroll", ()=>{
+  $("#siteHeader").classList.toggle("scrolled", window.scrollY>8);
+});
+function openDrawer(){ $("#mobileDrawer").classList.add("open"); }
+function closeDrawer(){ $("#mobileDrawer").classList.remove("open"); }
+$("#hamburgerBtn").addEventListener("click", openDrawer);
+$$("[data-close-drawer]").forEach(el=> el.addEventListener("click", closeDrawer));
+
+/* ============================================================
+   AUTH (DEMO)
+   ============================================================ */
+let authMode = "login";
+let selectedRole = "brand";
+
+function renderAuthUI(){
+  $$(".auth-tab").forEach(t=> t.classList.toggle("active", t.dataset.authTab===authMode));
+  $("#authModalTitle").textContent = authMode==="login" ? "Log In" : "Sign Up";
+  $("#signupRoleArea").classList.toggle("hidden", authMode!=="signup");
+  $("#authNameGroup").classList.toggle("hidden", authMode!=="signup");
+  $("#authSubmitBtn").textContent = authMode==="login" ? "Log In" : "Create Account";
+  $("#authAdminHint").textContent = authMode==="signup"
+    ? "Public sign-up creates a Brand or Creator account. Admin accounts are provisioned securely and are not available here."
+    : "";
+}
+$$(".auth-tab").forEach(t=> t.addEventListener("click", ()=>{ authMode = t.dataset.authTab; renderAuthUI(); }));
+$$(".role-opt").forEach(r=> r.addEventListener("click", ()=>{
+  selectedRole = r.dataset.role;
+  $$(".role-opt").forEach(x=> x.classList.toggle("active", x===r));
+}));
+
+function openAuth(mode="login"){ authMode = mode; renderAuthUI(); openModal("authModal"); }
+$("#loginBtn").addEventListener("click", ()=> openAuth("login"));
+$("#getStartedBtn").addEventListener("click", ()=> openAuth("signup"));
+$("#loginBtnDrawer").addEventListener("click", ()=> { closeDrawer(); openAuth("login"); });
+$("#getStartedBtnDrawer").addEventListener("click", ()=> { closeDrawer(); openAuth("signup"); });
+$("#footerLogin").addEventListener("click", (e)=>{ e.preventDefault(); openAuth("login"); });
+$("#footerSignup").addEventListener("click", (e)=>{ e.preventDefault(); openAuth("signup"); });
+
+$("#authForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const email = $("#authEmail").value.trim();
+  const name = $("#authName").value.trim();
+  if(authMode==="login"){
+    let user = state.users.find(u=> u.email===email);
+    if(!user){
+      // FUTURE PRODUCTION AUTHENTICATION: real login would verify credentials server-side.
+      // Demo: auto-create a brand-role account on first "login" for convenience.
+      user = {id:uid("u"), name: email.split("@")[0], email, role:"brand", status:"approved", createdAt:new Date().toISOString()};
+      state.users.push(user);
+    }
+    logIn(user);
+  } else {
+    if(!name){ showToast("Please enter a name.", "error"); return; }
+    const user = {id:uid("u"), name, email, role:selectedRole, status:"pending", createdAt:new Date().toISOString()};
+    state.users.push(user);
+    if(selectedRole==="brand"){
+      state.brands.push({id:uid("b"), name, logo:"", category:"Other", location:"", status:"pending", publicStatus:false, phone:"", email, ownerId:user.id});
+    } else {
+      state.creators.push({id:uid("cr"), name, username:"@"+name.toLowerCase().replace(/\s+/g,""), profileImage:"", coverImage:"", bio:"", categories:[], platforms:[], followers:0, location:"", rates:{}, packages:[], socialLinks:[], status:"pending", publicStatus:false, ownerId:user.id, createdAt:new Date().toISOString()});
+    }
+    saveState();
+    logIn(user);
+    showToast("Account created. Your profile is pending CollabFlow review.");
+  }
+});
+
+function logIn(user){
+  state.currentUser = user;
+  saveState();
+  closeModal("authModal");
+  updateHeaderAuthState();
+  showToast(`Welcome, ${user.name}.`);
+  if(user.role==="admin") showView("admin");
+  else if(user.role==="brand") showView("brandsPanel");
+  else if(user.role==="creator") showView("creatorPanel");
+}
+function logOut(){
+  state.currentUser = null;
+  saveState();
+  updateHeaderAuthState();
+  showView("home");
+  showToast("Logged out.");
+}
+["adminLogout","brandLogout","creatorLogout"].forEach(id=>{
+  $("#"+id).addEventListener("click", logOut);
+});
+
+function updateHeaderAuthState(){
+  const chip = $("#userChip");
+  const loginBtn = $("#loginBtn"), getStartedBtn = $("#getStartedBtn");
+  if(state.currentUser){
+    chip.textContent = `${state.currentUser.name} · ${state.currentUser.role}`;
+    chip.style.display = "inline-flex";
+    loginBtn.textContent = "Dashboard";
+    loginBtn.onclick = ()=> routeToOwnPanel();
+    getStartedBtn.textContent = "Log Out";
+    getStartedBtn.onclick = logOut;
+  } else {
+    chip.style.display = "none";
+    loginBtn.textContent = "Log In";
+    loginBtn.onclick = ()=> openAuth("login");
+    getStartedBtn.textContent = "Get Started";
+    getStartedBtn.onclick = ()=> openAuth("signup");
+  }
+}
+function routeToOwnPanel(){
+  if(!state.currentUser) return openAuth("login");
+  if(state.currentUser.role==="admin") showView("admin");
+  else if(state.currentUser.role==="brand") showView("brandsPanel");
+  else showView("creatorPanel");
+}
+function requireRole(role){
+  if(!state.currentUser || state.currentUser.role!==role){
+    showToast("Please log in to access this area.", "error");
+    showView("home");
+    openAuth("login");
+    return false;
+  }
+  return true;
+}
+
+// Hidden admin demo access: type collabflow admin credentials on login screen
+$("#authEmail").addEventListener("blur", ()=>{
+  // demo-only convenience shortcut, not real auth: admin@collabflow.demo logs in as admin
+});
+document.addEventListener("submit", (e)=>{
+  if(e.target.id==="authForm" && authMode==="login" && $("#authEmail").value.trim()==="admin@collabflow.demo"){
+    let admin = state.users.find(u=>u.role==="admin");
+    if(!admin){ admin = {id:uid("u"), name:"Admin", email:"admin@collabflow.demo", role:"admin", status:"approved", createdAt:new Date().toISOString()}; state.users.push(admin); }
+  }
+}, true);
+
+/* ============================================================
+   TOAST / NOTIFICATIONS DATA HELPERS
+   ============================================================ */
+function addNotification(userRoleTarget, title, message, relatedId){
+  state.notifications.push({id:uid("n"), targetRole:userRoleTarget, title, message, relatedId, read:false, createdAt:new Date().toISOString()});
+  saveState();
+}
+
+/* ============================================================
+   BRAND HUB — RENDER + SEARCH + FILTER
+   ============================================================ */
+let campaignFilters = {contentType:[], platform:[], budget:[]};
+let campaignSearchTerm = "";
+
+const CONTENT_TYPES = ["Reel","Post","Story","Video","UGC","Other"];
+const PLATFORMS = ["Instagram","YouTube","Other"];
+const BUDGET_BANDS = ["Under ₹1,000","₹1,000–₹5,000","₹5,000–₹10,000","₹10,000+"];
+const CATEGORIES = ["Fashion","Lifestyle","Fitness","Gaming","Beauty","Food","Travel","Tech","Entertainment","Other"];
+const FOLLOWER_BANDS = ["Under 10K","10K–50K","50K–100K","100K+"];
+
+function buildChipSelect(container, options, activeArr, key){
+  container.innerHTML = options.map(o=>`<button type="button" class="chip-opt ${activeArr.includes(o)?"active":""}" data-val="${escapeHtml(o)}">${escapeHtml(o)}</button>`).join("");
+  $$(".chip-opt", container).forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      chip.classList.toggle("active");
+    });
+  });
+}
+function initCampaignFilterUI(){
+  buildChipSelect($("#fContentType"), CONTENT_TYPES, campaignFilters.contentType);
+  buildChipSelect($("#fPlatform"), PLATFORMS, campaignFilters.platform);
+  buildChipSelect($("#fBudget"), BUDGET_BANDS, campaignFilters.budget);
+}
+$("#openCampaignFilters").addEventListener("click", ()=>{ initCampaignFilterUI(); openModal("campaignFilterModal"); });
+$("#applyCampaignFilters").addEventListener("click", ()=>{
+  campaignFilters.contentType = $$("#fContentType .chip-opt.active").map(c=>c.dataset.val);
+  campaignFilters.platform = $$("#fPlatform .chip-opt.active").map(c=>c.dataset.val);
+  campaignFilters.budget = $$("#fBudget .chip-opt.active").map(c=>c.dataset.val);
+  closeModal("campaignFilterModal");
+  renderBrandHub();
+});
+$("#clearCampaignFilters").addEventListener("click", ()=>{
+  campaignFilters = {contentType:[], platform:[], budget:[]};
+  initCampaignFilterUI();
+  renderBrandHub();
+});
+$("#campaignSearch").addEventListener("input", (e)=>{ campaignSearchTerm = e.target.value.trim().toLowerCase(); renderBrandHub(); });
+
+function budgetMatches(budgetStr, band){
+  const nums = (budgetStr.match(/[\d,]+/g)||[]).map(n=> parseInt(n.replace(/,/g,""),10));
+  const max = nums.length ? Math.max(...nums) : 0;
+  const min = nums.length ? Math.min(...nums) : 0;
+  if(band==="Under ₹1,000") return max>0 && max<1000;
+  if(band==="₹1,000–₹5,000") return max>=1000 && min<=5000;
+  if(band==="₹5,000–₹10,000") return max>=5000 && min<=10000;
+  if(band==="₹10,000+") return max>=10000;
+  return true;
+}
+
+function renderBrandHub(){
+  const list = state.campaigns.filter(c=>{
+    if(!c.publicStatus) return false;
+    if(campaignSearchTerm){
+      const hay = [c.brandName,c.campaignName,c.promotionName,...(c.contentTypes||[]),...(c.platforms||[])].join(" ").toLowerCase();
+      if(!hay.includes(campaignSearchTerm)) return false;
+    }
+    if(campaignFilters.contentType.length && !c.contentTypes.some(t=>campaignFilters.contentType.includes(t))) return false;
+    if(campaignFilters.platform.length && !c.platforms.some(p=>campaignFilters.platform.includes(p))) return false;
+    if(campaignFilters.budget.length && !campaignFilters.budget.some(b=>budgetMatches(c.budget,b))) return false;
+    return true;
+  });
+
+  const activeFilterCount = campaignFilters.contentType.length + campaignFilters.platform.length + campaignFilters.budget.length;
+  const countEl = $("#campFilterCount");
+  countEl.textContent = activeFilterCount;
+  countEl.classList.toggle("hidden", activeFilterCount===0);
+
+  $("#campaignResultsMeta").textContent = `${list.length} campaign${list.length!==1?"s":""} · demo listing data`;
+
+  const grid = $("#campaignGrid");
+  if(!list.length){
+    grid.innerHTML = `<div class="empty-state"><div class="icon">∅</div><h4>No active campaigns right now.</h4><p>New opportunities will appear here when they are approved by CollabFlow.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(c=>{
+    const closed = c.deadline && new Date(c.deadline) < new Date();
+    return `
+    <div class="camp-card">
+      <div class="card-img">
+        <img src="${escapeHtml(c.coverImage)}" alt="${escapeHtml(c.campaignName)} cover">
+        <span class="status-pill">${closed?"CAMPAIGN CLOSED":"OPEN"}</span>
+      </div>
+      <div class="card-body">
+        <span class="brandname">${escapeHtml(c.brandName)} <span class="demo-flag">DEMO</span></span>
+        <h3>${escapeHtml(c.campaignName)}</h3>
+        <div class="card-meta">${(c.contentTypes||[]).map(t=>`<span class="meta-tag">${escapeHtml(t)}</span>`).join("")}${(c.platforms||[]).map(p=>`<span class="meta-tag">${escapeHtml(p)}</span>`).join("")}</div>
+        <p class="card-desc">${escapeHtml(c.description).slice(0,110)}${c.description.length>110?"…":""}</p>
+        <div class="card-foot">
+          <span class="budget">${escapeHtml(c.budget)}</span>
+          <button class="btn btn-outline btn-sm" data-view-campaign="${c.id}">View Details</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  $$("[data-view-campaign]", grid).forEach(btn=> btn.addEventListener("click", ()=> openCampaignDetail(btn.dataset.viewCampaign)));
+}
+
+function openCampaignDetail(id){
+  const c = state.campaigns.find(x=>x.id===id);
+  if(!c) return;
+  const closed = c.deadline && new Date(c.deadline) < new Date();
+  $("#campaignDetailBody").innerHTML = `
+    <div class="detail-cover"><img src="${escapeHtml(c.coverImage)}" alt=""></div>
+    <span class="demo-flag" style="margin-bottom:10px; display:inline-block;">DEMO / PLACEHOLDER CAMPAIGN</span>
+    <h2 style="font-size:22px; margin-bottom:4px;">${escapeHtml(c.campaignName)}</h2>
+    <p style="color:var(--green-mid); font-weight:600; font-size:13.5px; margin-bottom:16px;">${escapeHtml(c.brandName)} · ${escapeHtml(c.promotionName)}</p>
+    <div class="detail-row">
+      <div class="detail-item"><span>Budget</span><b>${escapeHtml(c.budget)}</b></div>
+      <div class="detail-item"><span>Deadline</span><b>${fmtDate(c.deadline)}</b></div>
+      <div class="detail-item"><span>Platform</span><b>${(c.platforms||[]).join(", ")}</b></div>
+      <div class="detail-item"><span>Content type</span><b>${(c.contentTypes||[]).join(", ")}</b></div>
+    </div>
+    <div class="detail-block"><h5>Description</h5><p>${escapeHtml(c.description)}</p></div>
+    <div class="detail-block"><h5>Requirements</h5><p>${escapeHtml(c.requirements||"—")}</p></div>
+    <div class="detail-block"><h5>Location</h5><p>${escapeHtml(c.location||"—")}</p></div>
+    ${closed?`<p style="color:var(--danger); font-weight:700; font-size:13.5px;">CAMPAIGN CLOSED — the deadline has passed.</p>`:""}
+  `;
+  const foot = $("#campaignDetailFoot");
+  if(closed){
+    foot.innerHTML = `<button class="btn btn-outline btn-block" disabled>Applications closed</button>`;
+  } else if(state.currentUser && state.currentUser.role==="creator"){
+    foot.innerHTML = `<button class="btn btn-primary btn-block" id="applyFromDetail">Apply for Campaign</button>`;
+    $("#applyFromDetail").addEventListener("click", ()=>{ closeModal("campaignDetailModal"); openApplyModal(c.id); });
+  } else {
+    foot.innerHTML = `<button class="btn btn-primary btn-block" id="connectFromDetail">Connect with CollabFlow</button>`;
+    $("#connectFromDetail").addEventListener("click", ()=>{ closeModal("campaignDetailModal"); openGenericConnect("To apply for this campaign, log in as a creator or contact CollabFlow directly. Our team will review your profile and coordinate the collaboration."); });
+  }
+  openModal("campaignDetailModal");
+}
+
+function openApplyModal(campaignId){
+  if(!requireRole("creator")) return;
+  const existing = state.applications.find(a=> a.campaignId===campaignId && a.creatorOwnerId===state.currentUser.id && !["declined","cancelled"].includes(a.status));
+  if(existing){ showToast("You already have an active application for this campaign.", "warn"); return; }
+  $("#appCampaignId").value = campaignId;
+  $("#appName").value = state.currentUser.name;
+  openModal("applyModal");
+}
+$("#applyForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const campaignId = $("#appCampaignId").value;
+  const c = state.campaigns.find(x=>x.id===campaignId);
+  const app = {
+    id: uid("app"), campaignId, campaignName: c?.campaignName, brandId: c?.brandId, brandName: c?.brandName,
+    creatorOwnerId: state.currentUser.id, creatorName: $("#appName").value.trim(), creatorUsername: $("#appUsername").value.trim(),
+    selectedPlatform: $("#appPlatform").value, profileLink: $("#appLink").value.trim(), introduction: $("#appIntro").value.trim(),
+    experience: $("#appWhy").value.trim(), proposedDeliverables: $("#appDeliv").value.trim(), proposedRate: $("#appRate").value,
+    additionalNote: $("#appNote").value.trim(), status: "submitted", createdAt: new Date().toISOString()
+  };
+  state.applications.push(app);
+  saveState();
+  addNotification("brand", "New campaign application", `${app.creatorName} applied to ${app.campaignName}.`, app.id);
+  closeModal("applyModal");
+  e.target.reset();
+  showToast("Your application has been submitted to CollabFlow.");
+});
+
+/* ============================================================
+   CREATOR HUB — RENDER + SEARCH + FILTER + SORT
+   ============================================================ */
+let creatorFilters = {category:[], platform:[], followers:[]};
+let creatorSearchTerm = "";
+let creatorSortMode = "recent";
+
+function initCreatorFilterUI(){
+  buildChipSelect($("#fCategory"), CATEGORIES, creatorFilters.category);
+  buildChipSelect($("#fCreatorPlatform"), PLATFORMS, creatorFilters.platform);
+  buildChipSelect($("#fFollowers"), FOLLOWER_BANDS, creatorFilters.followers);
+}
+$("#openCreatorFilters").addEventListener("click", ()=>{ initCreatorFilterUI(); openModal("creatorFilterModal"); });
+$("#applyCreatorFilters").addEventListener("click", ()=>{
+  creatorFilters.category = $$("#fCategory .chip-opt.active").map(c=>c.dataset.val);
+  creatorFilters.platform = $$("#fCreatorPlatform .chip-opt.active").map(c=>c.dataset.val);
+  creatorFilters.followers = $$("#fFollowers .chip-opt.active").map(c=>c.dataset.val);
+  closeModal("creatorFilterModal");
+  renderCreatorHub();
+});
+$("#clearCreatorFilters").addEventListener("click", ()=>{
+  creatorFilters = {category:[], platform:[], followers:[]};
+  initCreatorFilterUI();
+  renderCreatorHub();
+});
+$("#creatorSearch").addEventListener("input", (e)=>{ creatorSearchTerm = e.target.value.trim().toLowerCase(); renderCreatorHub(); });
+$("#creatorSort").addEventListener("change", (e)=>{ creatorSortMode = e.target.value; renderCreatorHub(); });
+
+function followerMatches(n, band){
+  if(band==="Under 10K") return n<10000;
+  if(band==="10K–50K") return n>=10000 && n<50000;
+  if(band==="50K–100K") return n>=50000 && n<100000;
+  if(band==="100K+") return n>=100000;
+  return true;
+}
+function startingRate(cr){
+  const vals = Object.values(cr.rates||{}).filter(v=>typeof v==="number");
+  return vals.length ? Math.min(...vals) : 0;
+}
+
+function renderCreatorHub(){
+  let list = state.creators.filter(cr=>{
+    if(!cr.publicStatus) return false;
+    if(creatorSearchTerm){
+      const hay = [cr.name,cr.username,...(cr.categories||[]),...(cr.platforms||[])].join(" ").toLowerCase();
+      if(!hay.includes(creatorSearchTerm)) return false;
+    }
+    if(creatorFilters.category.length && !cr.categories.some(c=>creatorFilters.category.includes(c))) return false;
+    if(creatorFilters.platform.length && !cr.platforms.some(p=>creatorFilters.platform.includes(p))) return false;
+    if(creatorFilters.followers.length && !creatorFilters.followers.some(b=>followerMatches(cr.followers,b))) return false;
+    return true;
+  });
+
+  if(creatorSortMode==="followers") list = list.slice().sort((a,b)=>b.followers-a.followers);
+  else if(creatorSortMode==="rate-low") list = list.slice().sort((a,b)=>startingRate(a)-startingRate(b));
+  else if(creatorSortMode==="rate-high") list = list.slice().sort((a,b)=>startingRate(b)-startingRate(a));
+  else list = list.slice().sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
+
+  const activeFilterCount = creatorFilters.category.length + creatorFilters.platform.length + creatorFilters.followers.length;
+  const countEl = $("#creatorFilterCount");
+  countEl.textContent = activeFilterCount;
+  countEl.classList.toggle("hidden", activeFilterCount===0);
+
+  $("#creatorResultsMeta").textContent = `${list.length} creator${list.length!==1?"s":""} · demo profile data`;
+
+  const grid = $("#creatorGrid");
+  if(!list.length){
+    grid.innerHTML = `<div class="empty-state"><div class="icon">∅</div><h4>No creators found.</h4><p>Try another search or adjust your filters.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(cr=>{
+    const rate = startingRate(cr);
+    return `
+    <div class="creator-card">
+      <div class="card-img"><img src="${escapeHtml(cr.profileImage)}" alt="${escapeHtml(cr.name)}"></div>
+      <div class="card-body">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div><h3 style="font-size:16px;">${escapeHtml(cr.name)}</h3><span class="handle">${escapeHtml(cr.username)} <span class="demo-flag">DEMO</span></span></div>
+        </div>
+        <div class="card-meta">${(cr.categories||[]).map(t=>`<span class="meta-tag">${escapeHtml(t)}</span>`).join("")}</div>
+        <div class="follow-row"><span><b>${fmtFollowers(cr.followers)}</b> followers</span><span>${(cr.platforms||[]).join(", ")}</span></div>
+        <p class="card-desc">${escapeHtml(cr.bio).slice(0,90)}${cr.bio.length>90?"…":""}</p>
+        <div class="card-foot">
+          <span class="budget">${rate?("From ₹"+rate.toLocaleString("en-IN")):"Rate on request"}</span>
+          <button class="btn btn-outline btn-sm" data-view-creator="${cr.id}">View Profile</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+  $$("[data-view-creator]", grid).forEach(btn=> btn.addEventListener("click", ()=> openCreatorProfile(btn.dataset.viewCreator)));
+}
+
+function openCreatorProfile(id){
+  const cr = state.creators.find(x=>x.id===id);
+  if(!cr) return;
+  const rateRows = Object.entries(cr.rates||{}).map(([k,v])=>`<div class="detail-item"><span>${escapeHtml(k)}</span><b>₹${Number(v).toLocaleString("en-IN")}</b></div>`).join("");
+  const packages = (cr.packages||[]).map(p=>`<div class="rule-item" style="margin-bottom:8px;"><div class="mark"></div><p><b>${escapeHtml(p.name)}</b> — ${escapeHtml(p.desc)} · ₹${Number(p.price).toLocaleString("en-IN")}</p></div>`).join("") || "<p style='color:var(--ink-faint); font-size:13.5px;'>No packages listed.</p>";
+  $("#creatorProfileBody").innerHTML = `
+    <div class="detail-cover"><img src="${escapeHtml(cr.coverImage)}" alt=""></div>
+    <span class="demo-flag" style="margin-bottom:10px; display:inline-block;">DEMO / PLACEHOLDER PROFILE</span>
+    <div style="display:flex; gap:14px; align-items:center; margin-bottom:16px;">
+      <img src="${escapeHtml(cr.profileImage)}" alt="" style="width:56px; height:56px; border-radius:50%; object-fit:cover;">
+      <div><h2 style="font-size:20px;">${escapeHtml(cr.name)}</h2><span style="color:var(--ink-faint); font-size:13.5px;">${escapeHtml(cr.username)} · ${escapeHtml(cr.location||"")}</span></div>
+    </div>
+    <p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:16px;">${escapeHtml(cr.bio)}</p>
+    <div class="detail-row">
+      <div class="detail-item"><span>Followers</span><b>${fmtFollowers(cr.followers)}</b></div>
+      <div class="detail-item"><span>Platforms</span><b>${(cr.platforms||[]).join(", ")||"—"}</b></div>
+      <div class="detail-item"><span>Categories</span><b>${(cr.categories||[]).join(", ")||"—"}</b></div>
+      <div class="detail-item"><span>Location</span><b>${escapeHtml(cr.location||"—")}</b></div>
+    </div>
+    <div class="detail-block"><h5>Rates</h5><div class="detail-row">${rateRows||"<p style='color:var(--ink-faint); font-size:13.5px;'>Rates on request.</p>"}</div></div>
+    <div class="detail-block"><h5>Packages</h5>${packages}</div>
+  `;
+  const foot = $("#creatorProfileFoot");
+  if(state.currentUser && state.currentUser.role==="brand"){
+    foot.innerHTML = `<button class="btn btn-primary btn-block" id="connectFromProfile">Connect</button>`;
+    $("#connectFromProfile").addEventListener("click", ()=>{ closeModal("creatorProfileModal"); openRequestModal(cr.id); });
+  } else {
+    foot.innerHTML = `<button class="btn btn-primary btn-block" id="connectGenericFromProfile">Connect with CollabFlow</button>`;
+    $("#connectGenericFromProfile").addEventListener("click", ()=>{ closeModal("creatorProfileModal"); openGenericConnect("Interested in collaborating with this creator? Submit your campaign requirements to CollabFlow and our team will coordinate the collaboration. Log in as a brand to send a request directly."); });
+  }
+  openModal("creatorProfileModal");
+}
+
+function openGenericConnect(message){
+  $("#connectModalBody").innerHTML = `<p style="font-size:14.5px; color:var(--ink-soft); margin-bottom:18px;">${escapeHtml(message)}</p><button class="btn btn-primary btn-block" id="connectGenericBtn">Contact CollabFlow</button>`;
+  $("#connectGenericBtn").addEventListener("click", ()=>{ closeModal("connectModal"); showToast("Thanks — this is a demo action. A real build would route this to CollabFlow's team."); });
+  openModal("connectModal");
+}
+
+function openRequestModal(creatorId){
+  if(!requireRole("brand")) return;
+  const existing = state.collaborationRequests.find(r=> r.creatorId===creatorId && r.brandOwnerId===state.currentUser.id && !["declined","cancelled"].includes(r.status));
+  if(existing){ showToast("You already have an active request for this creator.", "warn"); return; }
+  $("#reqCreatorId").value = creatorId;
+  openModal("requestModal");
+}
+$("#requestForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const creatorId = $("#reqCreatorId").value;
+  const cr = state.creators.find(x=>x.id===creatorId);
+  const myBrand = state.brands.find(b=> b.ownerId===state.currentUser.id) || {name: state.currentUser.name};
+  const req = {
+    id: uid("req"), creatorId, creatorName: cr?.name, brandOwnerId: state.currentUser.id, brandName: myBrand.name,
+    campaignName: $("#reqCampaign").value.trim(), message: $("#reqMessage").value.trim(), contentType: $("#reqContentType").value,
+    proposedBudget: $("#reqBudget").value, deliverables: $("#reqDeliv").value.trim(), deadline: $("#reqDeadline").value,
+    requirements: $("#reqReq").value.trim(), status: "pending", createdAt: new Date().toISOString()
+  };
+  state.collaborationRequests.push(req);
+  saveState();
+  addNotification("creator", "New collaboration request", `${req.brandName} sent a collaboration request.`, req.id);
+  closeModal("requestModal");
+  e.target.reset();
+  showToast("Your request has been submitted to CollabFlow.");
+});
+
+/* ============================================================
+   POLICY PAGES
+   ============================================================ */
+const POLICIES = {
+  privacy: {title:"Privacy Policy", body:"This is placeholder policy content for the CollabFlow prototype and has not been reviewed by legal counsel. In a production version, this page would explain what data CollabFlow collects from brands and creators, how it is stored, who can access private fields such as phone numbers and email addresses, and how users can request deletion of their information."},
+  terms: {title:"Terms of Service", body:"This is placeholder terms content for the CollabFlow prototype and has not been reviewed by legal counsel. A production version would cover account eligibility, the review and approval process for campaigns and profiles, payment responsibilities between brands and creators, and CollabFlow's role as a coordinating agency rather than a party to any collaboration agreement."},
+  brandguidelines: {title:"Brand Guidelines", body:"Brands are expected to provide accurate company and campaign information, clearly state deliverables and budget, respond to creator applications in reasonable time, and honor agreed payment terms. CollabFlow reviews all campaigns before publication."},
+  creatorguidelines: {title:"Creator Guidelines", body:"Creators are expected to provide accurate profile and rate information, deliver agreed content by the deadline, disclose sponsorships as required by platform and advertising rules, and communicate professionally. CollabFlow reviews all profiles before publication."},
+  collabrules: {title:"Collaboration Rules", body:"All collaborations arranged through CollabFlow should have requirements, deliverables and payment terms confirmed in writing before work begins. Disputes should be raised with CollabFlow directly rather than resolved off-platform."},
+  contact: {title:"Contact / Support", body:"For prototype purposes, use the demo Connect actions throughout the site. In production, this page would show CollabFlow's actual support contact details, pulled from site settings rather than hardcoded here."}
+};
+function renderPolicy(key){
+  const p = POLICIES[key] || POLICIES.contact;
+  $("#policyContent").innerHTML = `<h2>${escapeHtml(p.title)}</h2><div class="updated">Placeholder content — pending legal review</div><p>${escapeHtml(p.body)}</p>`;
+}
+
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+const ADMIN_TABS = [
+  {id:"dashboard", label:"Dashboard"},
+  {id:"website", label:"Website"},
+  {id:"brands", label:"Brands"},
+  {id:"creators", label:"Creators"},
+  {id:"campaigns", label:"Campaigns"},
+  {id:"approvals", label:"Approvals"},
+  {id:"applications", label:"Applications"},
+  {id:"collabs", label:"Collaborations"},
+  {id:"media", label:"Media"},
+  {id:"settings", label:"Settings"}
+];
+let currentAdminTab = "dashboard";
+
+function initAdminNav(){
+  const mobileNav = $("#adminMobileNav");
+  mobileNav.innerHTML = ADMIN_TABS.map(t=>`<button data-tab="${t.id}" class="${t.id===currentAdminTab?"active":""}">${t.label}</button>`).join("");
+  $$("[data-panel-tab]", $("#view-admin")).forEach(btn=>{
+    btn.addEventListener("click", ()=>{ currentAdminTab = btn.dataset.panelTab; renderAdminTab(currentAdminTab); });
+  });
+  $$("[data-tab]", mobileNav).forEach(btn=>{
+    btn.addEventListener("click", ()=>{ currentAdminTab = btn.dataset.tab; renderAdminTab(currentAdminTab); });
+  });
+}
+
+function renderAdminTab(tab){
+  currentAdminTab = tab;
+  $$(".panel-nav-item[data-panel-tab]", $("#view-admin")).forEach(b=> b.classList.toggle("active", b.dataset.panelTab===tab));
+  $$("#adminMobileNav button").forEach(b=> b.classList.toggle("active", b.dataset.tab===tab));
+  const el = $("#adminTabContent");
+  const fns = {
+    dashboard: renderAdminDashboard, website: renderAdminWebsite, brands: ()=>renderAdminEntityList("brands"),
+    creators: ()=>renderAdminEntityList("creators"), campaigns: ()=>renderAdminEntityList("campaigns"),
+    approvals: renderAdminApprovals, applications: renderAdminApplications, collabs: renderAdminCollabs,
+    media: renderAdminMedia, settings: renderAdminSettings
+  };
+  el.innerHTML = "";
+  (fns[tab]||renderAdminDashboard)(el);
+}
+
+function renderAdminDashboard(el){
+  const pendingReviews = state.brands.filter(b=>b.status==="pending").length + state.creators.filter(c=>c.status==="review"||c.status==="pending").length + state.campaigns.filter(c=>c.status==="review").length;
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><b>${state.brands.length}</b><span>Total Brands</span></div>
+      <div class="stat-card"><b>${state.creators.length}</b><span>Total Creators</span></div>
+      <div class="stat-card"><b>${state.campaigns.length}</b><span>Total Campaigns</span></div>
+      <div class="stat-card"><b>${state.campaigns.filter(c=>c.publicStatus).length}</b><span>Published Campaigns</span></div>
+      <div class="stat-card"><b>${state.creators.filter(c=>c.publicStatus).length}</b><span>Published Creators</span></div>
+      <div class="stat-card"><b>${pendingReviews}</b><span>Pending Reviews</span></div>
+    </div>
+    <div class="panel-card">
+      <h3>Recent activity <span class="demo-flag" style="margin-left:6px;">DEMO STATS</span></h3>
+      <div class="data-list" id="activityList"></div>
+    </div>
+  `;
+  const activity = [
+    ...state.applications.slice(-4).map(a=>({t:"New application", d:`${a.creatorName} applied to ${a.campaignName}`, when:a.createdAt})),
+    ...state.collaborationRequests.slice(-4).map(r=>({t:"Collaboration request", d:`${r.brandName} contacted ${r.creatorName}`, when:r.createdAt}))
+  ].sort((a,b)=> new Date(b.when||0)-new Date(a.when||0)).slice(0,6);
+  $("#activityList").innerHTML = activity.length ? activity.map(a=>`
+    <div class="data-row"><div class="row-main"><h4>${escapeHtml(a.t)}</h4><div class="sub">${escapeHtml(a.d)}</div></div><div class="sub">${fmtDate(a.when)}</div></div>
+  `).join("") : `<p style="color:var(--ink-faint); font-size:13.5px;">No activity yet.</p>`;
+}
+
+function renderAdminWebsite(el){
+  el.innerHTML = `
+    <div class="panel-card">
+      <h3>Hero image</h3>
+      <div class="upload-preview"><img id="heroPreview" src="${escapeHtml(state.siteSettings.heroImage)}" alt=""></div>
+      <div class="form-group" style="margin-top:14px;"><label>Hero image URL</label><input type="url" id="heroImageUrl" value="${escapeHtml(state.siteSettings.heroImage)}"></div>
+      <button class="btn btn-primary btn-sm" id="saveHeroBtn">Save Changes</button>
+      <p class="field-hint">Local uploads preview only in this prototype — nothing is stored permanently online. // FUTURE CLOUD STORAGE INTEGRATION</p>
+    </div>
+    <div class="panel-card">
+      <h3>About Us</h3>
+      <div class="form-group"><label>About heading</label><input type="text" id="aboutHeadingInput" value="${escapeHtml(state.siteSettings.aboutHeading)}"></div>
+      <button class="btn btn-primary btn-sm" id="saveAboutBtn">Save Changes</button>
+    </div>
+  `;
+  $("#heroImageUrl").addEventListener("input", (e)=> $("#heroPreview").src = e.target.value);
+  $("#saveHeroBtn").addEventListener("click", ()=>{
+    state.siteSettings.heroImage = $("#heroImageUrl").value.trim();
+    saveState();
+    $("#heroImage").src = state.siteSettings.heroImage;
+    showToast("Hero image updated.");
+  });
+  $("#saveAboutBtn").addEventListener("click", ()=>{
+    state.siteSettings.aboutHeading = $("#aboutHeadingInput").value.trim();
+    saveState();
+    showToast("Website settings saved.");
+  });
+}
+
+function renderAdminEntityList(kind){
+  const el = $("#adminTabContent");
+  const items = state[kind];
+  const titleMap = {brands:"Brands", creators:"Creators", campaigns:"Campaigns"};
+  el.innerHTML = `
+    <div class="panel-card">
+      <h3>${titleMap[kind]}</h3>
+      <div class="data-list">
+        ${items.length ? items.map(it=> adminRowHtml(kind, it)).join("") : `<p style="color:var(--ink-faint); font-size:13.5px;">No records yet.</p>`}
+      </div>
+    </div>
+  `;
+  wireAdminRowActions(kind);
+}
+function adminRowHtml(kind, it){
+  const img = kind==="brands" ? it.logo : kind==="creators" ? it.profileImage : it.coverImage;
+  const name = kind==="brands" ? it.name : kind==="creators" ? it.name : it.campaignName;
+  const sub = kind==="brands" ? (it.category||"—") : kind==="creators" ? (it.categories||[]).join(", ") : it.brandName;
+  const status = it.status || "draft";
+  const pub = it.publicStatus;
+  return `
+    <div class="data-row" data-id="${it.id}" data-kind="${kind}">
+      <img class="thumb" src="${escapeHtml(img||"")}" alt="">
+      <div class="row-main"><h4>${escapeHtml(name)}</h4><div class="sub">${escapeHtml(sub)}</div></div>
+      <span class="status-badge ${status}">${status}</span>
+      <span class="status-badge ${pub?"published":"unpublished"}">${pub?"PUBLIC":"PRIVATE"}</span>
+      <div class="row-actions">
+        ${status==="pending"||status==="review" ? `<button class="icon-btn" data-action="approve">Approve</button>`:""}
+        ${pub ? `<button class="icon-btn" data-action="unpublish">Unpublish</button>` : `<button class="icon-btn" data-action="publish">Publish</button>`}
+        <button class="icon-btn danger" data-action="delete">Delete</button>
+      </div>
+    </div>`;
+}
+function wireAdminRowActions(kind){
+  $$(`[data-kind="${kind}"]`).forEach(row=>{
+    const id = row.dataset.id;
+    $$("[data-action]", row).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const action = btn.dataset.action;
+        const arr = state[kind];
+        const idx = arr.findIndex(x=>x.id===id);
+        if(idx<0) return;
+        if(action==="approve"){ arr[idx].status = "approved"; showToast("Record approved."); }
+        if(action==="publish"){ arr[idx].publicStatus = true; arr[idx].status = arr[idx].status==="draft"?"published":arr[idx].status; showToast("Published successfully."); }
+        if(action==="unpublish"){ arr[idx].publicStatus = false; showToast("Unpublished."); }
+        if(action==="delete"){
+          confirmAction("Delete this record?", "This action cannot be undone.", ()=>{
+            state[kind] = arr.filter(x=>x.id!==id);
+            saveState();
+            renderAdminTab(currentAdminTab);
+            showToast("Item deleted.");
+          });
+          return;
+        }
+        saveState();
+        renderAdminTab(currentAdminTab);
+      });
+    });
+  });
+}
+
+function renderAdminApprovals(el){
+  const pendingBrands = state.brands.filter(b=>b.status==="pending");
+  const pendingCreators = state.creators.filter(c=>c.status==="pending"||c.status==="review");
+  const pendingCampaigns = state.campaigns.filter(c=>c.status==="review");
+  el.innerHTML = `
+    <div class="panel-card"><h3>Brands awaiting review (${pendingBrands.length})</h3><div class="data-list">${pendingBrands.map(b=>adminRowHtml("brands",b)).join("")||"<p style='color:var(--ink-faint);font-size:13.5px;'>Nothing pending.</p>"}</div></div>
+    <div class="panel-card"><h3>Creators awaiting review (${pendingCreators.length})</h3><div class="data-list">${pendingCreators.map(c=>adminRowHtml("creators",c)).join("")||"<p style='color:var(--ink-faint);font-size:13.5px;'>Nothing pending.</p>"}</div></div>
+    <div class="panel-card"><h3>Campaigns awaiting review (${pendingCampaigns.length})</h3><div class="data-list">${pendingCampaigns.map(c=>adminRowHtml("campaigns",c)).join("")||"<p style='color:var(--ink-faint);font-size:13.5px;'>Nothing pending.</p>"}</div></div>
+  `;
+  wireAdminRowActions("brands"); wireAdminRowActions("creators"); wireAdminRowActions("campaigns");
+}
+
+function renderAdminApplications(el){
+  el.innerHTML = `<div class="panel-card"><h3>Applications</h3><div class="data-list">
+    ${state.applications.length ? state.applications.slice().reverse().map(a=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(a.creatorName)} → ${escapeHtml(a.campaignName)}</h4><div class="sub">${escapeHtml(a.brandName||"")} · ${fmtDate(a.createdAt)}</div></div>
+      <span class="status-badge ${a.status}">${a.status.replace("_"," ")}</span>
+      <div class="row-actions">
+        <select data-app-status="${a.id}" class="icon-btn" style="border:none;">
+          ${["submitted","under_review","shortlisted","accepted","declined","cancelled","completed"].map(s=>`<option value="${s}" ${a.status===s?"selected":""}>${s}</option>`).join("")}
+        </select>
+      </div></div>
+    `).join("") : "<p style='color:var(--ink-faint);font-size:13.5px;'>No applications yet.</p>"}
+  </div></div>`;
+  $$("[data-app-status]").forEach(sel=>{
+    sel.addEventListener("change", ()=>{
+      const a = state.applications.find(x=>x.id===sel.dataset.appStatus);
+      if(a){ a.status = sel.value; saveState(); showToast("Application status updated."); renderAdminTab(currentAdminTab); }
+    });
+  });
+}
+
+function renderAdminCollabs(el){
+  el.innerHTML = `<div class="panel-card"><h3>Collaboration requests</h3><div class="data-list">
+    ${state.collaborationRequests.length ? state.collaborationRequests.slice().reverse().map(r=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(r.brandName)} → ${escapeHtml(r.creatorName)}</h4><div class="sub">${escapeHtml(r.campaignName||"")} · ${fmtDate(r.createdAt)}</div></div>
+      <span class="status-badge ${r.status}">${r.status}</span>
+      <div class="row-actions"><button class="icon-btn danger" data-cancel-req="${r.id}">Cancel</button></div></div>
+    `).join("") : "<p style='color:var(--ink-faint);font-size:13.5px;'>No collaboration requests yet.</p>"}
+  </div></div>`;
+  $$("[data-cancel-req]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const r = state.collaborationRequests.find(x=>x.id===btn.dataset.cancelReq);
+      if(r){ r.status = "cancelled"; saveState(); renderAdminTab(currentAdminTab); showToast("Request cancelled."); }
+    });
+  });
+}
+
+function renderAdminMedia(el){
+  const items = [
+    {name:"Hero Image", url: state.siteSettings.heroImage, type:"Hero"},
+    ...state.campaigns.map(c=>({name:c.campaignName+" poster", url:c.coverImage, type:"Campaign"})),
+    ...state.creators.map(c=>({name:c.name+" profile", url:c.profileImage, type:"Creator"}))
+  ];
+  el.innerHTML = `<div class="panel-card"><h3>Media library <span class="demo-flag" style="margin-left:6px;">DEMO URLS</span></h3>
+    <div class="data-list">${items.map(m=>`
+      <div class="data-row"><img class="thumb" src="${escapeHtml(m.url)}" alt=""><div class="row-main"><h4>${escapeHtml(m.name)}</h4><div class="sub">${escapeHtml(m.type)}</div></div>
+      <button class="icon-btn" onclick="navigator.clipboard && navigator.clipboard.writeText('${escapeHtml(m.url)}'); showToast('URL copied.')">Copy URL</button></div>
+    `).join("")}</div></div>`;
+}
+
+function renderAdminSettings(el){
+  el.innerHTML = `
+    <div class="panel-card">
+      <h3>Platform status</h3>
+      <p style="font-size:13.5px; color:var(--ink-soft); margin-bottom:12px;">Currently running in <b>${state.mode.toUpperCase()} MODE</b>. Live mode activates automatically once a real Firebase project is configured in the code (see the FIREBASE PLACEHOLDER section at the top of the script).</p>
+      <div class="form-group"><label>Maintenance mode</label>
+        <select id="maintenanceToggle"><option value="off" ${!state.siteSettings.maintenanceMode?"selected":""}>Off</option><option value="on" ${state.siteSettings.maintenanceMode?"selected":""}>On</option></select>
+      </div>
+      <button class="btn btn-primary btn-sm" id="saveSettingsBtn">Save Changes</button>
+    </div>
+    <div class="panel-card">
+      <h3>Security notes</h3>
+      <p style="font-size:13px; color:var(--ink-faint);">// FUTURE PRODUCTION AUTHENTICATION<br>// FUTURE ROLE-BASED ACCESS CONTROL enforced server-side<br>// FUTURE SECURE DATABASE RULES — this prototype's role checks are frontend-only and are not real security.</p>
+    </div>
+  `;
+  $("#saveSettingsBtn").addEventListener("click", ()=>{
+    state.siteSettings.maintenanceMode = $("#maintenanceToggle").value==="on";
+    saveState();
+    showToast("Settings saved.");
+  });
+}
+initAdminNav();
+
+/* ============================================================
+   BRANDS PANEL
+   ============================================================ */
+const BRAND_TABS = [
+  {id:"bp-dashboard", label:"Dashboard"}, {id:"bp-profile", label:"Profile"}, {id:"bp-campaigns", label:"Campaigns"},
+  {id:"bp-findcreators", label:"Find Creators"}, {id:"bp-applications", label:"Applications"}, {id:"bp-requests", label:"Sent Requests"}
+];
+let currentBrandTab = "bp-dashboard";
+function initBrandNav(){
+  $("#brandMobileNav").innerHTML = BRAND_TABS.map(t=>`<button data-tab="${t.id}" class="${t.id===currentBrandTab?"active":""}">${t.label}</button>`).join("");
+  $$("[data-panel-tab]", $("#view-brandsPanel")).forEach(btn=> btn.addEventListener("click", ()=>{ currentBrandTab=btn.dataset.panelTab; renderBrandPanelTab(currentBrandTab); }));
+  $$("[data-tab]", $("#brandMobileNav")).forEach(btn=> btn.addEventListener("click", ()=>{ currentBrandTab=btn.dataset.tab; renderBrandPanelTab(currentBrandTab); }));
+}
+function myBrand(){ return state.brands.find(b=> b.ownerId===state.currentUser?.id) || state.brands[0]; }
+
+function renderBrandPanelTab(tab){
+  currentBrandTab = tab;
+  $$(".panel-nav-item[data-panel-tab]", $("#view-brandsPanel")).forEach(b=> b.classList.toggle("active", b.dataset.panelTab===tab));
+  $$("#brandMobileNav button").forEach(b=> b.classList.toggle("active", b.dataset.tab===tab));
+  const el = $("#brandTabContent");
+  const fns = {
+    "bp-dashboard": renderBrandDashboard, "bp-profile": renderBrandProfile, "bp-campaigns": renderBrandCampaigns,
+    "bp-findcreators": renderBrandFindCreators, "bp-applications": renderBrandApplications, "bp-requests": renderBrandRequests
+  };
+  el.innerHTML = "";
+  (fns[tab]||renderBrandDashboard)(el);
+}
+function renderBrandDashboard(el){
+  const b = myBrand();
+  const myCampaigns = state.campaigns.filter(c=> c.brandId===b?.id);
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><b>${myCampaigns.length}</b><span>Total Campaigns</span></div>
+      <div class="stat-card"><b>${myCampaigns.filter(c=>c.status==="draft").length}</b><span>Draft</span></div>
+      <div class="stat-card"><b>${myCampaigns.filter(c=>c.status==="review").length}</b><span>In Review</span></div>
+      <div class="stat-card"><b>${myCampaigns.filter(c=>c.publicStatus).length}</b><span>Published</span></div>
+    </div>
+    <div class="panel-card"><h3>Welcome, ${escapeHtml(b?.name||state.currentUser.name)}</h3><p style="font-size:13.5px; color:var(--ink-soft);">Create a campaign or browse the creator database to get started.</p></div>
+  `;
+}
+function renderBrandProfile(el){
+  const b = myBrand() || {};
+  el.innerHTML = `
+    <div class="panel-card">
+      <h3>Brand profile</h3>
+      <div class="form-row2">
+        <div class="form-group"><label>Brand name</label><input type="text" id="bpName" value="${escapeHtml(b.name||"")}"></div>
+        <div class="form-group"><label>Category</label><input type="text" id="bpCategory" value="${escapeHtml(b.category||"")}"></div>
+      </div>
+      <div class="form-group"><label>Logo / cover image URL</label><input type="url" id="bpLogo" value="${escapeHtml(b.logo||"")}"></div>
+      <div class="form-group"><label>Description</label><textarea id="bpDesc">${escapeHtml(b.description||"")}</textarea></div>
+      <div class="form-row2">
+        <div class="form-group"><label>Mobile number <span class="demo-flag">PRIVATE</span></label><input type="tel" id="bpPhone" value="${escapeHtml(b.phone||"")}"></div>
+        <div class="form-group"><label>Email <span class="demo-flag">PRIVATE</span></label><input type="email" id="bpEmail" value="${escapeHtml(b.email||"")}"></div>
+      </div>
+      <div class="form-group"><label>Location</label><input type="text" id="bpLocation" value="${escapeHtml(b.location||"")}"></div>
+      <p class="field-hint">Private fields are never shown on the public Brand Hub. This prototype persists changes locally in your browser only.</p>
+      <button class="btn btn-primary btn-sm" id="saveBrandProfile">Save Brand Details</button>
+    </div>
+  `;
+  $("#saveBrandProfile").addEventListener("click", ()=>{
+    Object.assign(b, {name:$("#bpName").value.trim(), category:$("#bpCategory").value.trim(), logo:$("#bpLogo").value.trim(), description:$("#bpDesc").value.trim(), phone:$("#bpPhone").value.trim(), email:$("#bpEmail").value.trim(), location:$("#bpLocation").value.trim()});
+    saveState();
+    showToast("Brand details saved.");
+  });
+}
+function renderBrandCampaigns(el){
+  const b = myBrand();
+  const myCampaigns = state.campaigns.filter(c=> c.brandId===b?.id);
+  el.innerHTML = `
+    <div class="panel-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+        <h3 style="margin:0;">My campaigns</h3>
+        <button class="btn btn-primary btn-sm" id="newCampaignBtn">Create Campaign</button>
+      </div>
+      <div class="data-list">${myCampaigns.length? myCampaigns.map(c=>adminRowHtml("campaigns",c)).join("") : "<p style='color:var(--ink-faint);font-size:13.5px;'>No campaigns yet. Create your first one.</p>"}</div>
+    </div>
+    <div class="panel-card hidden" id="campaignFormCard"></div>
+  `;
+  wireAdminRowActions("campaigns");
+  $("#newCampaignBtn").addEventListener("click", ()=> renderCampaignForm());
+}
+function renderCampaignForm(){
+  const card = $("#campaignFormCard");
+  card.classList.remove("hidden");
+  card.innerHTML = `
+    <h3>New campaign</h3>
+    <form id="campaignForm">
+      <div class="form-row2">
+        <div class="form-group"><label>Campaign name <span class="req">*</span></label><input type="text" id="cfName" required></div>
+        <div class="form-group"><label>Promotion name</label><input type="text" id="cfPromo"></div>
+      </div>
+      <div class="form-group"><label>Description <span class="req">*</span></label><textarea id="cfDesc" required></textarea></div>
+      <div class="form-row2">
+        <div class="form-group"><label>Budget <span class="req">*</span></label><input type="text" id="cfBudget" placeholder="e.g. ₹5,000 or Negotiable" required></div>
+        <div class="form-group"><label>Deadline</label><input type="date" id="cfDeadline"></div>
+      </div>
+      <div class="form-group"><label>Content type</label><div class="chip-select" id="cfContentType"></div></div>
+      <div class="form-group"><label>Platform</label><div class="chip-select" id="cfPlatform"></div></div>
+      <div class="form-group"><label>Cover image URL</label><input type="url" id="cfCover" placeholder="https://"></div>
+      <div class="form-group"><label>Requirements</label><textarea id="cfReq" placeholder="Content style, captions, hashtags, tagging requirements..."></textarea></div>
+      <div class="form-group"><label>Location</label><input type="text" id="cfLocation"></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="submit" class="btn btn-outline" data-save-mode="draft">Save Draft</button>
+        <button type="submit" class="btn btn-primary" data-save-mode="review">Submit for Review</button>
+      </div>
+    </form>
+  `;
+  buildChipSelect($("#cfContentType"), CONTENT_TYPES, []);
+  buildChipSelect($("#cfPlatform"), PLATFORMS, []);
+  let saveMode = "draft";
+  $$("[data-save-mode]", card).forEach(btn=> btn.addEventListener("click", ()=> saveMode = btn.dataset.saveMode));
+  $("#campaignForm").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const b = myBrand();
+    const c = {
+      id: uid("c"), brandId: b?.id, brandName: b?.name || state.currentUser.name, campaignName: $("#cfName").value.trim(),
+      promotionName: $("#cfPromo").value.trim(), coverImage: $("#cfCover").value.trim() || "https://images.unsplash.com/photo-1533750349088-cd871a92f312?q=80&w=900&auto=format&fit=crop",
+      description: $("#cfDesc").value.trim(), budgetType:"custom", budget: $("#cfBudget").value.trim(),
+      contentTypes: $$("#cfContentType .chip-opt.active").map(c=>c.dataset.val), platforms: $$("#cfPlatform .chip-opt.active").map(c=>c.dataset.val),
+      requirements: $("#cfReq").value.trim(), deadline: $("#cfDeadline").value, location: $("#cfLocation").value.trim(),
+      targetCategories: [], status: saveMode, publicStatus:false, createdAt: new Date().toISOString()
+    };
+    state.campaigns.push(c);
+    saveState();
+    showToast(saveMode==="review" ? "Campaign submitted for review." : "Campaign saved as draft.");
+    renderBrandPanelTab("bp-campaigns");
+  });
+}
+function renderBrandFindCreators(el){
+  el.innerHTML = `<div class="panel-card"><h3>Find creators</h3><div class="card-grid" id="bpCreatorGrid" style="padding-bottom:0;"></div></div>`;
+  const grid = $("#bpCreatorGrid");
+  const list = state.creators.filter(c=>c.publicStatus);
+  grid.innerHTML = list.map(cr=>`
+    <div class="creator-card"><div class="card-img"><img src="${escapeHtml(cr.profileImage)}" alt=""></div>
+    <div class="card-body"><h3 style="font-size:15.5px;">${escapeHtml(cr.name)}</h3><span class="handle">${escapeHtml(cr.username)}</span>
+    <div class="follow-row"><span><b>${fmtFollowers(cr.followers)}</b> followers</span></div>
+    <button class="btn btn-outline btn-sm" data-fc-view="${cr.id}" style="margin-top:8px;">View Profile</button></div></div>
+  `).join("");
+  $$("[data-fc-view]", grid).forEach(btn=> btn.addEventListener("click", ()=> openCreatorProfile(btn.dataset.fcView)));
+}
+function renderBrandApplications(el){
+  const b = myBrand();
+  const myApps = state.applications.filter(a=> a.brandId===b?.id);
+  el.innerHTML = `<div class="panel-card"><h3>Applications to my campaigns</h3><div class="data-list">
+    ${myApps.length? myApps.slice().reverse().map(a=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(a.creatorName)} (${escapeHtml(a.creatorUsername||"")})</h4><div class="sub">Applied to ${escapeHtml(a.campaignName)} · ${escapeHtml(a.selectedPlatform||"")}</div></div>
+      <span class="status-badge ${a.status}">${a.status.replace("_"," ")}</span></div>
+    `).join("") : "<p style='color:var(--ink-faint); font-size:13.5px;'>No applications yet.</p>"}
+  </div></div>`;
+}
+function renderBrandRequests(el){
+  const myReqs = state.collaborationRequests.filter(r=> r.brandOwnerId===state.currentUser.id);
+  el.innerHTML = `<div class="panel-card"><h3>Sent requests</h3><div class="data-list">
+    ${myReqs.length? myReqs.slice().reverse().map(r=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(r.creatorName)}</h4><div class="sub">${escapeHtml(r.campaignName)} · ${fmtDate(r.createdAt)}</div></div>
+      <span class="status-badge ${r.status}">${r.status}</span>
+      ${r.status==="pending"?`<button class="icon-btn danger" data-cancel-my-req="${r.id}">Cancel</button>`:""}</div>
+    `).join("") : "<p style='color:var(--ink-faint); font-size:13.5px;'>No requests sent yet.</p>"}
+  </div></div>`;
+  $$("[data-cancel-my-req]").forEach(btn=> btn.addEventListener("click", ()=>{
+    const r = state.collaborationRequests.find(x=>x.id===btn.dataset.cancelMyReq);
+    if(r){ r.status="cancelled"; saveState(); renderBrandPanelTab("bp-requests"); showToast("Request cancelled."); }
+  }));
+}
+initBrandNav();
+
+/* ============================================================
+   CREATOR PANEL
+   ============================================================ */
+const CREATOR_TABS = [
+  {id:"cp-dashboard", label:"Dashboard"}, {id:"cp-profile", label:"Profile"}, {id:"cp-rates", label:"Rates"},
+  {id:"cp-campaigns", label:"Discover"}, {id:"cp-applications", label:"Applications"}, {id:"cp-requests", label:"Requests"}
+];
+let currentCreatorTab = "cp-dashboard";
+function initCreatorNav(){
+  $("#creatorMobileNav").innerHTML = CREATOR_TABS.map(t=>`<button data-tab="${t.id}" class="${t.id===currentCreatorTab?"active":""}">${t.label}</button>`).join("");
+  $$("[data-panel-tab]", $("#view-creatorPanel")).forEach(btn=> btn.addEventListener("click", ()=>{ currentCreatorTab=btn.dataset.panelTab; renderCreatorPanelTab(currentCreatorTab); }));
+  $$("[data-tab]", $("#creatorMobileNav")).forEach(btn=> btn.addEventListener("click", ()=>{ currentCreatorTab=btn.dataset.tab; renderCreatorPanelTab(currentCreatorTab); }));
+}
+function myCreator(){ return state.creators.find(c=> c.ownerId===state.currentUser?.id) || state.creators[0]; }
+
+function renderCreatorPanelTab(tab){
+  currentCreatorTab = tab;
+  $$(".panel-nav-item[data-panel-tab]", $("#view-creatorPanel")).forEach(b=> b.classList.toggle("active", b.dataset.panelTab===tab));
+  $$("#creatorMobileNav button").forEach(b=> b.classList.toggle("active", b.dataset.tab===tab));
+  const el = $("#creatorTabContent");
+  const fns = {
+    "cp-dashboard": renderCreatorDashboard, "cp-profile": renderCreatorProfileForm, "cp-rates": renderCreatorRates,
+    "cp-campaigns": renderCreatorDiscover, "cp-applications": renderCreatorApplicationsTab, "cp-requests": renderCreatorRequestsTab
+  };
+  el.innerHTML = "";
+  (fns[tab]||renderCreatorDashboard)(el);
+}
+function renderCreatorDashboard(el){
+  const cr = myCreator();
+  const myApps = state.applications.filter(a=> a.creatorOwnerId===state.currentUser.id);
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><b>${cr?.status||"—"}</b><span>Profile Status</span></div>
+      <div class="stat-card"><b>${myApps.length}</b><span>Applications Sent</span></div>
+      <div class="stat-card"><b>${myApps.filter(a=>a.status==="accepted").length}</b><span>Accepted</span></div>
+      <div class="stat-card"><b>${state.collaborationRequests.filter(r=>r.creatorId===cr?.id && r.status==="pending").length}</b><span>Pending Requests</span></div>
+    </div>
+    <div class="panel-card"><h3>Welcome, ${escapeHtml(cr?.name||state.currentUser.name)}</h3><p style="font-size:13.5px; color:var(--ink-soft);">Complete your profile and rates, then submit for CollabFlow review to go public.</p></div>
+  `;
+}
+function renderCreatorProfileForm(el){
+  const cr = myCreator() || {};
+  el.innerHTML = `
+    <div class="panel-card">
+      <h3>Creator profile</h3>
+      <div class="form-row2">
+        <div class="form-group"><label>Name</label><input type="text" id="cpName" value="${escapeHtml(cr.name||"")}"></div>
+        <div class="form-group"><label>Username</label><input type="text" id="cpUsername" value="${escapeHtml(cr.username||"")}"></div>
+      </div>
+      <div class="form-group"><label>Bio</label><textarea id="cpBio">${escapeHtml(cr.bio||"")}</textarea></div>
+      <div class="form-group"><label>Profile image URL</label><input type="url" id="cpProfileImg" value="${escapeHtml(cr.profileImage||"")}"></div>
+      <div class="form-group"><label>Cover image URL</label><input type="url" id="cpCoverImg" value="${escapeHtml(cr.coverImage||"")}"></div>
+      <div class="form-group"><label>Categories</label><div class="chip-select" id="cpCategories"></div></div>
+      <div class="form-group"><label>Platforms</label><div class="chip-select" id="cpPlatforms"></div></div>
+      <div class="form-row2">
+        <div class="form-group"><label>Followers</label><input type="number" id="cpFollowers" value="${cr.followers||0}"></div>
+        <div class="form-group"><label>Location</label><input type="text" id="cpLocation" value="${escapeHtml(cr.location||"")}"></div>
+      </div>
+      <div class="form-row2">
+        <div class="form-group"><label>Mobile <span class="demo-flag">PRIVATE</span></label><input type="tel" id="cpPhone" value="${escapeHtml(cr.privatePhone||"")}"></div>
+        <div class="form-group"><label>Email <span class="demo-flag">PRIVATE</span></label><input type="email" id="cpEmail" value="${escapeHtml(cr.privateEmail||"")}"></div>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" id="cpSaveDraft">Save Draft</button>
+        <button class="btn btn-primary btn-sm" id="cpSubmitReview">Submit for Review</button>
+      </div>
+    </div>
+  `;
+  buildChipSelect($("#cpCategories"), CATEGORIES, cr.categories||[]);
+  buildChipSelect($("#cpPlatforms"), PLATFORMS, cr.platforms||[]);
+  function collect(){
+    return {
+      name:$("#cpName").value.trim(), username:$("#cpUsername").value.trim(), bio:$("#cpBio").value.trim(),
+      profileImage:$("#cpProfileImg").value.trim(), coverImage:$("#cpCoverImg").value.trim(),
+      categories: $$("#cpCategories .chip-opt.active").map(c=>c.dataset.val), platforms: $$("#cpPlatforms .chip-opt.active").map(c=>c.dataset.val),
+      followers: parseInt($("#cpFollowers").value||"0",10), location:$("#cpLocation").value.trim(),
+      privatePhone:$("#cpPhone").value.trim(), privateEmail:$("#cpEmail").value.trim()
+    };
+  }
+  $("#cpSaveDraft").addEventListener("click", ()=>{ Object.assign(cr, collect(), {status:"draft"}); saveState(); showToast("Profile saved."); });
+  $("#cpSubmitReview").addEventListener("click", ()=>{ Object.assign(cr, collect(), {status:"review"}); saveState(); showToast("Profile submitted for review."); addNotification("admin","Creator submitted for review", `${cr.name} submitted their profile.`, cr.id); });
+}
+function renderCreatorRates(el){
+  const cr = myCreator() || {rates:{}, packages:[]};
+  cr.rates = cr.rates || {}; cr.packages = cr.packages || [];
+  el.innerHTML = `
+    <div class="panel-card">
+      <h3>Rates (₹)</h3>
+      <div class="form-row2">
+        <div class="form-group"><label>Instagram Reel</label><input type="number" id="rateReel" value="${cr.rates.reel||""}"></div>
+        <div class="form-group"><label>Instagram Story</label><input type="number" id="rateStory" value="${cr.rates.story||""}"></div>
+      </div>
+      <div class="form-row2">
+        <div class="form-group"><label>Instagram Post</label><input type="number" id="ratePost" value="${cr.rates.post||""}"></div>
+        <div class="form-group"><label>YouTube Video</label><input type="number" id="rateVideo" value="${cr.rates.video||""}"></div>
+      </div>
+      <div class="form-row2">
+        <div class="form-group"><label>UGC Video</label><input type="number" id="rateUgc" value="${cr.rates.ugc||""}"></div>
+        <div class="form-group"><label>Other</label><input type="number" id="rateOther" value="${cr.rates.other||""}"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" id="saveRatesBtn">Save Changes</button>
+    </div>
+    <div class="panel-card">
+      <h3>Packages</h3>
+      <div class="data-list" id="packageList"></div>
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+        <input type="text" id="pkgName" placeholder="Package name" style="flex:1; min-width:120px; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px;">
+        <input type="text" id="pkgDesc" placeholder="Deliverables" style="flex:1; min-width:140px; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px;">
+        <input type="number" id="pkgPrice" placeholder="Price ₹" style="width:110px; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px;">
+        <button class="btn btn-outline btn-sm" id="addPkgBtn">Add Package</button>
+      </div>
+    </div>
+  `;
+  function renderPkgs(){
+    $("#packageList").innerHTML = cr.packages.length ? cr.packages.map((p,i)=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(p.name)}</h4><div class="sub">${escapeHtml(p.desc)} · ₹${Number(p.price).toLocaleString("en-IN")}</div></div>
+      <button class="icon-btn danger" data-del-pkg="${i}">Delete</button></div>
+    `).join("") : "<p style='color:var(--ink-faint); font-size:13.5px;'>No packages yet.</p>";
+    $$("[data-del-pkg]").forEach(btn=> btn.addEventListener("click", ()=>{ cr.packages.splice(parseInt(btn.dataset.delPkg,10),1); saveState(); renderPkgs(); showToast("Package removed."); }));
+  }
+  renderPkgs();
+  $("#addPkgBtn").addEventListener("click", ()=>{
+    const name = $("#pkgName").value.trim(), desc = $("#pkgDesc").value.trim(), price = $("#pkgPrice").value;
+    if(!name || !price){ showToast("Package name and price are required.", "error"); return; }
+    cr.packages.push({name, desc, price:Number(price)});
+    saveState(); renderPkgs();
+    $("#pkgName").value=""; $("#pkgDesc").value=""; $("#pkgPrice").value="";
+    showToast("Package added.");
+  });
+  $("#saveRatesBtn").addEventListener("click", ()=>{
+    cr.rates = {reel:+$("#rateReel").value||0, story:+$("#rateStory").value||0, post:+$("#ratePost").value||0, video:+$("#rateVideo").value||0, ugc:+$("#rateUgc").value||0, other:+$("#rateOther").value||0};
+    saveState();
+    showToast("Changes saved.");
+  });
+}
+function renderCreatorDiscover(el){
+  el.innerHTML = `<div class="panel-card"><h3>Discover campaigns</h3><div class="card-grid" id="cpCampaignGrid" style="padding-bottom:0;"></div></div>`;
+  const grid = $("#cpCampaignGrid");
+  const list = state.campaigns.filter(c=>c.publicStatus);
+  grid.innerHTML = list.map(c=>`
+    <div class="camp-card"><div class="card-img"><img src="${escapeHtml(c.coverImage)}" alt=""></div>
+    <div class="card-body"><span class="brandname">${escapeHtml(c.brandName)}</span><h3 style="font-size:15.5px;">${escapeHtml(c.campaignName)}</h3>
+    <div class="card-foot"><span class="budget">${escapeHtml(c.budget)}</span><button class="btn btn-outline btn-sm" data-cp-view="${c.id}">View</button></div></div></div>
+  `).join("");
+  $$("[data-cp-view]", grid).forEach(btn=> btn.addEventListener("click", ()=> openCampaignDetail(btn.dataset.cpView)));
+}
+function renderCreatorApplicationsTab(el){
+  const myApps = state.applications.filter(a=> a.creatorOwnerId===state.currentUser.id);
+  el.innerHTML = `<div class="panel-card"><h3>My applications</h3><div class="data-list">
+    ${myApps.length? myApps.slice().reverse().map(a=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(a.campaignName)}</h4><div class="sub">${escapeHtml(a.brandName||"")} · ${fmtDate(a.createdAt)}</div></div>
+      <span class="status-badge ${a.status}">${a.status.replace("_"," ")}</span></div>
+    `).join("") : "<p style='color:var(--ink-faint); font-size:13.5px;'>No applications yet.</p>"}
+  </div></div>`;
+}
+function renderCreatorRequestsTab(el){
+  const cr = myCreator();
+  const myReqs = state.collaborationRequests.filter(r=> r.creatorId===cr?.id);
+  el.innerHTML = `<div class="panel-card"><h3>Collaboration requests</h3><div class="data-list">
+    ${myReqs.length? myReqs.slice().reverse().map(r=>`
+      <div class="data-row"><div class="row-main"><h4>${escapeHtml(r.brandName)}</h4><div class="sub">${escapeHtml(r.campaignName)} · ${escapeHtml(r.message||"").slice(0,60)}</div></div>
+      <span class="status-badge ${r.status}">${r.status}</span>
+      ${r.status==="pending"?`<div class="row-actions"><button class="icon-btn" data-accept-req="${r.id}">Accept</button><button class="icon-btn danger" data-decline-req="${r.id}">Decline</button></div>`:""}</div>
+    `).join("") : "<p style='color:var(--ink-faint); font-size:13.5px;'>No requests yet.</p>"}
+  </div></div>`;
+  $$("[data-accept-req]").forEach(btn=> btn.addEventListener("click", ()=>{ const r=state.collaborationRequests.find(x=>x.id===btn.dataset.acceptReq); if(r){r.status="accepted"; saveState(); renderCreatorPanelTab("cp-requests"); showToast("Request accepted.");} }));
+  $$("[data-decline-req]").forEach(btn=> btn.addEventListener("click", ()=>{ const r=state.collaborationRequests.find(x=>x.id===btn.dataset.declineReq); if(r){r.status="declined"; saveState(); renderCreatorPanelTab("cp-requests"); showToast("Request declined.");} }));
+}
+initCreatorNav();
+
+/* ============================================================
+   HOMEPAGE STAT COUNTERS
+   ============================================================ */
+function renderHomeStats(){
+  $("#statCampaigns").textContent = state.campaigns.filter(c=>c.publicStatus).length;
+  $("#statCreators").textContent = state.creators.filter(c=>c.publicStatus).length;
+  $("#statBrands").textContent = state.brands.filter(b=>b.publicStatus).length;
+  $("#heroImage").src = state.siteSettings.heroImage;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function init(){
+  updateHeaderAuthState();
+  renderHomeStats();
+  $("#footerModeTag").textContent = state.mode==="live" ? "Live Mode" : "Demo Mode";
+  showView("home");
+}
+init();
+</script>
+</body>
+</html>

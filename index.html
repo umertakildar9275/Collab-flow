@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CollabFlow — Connect Brands With Creators</title>
+<meta name="description" content="CollabFlow is a managed platform connecting brands and creators for influencer marketing collaborations, coordinated end to end by the CollabFlow team.">
+<meta property="og:title" content="CollabFlow — Connect Brands With Creators">
+<meta property="og:description" content="Discover live campaigns and approved creators, coordinated by the CollabFlow team.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="mode-banner" id="mode-banner">Checking connection…</div>
+
+<header class="site-header">
+  <div class="container nav-row">
+    <a href="index.html" class="brand-mark">CollabFlow<small>Brand × Creator Collaboration</small></a>
+    <nav class="nav-links">
+      <a href="#brand-hub">Brand Hub</a>
+      <a href="#creator-hub">Creator Hub</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="nav-actions" id="nav-auth-slot"></div>
+    <button class="hamburger" onclick="CF.toggleDrawer()" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mobile-drawer" id="mobile-drawer">
+  <div class="drawer-top">
+    <span class="brand-mark">CollabFlow</span>
+    <button class="modal-close" style="position:static" onclick="CF.toggleDrawer()" aria-label="Close menu">✕</button>
+  </div>
+  <a href="#brand-hub" onclick="CF.toggleDrawer()">Brand Hub</a>
+  <a href="#creator-hub" onclick="CF.toggleDrawer()">Creator Hub</a>
+  <a href="#how-it-works" onclick="CF.toggleDrawer()">How it works</a>
+  <a href="#about" onclick="CF.toggleDrawer()">About</a>
+  <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px" id="drawer-auth-slot"></div>
+</div>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <p class="eyebrow">Agency-managed collaborations</p>
+      <h1 id="hero-heading">Where brands and creators actually get things done</h1>
+      <p id="hero-description" style="font-size:1.05rem;max-width:46ch">CollabFlow is the managed workspace behind every jersey drop, product post and campaign — brands post what they need, creators apply, we coordinate the rest.</p>
+      <div class="hero-cta-row">
+        <a href="#brand-hub" class="btn btn-primary">Explore Brand Hub</a>
+        <a href="#creator-hub" class="btn btn-secondary">Explore Creator Hub</a>
+      </div>
+    </div>
+    <div class="deal-card">
+      <span class="deal-stamp">SAMPLE DEAL</span>
+      <h3 style="margin-bottom:14px">Collaboration overview</h3>
+      <div class="deal-row"><span class="deal-label">Brand</span><span>Ridgeline Sportswear</span></div>
+      <div class="deal-row"><span class="deal-label">Creator</span><span>Fashion · 40K+ followers</span></div>
+      <div class="deal-row"><span class="deal-label">Deliverable</span><span>1 Reel + 2 Stories</span></div>
+      <div class="deal-row"><span class="deal-label">Coordinated by</span><span>CollabFlow</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <p class="eyebrow">How it works</p>
+    <h2>Two sides, one coordinated workflow</h2>
+    <div class="flow-cols" style="margin-top:28px">
+      <div class="flow-col">
+        <h3>For brands</h3>
+        <ol class="flow-steps">
+          <li>Contact CollabFlow and share your campaign requirements</li>
+          <li>CollabFlow reviews and adds your campaign</li>
+          <li>Campaign is approved and published to the Brand Hub</li>
+          <li>Matching creators apply through the platform</li>
+          <li>CollabFlow coordinates the collaboration</li>
+        </ol>
+      </div>
+      <div class="flow-col">
+        <h3>For creators</h3>
+        <ol class="flow-steps">
+          <li>Contact CollabFlow and share your details and rates</li>
+          <li>CollabFlow reviews and approves your profile</li>
+          <li>Profile is published to the Creator Hub</li>
+          <li>You view and apply to suitable campaigns</li>
+          <li>CollabFlow coordinates the collaboration</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== RULES ============== -->
+<section class="section" id="rules">
+  <div class="container">
+    <p class="eyebrow">Guidelines</p>
+    <h2>How we keep collaborations working</h2>
+    <div class="rules-list" id="rules-list" style="margin-top:24px"></div>
+  </div>
+</section>
+
+<!-- ============== BRAND HUB ============== -->
+<section class="section" id="brand-hub">
+  <div class="container">
+    <p class="eyebrow">Brand Hub</p>
+    <h2 id="brandhub-heading">Live campaigns</h2>
+    <p id="brandhub-desc">Campaigns currently approved and open to creators.</p>
+    <div class="toolbar">
+      <input class="search-input" id="campaign-search" placeholder="Search by brand, campaign or content type…">
+      <button class="btn btn-ghost" onclick="CF.openModal('campaign-filter-modal')">Filters</button>
+    </div>
+    <div id="campaign-grid" class="grid-cards"></div>
+  </div>
+</section>
+
+<!-- ============== CREATOR HUB ============== -->
+<section class="section" id="creator-hub">
+  <div class="container">
+    <p class="eyebrow">Creator Hub</p>
+    <h2 id="creatorhub-heading">Approved creators</h2>
+    <p id="creatorhub-desc">Creators reviewed and ready to collaborate.</p>
+    <div class="toolbar">
+      <input class="search-input" id="creator-search" placeholder="Search by name, category or platform…">
+      <select id="creator-sort" class="search-input" style="flex:0 0 190px">
+        <option value="recent">Recently added</option>
+        <option value="followers">Followers</option>
+        <option value="rate-low">Lowest starting rate</option>
+        <option value="rate-high">Highest starting rate</option>
+      </select>
+      <button class="btn btn-ghost" onclick="CF.openModal('creator-filter-modal')">Filters</button>
+    </div>
+    <div id="creator-grid" class="grid-cards"></div>
+  </div>
+</section>
+
+<!-- ============== ABOUT ============== -->
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div>
+      <p class="eyebrow">About CollabFlow</p>
+      <h2 id="about-heading">One team coordinating both sides of the deal</h2>
+      <p id="about-description">CollabFlow is an agency-managed platform, not an open marketplace. Every brand and every creator is reviewed before anything goes public, and every collaboration is coordinated by our team from first message to delivery.</p>
+    </div>
+    <div class="rule-left">
+      <p><strong>For brands:</strong> a reviewed pool of creators, without managing outreach yourself.</p>
+      <p><strong>For creators:</strong> real campaign briefs, with rates and requirements agreed up front.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <span class="brand-mark" style="color:#fff">CollabFlow</span>
+      <p style="color:#EAF2ED;opacity:.85;margin-top:10px;max-width:32ch">The managed workspace connecting brands and creators.</p>
+    </div>
+    <div>
+      <h4>Platform</h4>
+      <ul><li><a href="#brand-hub">Brand Hub</a></li><li><a href="#creator-hub">Creator Hub</a></li><li><a href="#about">About Us</a></li></ul>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <ul>
+        <li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-privacy')">Privacy Policy</button></li>
+        <li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-tos')">Terms of Service</button></li>
+        <li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-rules')">Collaboration Rules</button></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Support</h4>
+      <ul><li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-contact')">Contact</button></li></ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">© 2026 CollabFlow. All rights reserved.</div>
+</footer>
+
+<!-- ============== AUTH MODAL ============== -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="CF.closeModal('auth-modal')" aria-label="Close">✕</button>
+    <div class="tab-row">
+      <button id="tab-login" class="active" onclick="switchAuthTab('login')">Log in</button>
+      <button id="tab-signup" onclick="switchAuthTab('signup')">Get started</button>
+    </div>
+
+    <form id="login-form" class="form-grid">
+      <div><label>Email</label><input type="email" id="login-email" required></div>
+      <div><label>Password</label><input type="password" id="login-password" required></div>
+      <button class="btn btn-primary btn-block" type="submit">Log in</button>
+    </form>
+
+    <form id="signup-form" class="form-grid" style="display:none">
+      <div>
+        <label>I am a</label>
+        <div class="checkbox-row">
+          <label class="checkbox-pill"><input type="radio" name="signup-role" value="BRAND" checked> Brand</label>
+          <label class="checkbox-pill"><input type="radio" name="signup-role" value="CREATOR"> Creator</label>
+        </div>
+      </div>
+      <div><label>Name <span id="signup-name-label">(brand name)</span></label><input type="text" id="signup-name" required></div>
+      <div id="signup-username-wrap" style="display:none"><label>Username / handle</label><input type="text" id="signup-username"></div>
+      <div><label>Email</label><input type="email" id="signup-email" required></div>
+      <div><label>Password</label><input type="password" id="signup-password" minlength="6" required></div>
+      <p class="help-text">Your account starts as pending until CollabFlow reviews and approves it.</p>
+      <button class="btn btn-primary btn-block" type="submit">Create account</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============== CAMPAIGN FILTER MODAL ============== -->
+<div class="modal-overlay" id="campaign-filter-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="CF.closeModal('campaign-filter-modal')" aria-label="Close">✕</button>
+    <h3 class="modal-title">Filter campaigns</h3>
+    <div class="form-grid">
+      <div><label>Content type</label>
+        <div class="checkbox-row" id="filter-content-type"></div>
+      </div>
+      <div><label>Platform</label>
+        <div class="checkbox-row" id="filter-platform"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn btn-ghost btn-block" onclick="clearCampaignFilters()">Clear filters</button>
+        <button class="btn btn-primary btn-block" onclick="applyCampaignFilters()">Apply filters</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== CREATOR FILTER MODAL ============== -->
+<div class="modal-overlay" id="creator-filter-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="CF.closeModal('creator-filter-modal')" aria-label="Close">✕</button>
+    <h3 class="modal-title">Filter creators</h3>
+    <div class="form-grid">
+      <div><label>Category</label>
+        <div class="checkbox-row" id="filter-category"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn btn-ghost btn-block" onclick="clearCreatorFilters()">Clear filters</button>
+        <button class="btn btn-primary btn-block" onclick="applyCreatorFilters()">Apply filters</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== CAMPAIGN DETAIL MODAL ============== -->
+<div class="modal-overlay" id="campaign-detail-modal">
+  <div class="modal-box" id="campaign-detail-body"></div>
+</div>
+
+<!-- ============== CREATOR PROFILE MODAL ============== -->
+<div class="modal-overlay" id="creator-profile-modal">
+  <div class="modal-box" id="creator-profile-body"></div>
+</div>
+
+<!-- ============== LEGAL MODALS ============== -->
+<div class="modal-overlay" id="legal-privacy"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-privacy')">✕</button><h3>Privacy Policy</h3><p class="help-text">Draft placeholder — pending final legal review. CollabFlow collects only the information needed to run campaigns and profiles, and never shares private contact details publicly.</p></div></div>
+<div class="modal-overlay" id="legal-tos"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-tos')">✕</button><h3>Terms of Service</h3><p class="help-text">Draft placeholder — pending final legal review. Use of CollabFlow is subject to the collaboration guidelines shown on this site.</p></div></div>
+<div class="modal-overlay" id="legal-rules"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-rules')">✕</button><h3>Collaboration Rules</h3><div id="legal-rules-list"></div></div></div>
+<div class="modal-overlay" id="legal-contact"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-contact')">✕</button><h3>Contact CollabFlow</h3><p class="help-text">Reach out through the details CollabFlow shares with approved brands and creators directly.</p></div></div>
+
+<!-- ============== FIREBASE SDKS (compat) ============== -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/shared.js"></script>
+
+<script>
+let ALL_CAMPAIGNS = [], ALL_CREATORS = [];
+let campaignFilters = { contentTypes: [], platforms: [] };
+let creatorFilters = { categories: [] };
+const CONTENT_TYPES = ["Reel", "Post", "Story", "Video", "UGC", "Other"];
+const PLATFORMS = ["Instagram", "YouTube", "Other"];
+const CATEGORIES = ["Fashion", "Lifestyle", "Fitness", "Gaming", "Beauty", "Food", "Travel", "Tech", "Entertainment", "Other"];
+
+function switchAuthTab(tab) {
+  document.getElementById("tab-login").classList.toggle("active", tab === "login");
+  document.getElementById("tab-signup").classList.toggle("active", tab === "signup");
+  document.getElementById("login-form").style.display = tab === "login" ? "grid" : "none";
+  document.getElementById("signup-form").style.display = tab === "signup" ? "grid" : "none";
+}
+
+document.querySelectorAll('input[name="signup-role"]').forEach((r) => {
+  r.addEventListener("change", (e) => {
+    const isCreator = e.target.value === "CREATOR";
+    document.getElementById("signup-username-wrap").style.display = isCreator ? "block" : "none";
+    document.getElementById("signup-name-label").textContent = isCreator ? "(creator name)" : "(brand name)";
+  });
+});
+
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await CF.signIn(document.getElementById("login-email").value, document.getElementById("login-password").value);
+    CF.toast("Logged in.");
+    CF.closeModal("auth-modal");
+    setTimeout(() => CF.renderAuthNav(), 600);
+  } catch (err) { CF.toast(err.message, "error"); }
+});
+
+document.getElementById("signup-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const role = document.querySelector('input[name="signup-role"]:checked').value;
+  try {
+    await CF.signUp(
+      document.getElementById("signup-email").value,
+      document.getElementById("signup-password").value,
+      role,
+      { name: document.getElementById("signup-name").value, username: document.getElementById("signup-username").value }
+    );
+    CF.toast("Account created — pending CollabFlow review.");
+    CF.closeModal("auth-modal");
+  } catch (err) { CF.toast(err.message, "error"); }
+});
+
+function renderChecklist(containerId, values, groupKey) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = values.map((v) =>
+    `<label class="checkbox-pill"><input type="checkbox" value="${v}" data-group="${groupKey}"> ${v}</label>`
+  ).join("");
+}
+renderChecklist("filter-content-type", CONTENT_TYPES, "ct");
+renderChecklist("filter-platform", PLATFORMS, "pf");
+renderChecklist("filter-category", CATEGORIES, "cat");
+
+function applyCampaignFilters() {
+  campaignFilters.contentTypes = [...document.querySelectorAll('[data-group="ct"]:checked')].map(c => c.value);
+  campaignFilters.platforms = [...document.querySelectorAll('[data-group="pf"]:checked')].map(c => c.value);
+  CF.closeModal("campaign-filter-modal");
+  renderCampaigns();
+}
+function clearCampaignFilters() {
+  document.querySelectorAll('[data-group="ct"],[data-group="pf"]').forEach(c => c.checked = false);
+  campaignFilters = { contentTypes: [], platforms: [] };
+  renderCampaigns();
+}
+function applyCreatorFilters() {
+  creatorFilters.categories = [...document.querySelectorAll('[data-group="cat"]:checked')].map(c => c.value);
+  CF.closeModal("creator-filter-modal");
+  renderCreators();
+}
+function clearCreatorFilters() {
+  document.querySelectorAll('[data-group="cat"]').forEach(c => c.checked = false);
+  creatorFilters = { categories: [] };
+  renderCreators();
+}
+
+function campaignCardHtml(c) {
+  const types = (c.contentTypes || []).join(", ");
+  return `<div class="campaign-card">
+    <div class="card-media"><img src="${c.coverImage || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=600&auto=format&fit=crop'}" alt="${CF.escapeHtml(c.campaignName)} cover"></div>
+    <div class="card-body">
+      <div class="card-meta">${c.isDemo ? '<span class="demo-tag">DEMO</span>' : ""}<span>${CF.escapeHtml(types || "—")}</span></div>
+      <div class="card-title">${CF.escapeHtml(c.campaignName || "Untitled campaign")}</div>
+      <div class="card-meta"><span>${CF.escapeHtml(c.brandName || "")}</span><span>${CF.formatINR(c.budget)}</span></div>
+      <p class="card-desc">${CF.escapeHtml((c.description || "").slice(0, 90))}${(c.description || "").length > 90 ? "…" : ""}</p>
+      <div class="card-foot"><span class="help-text">Deadline: ${c.deadline || "—"}</span><button class="btn btn-sm btn-primary" onclick="openCampaignDetail('${c.id}')">View details</button></div>
+    </div>
+  </div>`;
+}
+
+function renderCampaigns() {
+  const q = (document.getElementById("campaign-search").value || "").toLowerCase();
+  let rows = ALL_CAMPAIGNS.filter(c => c.publicStatus);
+  if (q) rows = rows.filter(c => [c.brandName, c.campaignName, ...(c.contentTypes || []), ...(c.platforms || [])].join(" ").toLowerCase().includes(q));
+  if (campaignFilters.contentTypes.length) rows = rows.filter(c => (c.contentTypes || []).some(t => campaignFilters.contentTypes.includes(t)));
+  if (campaignFilters.platforms.length) rows = rows.filter(c => (c.platforms || []).some(p => campaignFilters.platforms.includes(p)));
+  const grid = document.getElementById("campaign-grid");
+  if (!rows.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>No active campaigns right now</h3><p>New opportunities will appear here once CollabFlow approves them.</p></div>`; return; }
+  grid.innerHTML = rows.map(campaignCardHtml).join("");
+}
+
+function openCampaignDetail(id) {
+  const c = ALL_CAMPAIGNS.find(x => x.id === id);
+  if (!c) return;
+  const closed = c.deadline && new Date(c.deadline) < new Date();
+  document.getElementById("campaign-detail-body").innerHTML = `
+    <button class="modal-close" onclick="CF.closeModal('campaign-detail-modal')">✕</button>
+    ${c.isDemo ? '<span class="demo-tag">DEMO CONTENT</span>' : ""}
+    <h3 class="modal-title" style="margin-top:8px">${CF.escapeHtml(c.campaignName)}</h3>
+    <p class="help-text">${CF.escapeHtml(c.brandName)}</p>
+    <img src="${c.coverImage}" style="border-radius:8px;margin:12px 0;max-height:220px;object-fit:cover;width:100%" alt="">
+    <p>${CF.escapeHtml(c.description || "")}</p>
+    <div class="card-meta" style="margin-bottom:12px">
+      <span>Budget: ${CF.formatINR(c.budget)}</span>
+      <span>Platforms: ${(c.platforms || []).join(", ") || "—"}</span>
+      <span>Content: ${(c.contentTypes || []).join(", ") || "—"}</span>
+      <span>Deadline: ${c.deadline || "—"}</span>
+      <span>Location: ${c.location || "—"}</span>
+    </div>
+    <p><strong>Requirements:</strong> ${CF.escapeHtml(c.requirements || "—")}</p>
+    ${closed ? '<p class="badge badge-unpublished">CAMPAIGN CLOSED</p>' :
+      (CF.currentUser && CF.currentUser.role === "CREATOR"
+        ? `<button class="btn btn-primary btn-block" onclick="openApplicationForm('${c.id}')">Apply for campaign</button>`
+        : `<button class="btn btn-primary btn-block" onclick="CF.closeModal('campaign-detail-modal');CF.openModal('auth-modal')">Log in as a creator to apply</button>`)}
+  `;
+  CF.openModal("campaign-detail-modal");
+}
+
+function openApplicationForm(campaignId) {
+  const c = ALL_CAMPAIGNS.find(x => x.id === campaignId);
+  document.getElementById("campaign-detail-body").innerHTML = `
+    <button class="modal-close" onclick="CF.closeModal('campaign-detail-modal')">✕</button>
+    <h3 class="modal-title">Apply — ${CF.escapeHtml(c.campaignName)}</h3>
+    <form class="form-grid" id="apply-form">
+      <div><label>Selected platform</label><select id="app-platform">${(c.platforms || PLATFORMS).map(p => `<option>${p}</option>`).join("")}</select></div>
+      <div><label>Profile / social link</label><input type="url" id="app-profile-link" required></div>
+      <div><label>Short introduction</label><textarea id="app-intro" required></textarea></div>
+      <div><label>Proposed deliverables</label><input type="text" id="app-deliverables" placeholder="e.g. 1 Reel + 2 Stories"></div>
+      <div><label>Proposed rate (₹)</label><input type="number" id="app-rate"></div>
+      <div><label>Additional note</label><textarea id="app-note"></textarea></div>
+      <button class="btn btn-primary btn-block" type="submit">Submit application</button>
+      <p class="help-text">CollabFlow reviews applications — your private contact details are never shared automatically.</p>
+    </form>`;
+  document.getElementById("apply-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      const existing = await CF.getCollection("applications", { where: [["campaignId", "==", campaignId], ["creatorId", "==", CF.currentUser.uid], ["status", "in", ["SUBMITTED", "UNDER_REVIEW", "SHORTLISTED"]]] });
+      if (existing.length && !CF.DEMO_MODE) { CF.toast("You already have an active application for this campaign.", "warn"); return; }
+      await CF.addDoc("applications", {
+        campaignId, brandId: c.brandId || null, creatorId: CF.currentUser.uid,
+        selectedPlatform: document.getElementById("app-platform").value,
+        profileLink: document.getElementById("app-profile-link").value,
+        introduction: document.getElementById("app-intro").value,
+        proposedDeliverables: document.getElementById("app-deliverables").value,
+        proposedRate: document.getElementById("app-rate").value,
+        additionalNote: document.getElementById("app-note").value,
+        status: "SUBMITTED"
+      });
+      CF.toast("Application submitted to CollabFlow.");
+      CF.closeModal("campaign-detail-modal");
+    } catch (err) { CF.toast(err.message, "error"); }
+  });
+}
+
+function creatorCardHtml(c) {
+  const startRate = c.rates ? Math.min(...Object.values(c.rates).filter(v => v > 0)) : null;
+  return `<div class="creator-card">
+    <div class="card-media"><img src="${c.profileImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop'}" alt="${CF.escapeHtml(c.name)}"></div>
+    <div class="card-body">
+      <div class="card-meta">${c.isDemo ? '<span class="demo-tag">DEMO</span>' : ""}<span>${CF.escapeHtml(c.category || "")}</span></div>
+      <div class="card-title">${CF.escapeHtml(c.name)}</div>
+      <div class="card-meta"><span>${CF.escapeHtml(c.username || "")}</span><span>${(c.followers || 0).toLocaleString("en-IN")} followers</span></div>
+      <p class="card-desc">${CF.escapeHtml((c.bio || "").slice(0, 80))}</p>
+      <div class="card-foot"><span class="help-text">From ${CF.formatINR(startRate)}</span><button class="btn btn-sm btn-primary" onclick="openCreatorProfile('${c.id}')">View profile</button></div>
+    </div>
+  </div>`;
+}
+
+function renderCreators() {
+  const q = (document.getElementById("creator-search").value || "").toLowerCase();
+  const sort = document.getElementById("creator-sort").value;
+  let rows = ALL_CREATORS.filter(c => c.publicStatus);
+  if (q) rows = rows.filter(c => [c.name, c.username, c.category, ...(c.platforms || [])].join(" ").toLowerCase().includes(q));
+  if (creatorFilters.categories.length) rows = rows.filter(c => creatorFilters.categories.includes(c.category));
+  const minRate = c => c.rates ? Math.min(...Object.values(c.rates).filter(v => v > 0)) : 0;
+  if (sort === "followers") rows.sort((a, b) => (b.followers || 0) - (a.followers || 0));
+  if (sort === "rate-low") rows.sort((a, b) => minRate(a) - minRate(b));
+  if (sort === "rate-high") rows.sort((a, b) => minRate(b) - minRate(a));
+  const grid = document.getElementById("creator-grid");
+  if (!rows.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>No creators found</h3><p>Try another search or adjust your filters.</p></div>`; return; }
+  grid.innerHTML = rows.map(creatorCardHtml).join("");
+}
+
+function openCreatorProfile(id) {
+  const c = ALL_CREATORS.find(x => x.id === id);
+  if (!c) return;
+  const rateRows = c.rates ? Object.entries(c.rates).filter(([, v]) => v > 0).map(([k, v]) => `<div class="deal-row"><span class="deal-label">${k}</span><span>${CF.formatINR(v)}</span></div>`).join("") : "";
+  document.getElementById("creator-profile-body").innerHTML = `
+    <button class="modal-close" onclick="CF.closeModal('creator-profile-modal')">✕</button>
+    ${c.isDemo ? '<span class="demo-tag">DEMO CONTENT</span>' : ""}
+    <h3 class="modal-title" style="margin-top:8px">${CF.escapeHtml(c.name)}</h3>
+    <p class="help-text">${CF.escapeHtml(c.username || "")} · ${CF.escapeHtml(c.category || "")}</p>
+    <img src="${c.profileImage}" style="border-radius:8px;margin:12px 0;max-height:220px;object-fit:cover;width:100%" alt="">
+    <p>${CF.escapeHtml(c.bio || "")}</p>
+    <div class="deal-card" style="margin-bottom:14px">${rateRows || '<p class="help-text">Rates shared on request.</p>'}</div>
+    ${(CF.currentUser && CF.currentUser.role === "BRAND")
+      ? `<button class="btn btn-primary btn-block" onclick="openCollabRequestForm('${c.id}')">Connect with CollabFlow</button>`
+      : `<button class="btn btn-primary btn-block" onclick="CF.closeModal('creator-profile-modal');CF.openModal('auth-modal')">Log in as a brand to connect</button>`}
+  `;
+  CF.openModal("creator-profile-modal");
+}
+
+function openCollabRequestForm(creatorId) {
+  const c = ALL_CREATORS.find(x => x.id === creatorId);
+  document.getElementById("creator-profile-body").innerHTML = `
+    <button class="modal-close" onclick="CF.closeModal('creator-profile-modal')">✕</button>
+    <h3 class="modal-title">Connect with ${CF.escapeHtml(c.name)}</h3>
+    <p class="help-text">Submit your campaign requirements and CollabFlow will coordinate the collaboration.</p>
+    <form class="form-grid" id="collab-form">
+      <div><label>Message</label><textarea id="collab-message" required></textarea></div>
+      <div><label>Content type</label><input type="text" id="collab-content-type" placeholder="e.g. Reel"></div>
+      <div><label>Proposed budget (₹)</label><input type="number" id="collab-budget"></div>
+      <div><label>Deliverables</label><input type="text" id="collab-deliverables"></div>
+      <div><label>Deadline</label><input type="date" id="collab-deadline"></div>
+      <button class="btn btn-primary btn-block" type="submit">Send collaboration request</button>
+    </form>`;
+  document.getElementById("collab-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      const existing = await CF.getCollection("collaborationRequests", { where: [["creatorId", "==", creatorId], ["brandId", "==", CF.currentUser.uid], ["status", "==", "PENDING"]] });
+      if (existing.length && !CF.DEMO_MODE) { CF.toast("You already have an active request with this creator.", "warn"); return; }
+      await CF.addDoc("collaborationRequests", {
+        creatorId, brandId: CF.currentUser.uid, creatorName: c.name,
+        message: document.getElementById("collab-message").value,
+        contentType: document.getElementById("collab-content-type").value,
+        proposedBudget: document.getElementById("collab-budget").value,
+        deliverables: document.getElementById("collab-deliverables").value,
+        deadline: document.getElementById("collab-deadline").value,
+        status: "PENDING"
+      });
+      CF.toast("Request submitted to CollabFlow.");
+      CF.closeModal("creator-profile-modal");
+    } catch (err) { CF.toast(err.message, "error"); }
+  });
+}
+
+async function loadWebsiteContent() {
+  const site = await CF.getDoc("website/home", CF.DEMO.website);
+  document.getElementById("hero-heading").textContent = site.heroHeading;
+  document.getElementById("hero-description").textContent = site.heroDescription;
+  document.getElementById("brandhub-heading").textContent = site.brandHubHeading;
+  document.getElementById("brandhub-desc").textContent = site.brandHubDescription;
+  document.getElementById("creatorhub-heading").textContent = site.creatorHubHeading;
+  document.getElementById("creatorhub-desc").textContent = site.creatorHubDescription;
+  document.getElementById("about-heading").textContent = site.aboutHeading;
+  document.getElementById("about-description").textContent = site.aboutDescription;
+
+  const rules = await CF.getCollection("rules", { fallbackDemo: true });
+  const rulesHtml = rules.map(r => `<div class="rule-item"><span class="dot"></span><p style="margin:0">${CF.escapeHtml(r.text)}</p></div>`).join("");
+  document.getElementById("rules-list").innerHTML = rulesHtml;
+  document.getElementById("legal-rules-list").innerHTML = rulesHtml;
+}
+
+async function init() {
+  await loadWebsiteContent();
+  ALL_CAMPAIGNS = await CF.getCollection("campaigns", { where: [["publicStatus", "==", true]], fallbackDemo: true });
+  ALL_CREATORS = await CF.getCollection("creators", { where: [["publicStatus", "==", true]], fallbackDemo: true });
+  renderCampaigns();
+  renderCreators();
+  document.getElementById("campaign-search").addEventListener("input", CF.debounce(renderCampaigns, 200));
+  document.getElementById("creator-search").addEventListener("input", CF.debounce(renderCreators, 200));
+  document.getElementById("creator-sort").addEventListener("change", renderCreators);
+}
+init();
+</script>
+</body>
+</html>

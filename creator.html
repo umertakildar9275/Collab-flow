@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator Panel — CollabFlow</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="mode-banner" id="mode-banner">Checking connection…</div>
+
+<div class="auth-screen" id="cf-access-screen">
+  <a href="index.html" class="brand-mark">CollabFlow</a>
+  <h2 style="margin-top:18px">Creator Panel</h2>
+  <p class="help-text" style="margin-bottom:18px">Log in with your creator account, or create one from the homepage.</p>
+  <form class="form-grid" id="creator-login-form">
+    <div><label>Email</label><input type="email" id="cl-email" required></div>
+    <div><label>Password</label><input type="password" id="cl-password" required></div>
+    <button class="btn btn-primary btn-block" type="submit">Log in</button>
+  </form>
+  <p class="help-text" style="margin-top:14px"><a href="index.html">← Create a creator account from the homepage</a></p>
+  <p class="field-error show" id="creator-access-msg"></p>
+</div>
+
+<div class="panel-shell" id="cf-panel-app" style="display:none">
+  <aside class="panel-sidebar" id="panel-sidebar">
+    <a href="index.html" class="brand-mark">CollabFlow<small>CREATOR PANEL</small></a>
+    <nav class="panel-nav" id="panel-nav">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="profile">My Profile</button>
+      <button data-tab="rates">Rates &amp; Packages</button>
+      <button data-tab="browse">Browse Campaigns</button>
+      <button data-tab="applications">My Applications</button>
+      <button data-tab="requests">Collaboration Requests</button>
+      <button onclick="CF.signOutUser()" style="margin-top:14px;color:#ffb3a3">Logout</button>
+    </nav>
+  </aside>
+
+  <main class="panel-main">
+    <div class="panel-topbar">
+      <button class="panel-drawer-btn" onclick="document.getElementById('panel-sidebar').classList.toggle('open-mobile')">☰ Menu</button>
+      <h2 style="margin:0" id="panel-title">Dashboard</h2><span></span>
+    </div>
+
+    <section class="panel-tab" data-tab="dashboard">
+      <div class="stat-grid" id="stat-grid"></div>
+    </section>
+
+    <section class="panel-tab" data-tab="profile" style="display:none">
+      <div class="form-grid cols-2">
+        <div><label>Creator name</label><input type="text" id="p-name"></div>
+        <div><label>Username / handle</label><input type="text" id="p-username"></div>
+        <div><label>Category</label><input type="text" id="p-category"></div>
+        <div><label>Location</label><input type="text" id="p-location"></div>
+        <div><label>Platforms (comma separated)</label><input type="text" id="p-platforms" placeholder="Instagram, YouTube"></div>
+        <div><label>Followers</label><input type="number" id="p-followers"></div>
+        <div><label>Average views</label><input type="number" id="p-avgviews"></div>
+        <div><label>Engagement rate (%)</label><input type="number" id="p-engagement"></div>
+        <div><label>Instagram / social link</label><input type="url" id="p-social"></div>
+        <div><label>Mobile <span class="help-text">(private)</span></label><input type="tel" id="p-phone"></div>
+        <div style="grid-column:1/-1"><label>Bio</label><textarea id="p-bio"></textarea></div>
+        <div><label>Profile image URL</label><input type="url" id="p-profileimg"></div>
+        <div><label>Cover image URL</label><input type="url" id="p-coverimg"></div>
+        <div style="grid-column:1/-1"><input type="file" id="p-profile-file" accept="image/*"><p class="help-text">Or upload a profile image.</p></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-primary" onclick="saveCreatorProfile()">Save profile</button>
+        <button class="btn btn-secondary" onclick="submitCreatorForReview()">Submit for review</button>
+      </div>
+    </section>
+
+    <section class="panel-tab" data-tab="rates" style="display:none">
+      <h3>Rates (₹)</h3>
+      <div class="form-grid cols-2">
+        <div><label>Instagram Reel</label><input type="number" id="r-reel"></div>
+        <div><label>Instagram Story</label><input type="number" id="r-story"></div>
+        <div><label>Instagram Post</label><input type="number" id="r-post"></div>
+        <div><label>YouTube Video</label><input type="number" id="r-video"></div>
+        <div><label>UGC Video</label><input type="number" id="r-ugc"></div>
+        <div><label class="checkbox-pill"><input type="checkbox" id="r-negotiable"> Rates negotiable</label></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="saveRates()">Save rates</button>
+
+      <h3 style="margin-top:30px">Packages</h3>
+      <div id="packages-list"></div>
+      <form class="form-grid cols-2" style="margin-top:14px" id="package-form">
+        <div><label>Package name</label><input type="text" id="pk-name" required></div>
+        <div><label>Price (₹)</label><input type="number" id="pk-price" required></div>
+        <div style="grid-column:1/-1"><label>Deliverables</label><input type="text" id="pk-deliverables" placeholder="e.g. 1 Reel + 2 Stories" required></div>
+        <button class="btn btn-secondary" type="submit" style="grid-column:1/-1">Add package</button>
+      </form>
+    </section>
+
+    <section class="panel-tab" data-tab="browse" style="display:none">
+      <div class="toolbar"><input class="search-input" id="browse-search" placeholder="Search campaigns…"></div>
+      <div id="browse-grid" class="grid-cards"></div>
+    </section>
+
+    <section class="panel-tab" data-tab="applications" style="display:none">
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Campaign</th><th>Proposed rate</th><th>Status</th></tr></thead><tbody id="my-apps-tbody"></tbody></table></div>
+    </section>
+
+    <section class="panel-tab" data-tab="requests" style="display:none">
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Brand</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead><tbody id="requests-tbody"></tbody></table></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-overlay" id="apply-modal"><div class="modal-box" id="apply-modal-body"></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/shared.js"></script>
+<script>
+CF.requireRole(["CREATOR"]);
+function myUid() { return CF.currentUser ? CF.currentUser.uid : "demo-creator"; }
+function statusBadge(s) { return `<span class="badge badge-${(s || "draft").toLowerCase()}">${s || "DRAFT"}</span>`; }
+
+document.getElementById("creator-login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await CF.signIn(document.getElementById("cl-email").value, document.getElementById("cl-password").value);
+    setTimeout(() => {
+      if (CF.currentUser && CF.currentUser.role === "CREATOR") location.reload();
+      else document.getElementById("creator-access-msg").textContent = "This account is not a creator account.";
+    }, 700);
+  } catch (err) { document.getElementById("creator-access-msg").textContent = err.message; }
+});
+
+document.querySelectorAll("#panel-nav button[data-tab]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#panel-nav button[data-tab]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".panel-tab").forEach(t => t.style.display = "none");
+    document.querySelector(`.panel-tab[data-tab="${btn.dataset.tab}"]`).style.display = "block";
+    document.getElementById("panel-title").textContent = btn.textContent;
+    document.getElementById("panel-sidebar").classList.remove("open-mobile");
+    loadTab(btn.dataset.tab);
+  });
+});
+
+async function loadDashboard() {
+  const [apps, reqs] = await Promise.all([
+    CF.getCollection("applications", { where: [["creatorId", "==", myUid()]] }),
+    CF.getCollection("collaborationRequests", { where: [["creatorId", "==", myUid()]] })
+  ]);
+  const stats = [["My applications", apps.length], ["Pending requests", reqs.filter(r => r.status === "PENDING").length], ["Accepted", reqs.filter(r => r.status === "ACCEPTED").length]];
+  document.getElementById("stat-grid").innerHTML = stats.map(([lbl, num]) => `<div class="stat-card"><div class="num">${num}</div><div class="lbl">${lbl}</div></div>`).join("");
+}
+
+async function loadProfile() {
+  const c = await CF.getDoc("creators/" + myUid(), {});
+  document.getElementById("p-name").value = c.name || "";
+  document.getElementById("p-username").value = c.username || "";
+  document.getElementById("p-category").value = c.category || "";
+  document.getElementById("p-location").value = c.location || "";
+  document.getElementById("p-platforms").value = (c.platforms || []).join(", ");
+  document.getElementById("p-followers").value = c.followers || "";
+  document.getElementById("p-avgviews").value = c.averageViews || "";
+  document.getElementById("p-engagement").value = c.engagementRate || "";
+  document.getElementById("p-social").value = c.socialLinks || "";
+  document.getElementById("p-phone").value = c.privatePhone || "";
+  document.getElementById("p-bio").value = c.bio || "";
+  document.getElementById("p-profileimg").value = c.profileImage || "";
+  document.getElementById("p-coverimg").value = c.coverImage || "";
+}
+async function saveCreatorProfile() {
+  try {
+    let profileImage = document.getElementById("p-profileimg").value;
+    const file = document.getElementById("p-profile-file").files[0];
+    if (file) profileImage = await CF.uploadImage(file, "creators/" + myUid());
+    await CF.setDoc("creators", myUid(), {
+      ownerUid: myUid(), name: document.getElementById("p-name").value, username: document.getElementById("p-username").value,
+      category: document.getElementById("p-category").value, location: document.getElementById("p-location").value,
+      platforms: document.getElementById("p-platforms").value.split(",").map(s => s.trim()).filter(Boolean),
+      followers: Number(document.getElementById("p-followers").value) || 0,
+      averageViews: Number(document.getElementById("p-avgviews").value) || 0,
+      engagementRate: Number(document.getElementById("p-engagement").value) || 0,
+      socialLinks: document.getElementById("p-social").value, privatePhone: document.getElementById("p-phone").value,
+      bio: document.getElementById("p-bio").value, profileImage, coverImage: document.getElementById("p-coverimg").value
+    });
+    CF.toast("Profile saved.");
+  } catch (err) { CF.toast(err.message, "error"); }
+}
+async function submitCreatorForReview() { await CF.updateDoc("creators", myUid(), { status: "REVIEW" }); CF.toast("Profile submitted for review."); }
+
+async function loadRates() {
+  const c = await CF.getDoc("creators/" + myUid(), {});
+  const r = c.rates || {};
+  document.getElementById("r-reel").value = r.reel || "";
+  document.getElementById("r-story").value = r.story || "";
+  document.getElementById("r-post").value = r.post || "";
+  document.getElementById("r-video").value = r.video || "";
+  document.getElementById("r-ugc").value = r.ugc || "";
+  document.getElementById("r-negotiable").checked = !!r.negotiable;
+  renderPackages(c.packages || []);
+}
+async function saveRates() {
+  await CF.updateDoc("creators", myUid(), {
+    rates: {
+      reel: Number(document.getElementById("r-reel").value) || 0, story: Number(document.getElementById("r-story").value) || 0,
+      post: Number(document.getElementById("r-post").value) || 0, video: Number(document.getElementById("r-video").value) || 0,
+      ugc: Number(document.getElementById("r-ugc").value) || 0, negotiable: document.getElementById("r-negotiable").checked
+    }
+  });
+  CF.toast("Rates saved.");
+}
+function renderPackages(packages) {
+  document.getElementById("packages-list").innerHTML = packages.length ? packages.map((p, i) => `
+    <div class="rule-item"><div style="flex:1"><strong>${CF.escapeHtml(p.name)}</strong><br><span class="help-text">${CF.escapeHtml(p.deliverables)} — ${CF.formatINR(p.price)}</span></div>
+    <button class="btn btn-sm btn-danger" onclick="removePackage(${i})">Remove</button></div>`).join("") : `<p class="help-text">No packages yet.</p>`;
+  window._packages = packages;
+}
+document.getElementById("package-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const packages = window._packages || [];
+  packages.push({ name: document.getElementById("pk-name").value, price: Number(document.getElementById("pk-price").value), deliverables: document.getElementById("pk-deliverables").value });
+  await CF.updateDoc("creators", myUid(), { packages });
+  renderPackages(packages);
+  e.target.reset();
+  CF.toast("Package added.");
+});
+async function removePackage(i) {
+  const packages = (window._packages || []).slice();
+  packages.splice(i, 1);
+  await CF.updateDoc("creators", myUid(), { packages });
+  renderPackages(packages);
+  CF.toast("Package removed.");
+}
+
+async function loadBrowseCampaigns() {
+  window._browseRows = await CF.getCollection("campaigns", { where: [["publicStatus", "==", true]], fallbackDemo: true });
+  renderBrowseGrid();
+}
+function renderBrowseGrid() {
+  const q = (document.getElementById("browse-search").value || "").toLowerCase();
+  const rows = (window._browseRows || []).filter(c => !q || [c.brandName, c.campaignName, ...(c.contentTypes || [])].join(" ").toLowerCase().includes(q));
+  document.getElementById("browse-grid").innerHTML = rows.length ? rows.map(c => {
+    const closed = c.deadline && new Date(c.deadline) < new Date();
+    return `<div class="campaign-card"><div class="card-media"><img src="${c.coverImage || ''}" alt="${CF.escapeHtml(c.campaignName)}"></div>
+    <div class="card-body"><div class="card-title">${CF.escapeHtml(c.campaignName)}</div>
+    <div class="card-meta"><span>${CF.escapeHtml(c.brandName || "")}</span><span>${CF.formatINR(c.budget)}</span></div>
+    <p class="card-desc">${CF.escapeHtml((c.description || "").slice(0, 80))}</p>
+    ${closed ? '<span class="badge badge-unpublished">CAMPAIGN CLOSED</span>' : `<button class="btn btn-sm btn-primary" onclick="openApply('${c.id}')">Apply</button>`}
+    </div></div>`;
+  }).join("") : `<div class="empty-state" style="grid-column:1/-1"><h3>No campaigns available right now</h3></div>`;
+}
+document.getElementById("browse-search").addEventListener("input", CF.debounce(renderBrowseGrid, 200));
+
+function openApply(campaignId) {
+  const c = (window._browseRows || []).find(x => x.id === campaignId);
+  document.getElementById("apply-modal-body").innerHTML = `
+    <button class="modal-close" onclick="CF.closeModal('apply-modal')">✕</button>
+    <h3 class="modal-title">Apply — ${CF.escapeHtml(c.campaignName)}</h3>
+    <form class="form-grid" id="apply-form">
+      <div><label>Selected platform</label><select id="ap-platform">${(c.platforms || ["Instagram"]).map(p => `<option>${p}</option>`).join("")}</select></div>
+      <div><label>Profile link</label><input type="url" id="ap-link" required></div>
+      <div><label>Introduction</label><textarea id="ap-intro" required></textarea></div>
+      <div><label>Proposed rate (₹)</label><input type="number" id="ap-rate"></div>
+      <button class="btn btn-primary btn-block" type="submit">Submit application</button>
+    </form>`;
+  document.getElementById("apply-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      const existing = await CF.getCollection("applications", { where: [["campaignId", "==", campaignId], ["creatorId", "==", myUid()], ["status", "in", ["SUBMITTED", "UNDER_REVIEW", "SHORTLISTED"]]] });
+      if (existing.length && !CF.DEMO_MODE) { CF.toast("You already have an active application for this campaign.", "warn"); return; }
+      await CF.addDoc("applications", {
+        campaignId, brandId: c.brandId || null, creatorId: myUid(),
+        selectedPlatform: document.getElementById("ap-platform").value, profileLink: document.getElementById("ap-link").value,
+        introduction: document.getElementById("ap-intro").value, proposedRate: document.getElementById("ap-rate").value, status: "SUBMITTED"
+      });
+      CF.toast("Application submitted."); CF.closeModal("apply-modal");
+    } catch (err) { CF.toast(err.message, "error"); }
+  });
+  CF.openModal("apply-modal");
+}
+
+async function loadMyApplications() {
+  const rows = await CF.getCollection("applications", { where: [["creatorId", "==", myUid()]] });
+  document.getElementById("my-apps-tbody").innerHTML = rows.length ? rows.map(a => `
+    <tr><td data-label="Campaign">${a.campaignId}</td><td data-label="Proposed rate">${CF.formatINR(a.proposedRate)}</td><td data-label="Status">${statusBadge(a.status)}</td></tr>`).join("")
+    : `<tr><td colspan="3">No applications yet.</td></tr>`;
+}
+
+async function loadRequests() {
+  const rows = await CF.getCollection("collaborationRequests", { where: [["creatorId", "==", myUid()]] });
+  document.getElementById("requests-tbody").innerHTML = rows.length ? rows.map(r => `
+    <tr><td data-label="Brand">${r.brandId}</td><td data-label="Message">${CF.escapeHtml((r.message || "").slice(0, 40))}</td>
+    <td data-label="Status">${statusBadge(r.status)}</td>
+    <td data-label="Actions">${r.status === "PENDING" ? `<div class="row-actions"><button class="btn btn-sm btn-primary" onclick="respondRequest('${r.id}','ACCEPTED')">Accept</button><button class="btn btn-sm btn-ghost" onclick="respondRequest('${r.id}','DECLINED')">Decline</button></div>` : ""}</td></tr>`).join("")
+    : `<tr><td colspan="4">No collaboration requests yet.</td></tr>`;
+}
+async function respondRequest(id, status) { await CF.updateDoc("collaborationRequests", id, { status }); CF.toast("Request " + status.toLowerCase() + "."); loadRequests(); }
+
+function loadTab(tab) {
+  if (tab === "dashboard") loadDashboard();
+  if (tab === "profile") loadProfile();
+  if (tab === "rates") loadRates();
+  if (tab === "browse") loadBrowseCampaigns();
+  if (tab === "applications") loadMyApplications();
+  if (tab === "requests") loadRequests();
+}
+CF.onAuthReady(() => loadDashboard());
+</script>
+</body>
+</html>

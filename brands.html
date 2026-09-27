@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brands Panel — CollabFlow</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="mode-banner" id="mode-banner">Checking connection…</div>
+
+<div class="auth-screen" id="cf-access-screen">
+  <a href="index.html" class="brand-mark">CollabFlow</a>
+  <h2 style="margin-top:18px">Brands Panel</h2>
+  <p class="help-text" style="margin-bottom:18px">Log in with your brand account, or create one from the homepage.</p>
+  <form class="form-grid" id="brand-login-form">
+    <div><label>Email</label><input type="email" id="bl-email" required></div>
+    <div><label>Password</label><input type="password" id="bl-password" required></div>
+    <button class="btn btn-primary btn-block" type="submit">Log in</button>
+  </form>
+  <p class="help-text" style="margin-top:14px"><a href="index.html">← Create a brand account from the homepage</a></p>
+  <p class="field-error show" id="brand-access-msg"></p>
+</div>
+
+<div class="panel-shell" id="cf-panel-app" style="display:none">
+  <aside class="panel-sidebar" id="panel-sidebar">
+    <a href="index.html" class="brand-mark">CollabFlow<small>BRANDS PANEL</small></a>
+    <nav class="panel-nav" id="panel-nav">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="profile">Brand Profile</button>
+      <button data-tab="campaigns">My Campaigns</button>
+      <button data-tab="create">Create Campaign</button>
+      <button data-tab="applications">Applications</button>
+      <button data-tab="find">Find Creators</button>
+      <button data-tab="sent">Sent Requests</button>
+      <button onclick="CF.signOutUser()" style="margin-top:14px;color:#ffb3a3">Logout</button>
+    </nav>
+  </aside>
+
+  <main class="panel-main">
+    <div class="panel-topbar">
+      <button class="panel-drawer-btn" onclick="document.getElementById('panel-sidebar').classList.toggle('open-mobile')">☰ Menu</button>
+      <h2 style="margin:0" id="panel-title">Dashboard</h2><span></span>
+    </div>
+
+    <section class="panel-tab" data-tab="dashboard">
+      <div class="stat-grid" id="stat-grid"></div>
+    </section>
+
+    <section class="panel-tab" data-tab="profile" style="display:none">
+      <div class="form-grid cols-2">
+        <div><label>Brand name</label><input type="text" id="p-name"></div>
+        <div><label>Category</label><input type="text" id="p-category"></div>
+        <div><label>Website</label><input type="url" id="p-website"></div>
+        <div><label>Location</label><input type="text" id="p-location"></div>
+        <div><label>Mobile <span class="help-text">(private)</span></label><input type="tel" id="p-mobile"></div>
+        <div><label>Email <span class="help-text">(private)</span></label><input type="email" id="p-email"></div>
+        <div><label>Instagram / social link</label><input type="url" id="p-social"></div>
+        <div><label>Logo URL</label><input type="url" id="p-logo"></div>
+        <div style="grid-column:1/-1"><label>Description</label><textarea id="p-desc"></textarea></div>
+        <div style="grid-column:1/-1"><input type="file" id="p-logo-file" accept="image/*"><p class="help-text">Or upload a logo image.</p></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-primary" onclick="saveBrandProfile()">Save brand details</button>
+        <button class="btn btn-secondary" onclick="submitBrandForReview()">Submit for review</button>
+      </div>
+    </section>
+
+    <section class="panel-tab" data-tab="campaigns" style="display:none">
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Campaign</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead><tbody id="my-campaigns-tbody"></tbody></table></div>
+    </section>
+
+    <section class="panel-tab" data-tab="create" style="display:none">
+      <form class="form-grid cols-2" id="campaign-form">
+        <div><label>Campaign name <span class="req">*</span></label><input type="text" id="c-name" required></div>
+        <div><label>Promotion name</label><input type="text" id="c-promo"></div>
+        <div style="grid-column:1/-1"><label>Description <span class="req">*</span></label><textarea id="c-desc" required></textarea></div>
+        <div><label>Budget type</label><select id="c-budget-type"><option>Fixed</option><option>Range</option><option>Negotiable</option></select></div>
+        <div><label>Budget <span class="req">*</span></label><input type="text" id="c-budget" placeholder="e.g. ₹5,000 or ₹3,000–7,000" required></div>
+        <div><label>Content types <span class="req">*</span></label>
+          <div class="checkbox-row" id="c-content-types"></div>
+        </div>
+        <div><label>Platforms <span class="req">*</span></label>
+          <div class="checkbox-row" id="c-platforms"></div>
+        </div>
+        <div><label>Deliverables</label><input type="text" id="c-deliverables" placeholder="e.g. 1 Reel + 2 Stories"></div>
+        <div><label>Deadline</label><input type="date" id="c-deadline"></div>
+        <div><label>Location</label><input type="text" id="c-location"></div>
+        <div><label>Target creator category</label><input type="text" id="c-target-category" placeholder="e.g. Fashion"></div>
+        <div style="grid-column:1/-1"><label>Requirements</label><textarea id="c-requirements"></textarea></div>
+        <div><label>Reference image/video URL</label><input type="url" id="c-reference"></div>
+        <div><label>Campaign poster URL</label><input type="url" id="c-poster"></div>
+        <div style="grid-column:1/-1"><input type="file" id="c-poster-file" accept="image/*"><p class="help-text">Or upload a poster image.</p></div>
+        <div style="grid-column:1/-1"><label>Additional notes</label><textarea id="c-notes"></textarea></div>
+      </form>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-secondary" onclick="saveCampaign('DRAFT')">Save as draft</button>
+        <button class="btn btn-primary" onclick="saveCampaign('REVIEW')">Submit for review</button>
+      </div>
+    </section>
+
+    <section class="panel-tab" data-tab="applications" style="display:none">
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Campaign</th><th>Creator</th><th>Proposed rate</th><th>Status</th></tr></thead><tbody id="brand-applications-tbody"></tbody></table></div>
+    </section>
+
+    <section class="panel-tab" data-tab="find" style="display:none">
+      <div class="toolbar"><input class="search-input" id="find-search" placeholder="Search creators…"></div>
+      <div id="find-grid" class="grid-cards"></div>
+    </section>
+
+    <section class="panel-tab" data-tab="sent" style="display:none">
+      <div style="overflow-x:auto"><table class="data-table"><thead><tr><th>Creator</th><th>Message</th><th>Status</th><th>Actions</th></tr></thead><tbody id="sent-tbody"></tbody></table></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-overlay" id="collab-modal"><div class="modal-box" id="collab-modal-body"></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/shared.js"></script>
+<script>
+CF.requireRole(["BRAND"]);
+const CONTENT_TYPES = ["Reel", "Post", "Story", "Video", "UGC", "Other"];
+const PLATFORMS = ["Instagram", "YouTube", "Other"];
+document.getElementById("c-content-types").innerHTML = CONTENT_TYPES.map(t => `<label class="checkbox-pill"><input type="checkbox" value="${t}" class="ct-check"> ${t}</label>`).join("");
+document.getElementById("c-platforms").innerHTML = PLATFORMS.map(t => `<label class="checkbox-pill"><input type="checkbox" value="${t}" class="pf-check"> ${t}</label>`).join("");
+
+document.getElementById("brand-login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await CF.signIn(document.getElementById("bl-email").value, document.getElementById("bl-password").value);
+    setTimeout(() => {
+      if (CF.currentUser && CF.currentUser.role === "BRAND") location.reload();
+      else document.getElementById("brand-access-msg").textContent = "This account is not a brand account.";
+    }, 700);
+  } catch (err) { document.getElementById("brand-access-msg").textContent = err.message; }
+});
+
+document.querySelectorAll("#panel-nav button[data-tab]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#panel-nav button[data-tab]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".panel-tab").forEach(t => t.style.display = "none");
+    document.querySelector(`.panel-tab[data-tab="${btn.dataset.tab}"]`).style.display = "block";
+    document.getElementById("panel-title").textContent = btn.textContent;
+    document.getElementById("panel-sidebar").classList.remove("open-mobile");
+    loadTab(btn.dataset.tab);
+  });
+});
+
+function statusBadge(s) { return `<span class="badge badge-${(s || "draft").toLowerCase()}">${s || "DRAFT"}</span>`; }
+function myUid() { return CF.currentUser ? CF.currentUser.uid : "demo-brand"; }
+
+async function loadDashboard() {
+  const camps = await CF.getCollection("campaigns", { where: [["brandId", "==", myUid()]] });
+  const stats = [
+    ["Total campaigns", camps.length],
+    ["Active", camps.filter(c => c.publicStatus).length],
+    ["Draft", camps.filter(c => c.status === "DRAFT").length],
+    ["Published", camps.filter(c => c.publicStatus).length]
+  ];
+  document.getElementById("stat-grid").innerHTML = stats.map(([lbl, num]) => `<div class="stat-card"><div class="num">${num}</div><div class="lbl">${lbl}</div></div>`).join("");
+}
+
+async function loadProfile() {
+  const brand = await CF.getDoc("brands/" + myUid(), {});
+  document.getElementById("p-name").value = brand.name || "";
+  document.getElementById("p-category").value = brand.category || "";
+  document.getElementById("p-website").value = brand.website || "";
+  document.getElementById("p-location").value = brand.location || "";
+  document.getElementById("p-mobile").value = brand.mobile || "";
+  document.getElementById("p-email").value = brand.email || (CF.currentUser ? CF.currentUser.email : "");
+  document.getElementById("p-social").value = brand.socialLinks || "";
+  document.getElementById("p-logo").value = brand.logo || "";
+  document.getElementById("p-desc").value = brand.description || "";
+}
+async function saveBrandProfile() {
+  try {
+    let logo = document.getElementById("p-logo").value;
+    const file = document.getElementById("p-logo-file").files[0];
+    if (file) logo = await CF.uploadImage(file, "brands/" + myUid());
+    await CF.setDoc("brands", myUid(), {
+      ownerUid: myUid(), name: document.getElementById("p-name").value, category: document.getElementById("p-category").value,
+      website: document.getElementById("p-website").value, location: document.getElementById("p-location").value,
+      mobile: document.getElementById("p-mobile").value, email: document.getElementById("p-email").value,
+      socialLinks: document.getElementById("p-social").value, logo, description: document.getElementById("p-desc").value
+    });
+    CF.toast("Brand details saved.");
+  } catch (err) { CF.toast(err.message, "error"); }
+}
+async function submitBrandForReview() { await CF.updateDoc("brands", myUid(), { status: "PENDING" }); CF.toast("Submitted for CollabFlow review."); }
+
+async function loadMyCampaigns() {
+  const rows = await CF.getCollection("campaigns", { where: [["brandId", "==", myUid()]] });
+  document.getElementById("my-campaigns-tbody").innerHTML = rows.length ? rows.map(c => `
+    <tr><td data-label="Campaign">${CF.escapeHtml(c.campaignName)}</td><td data-label="Budget">${CF.formatINR(c.budget)}</td>
+    <td data-label="Status">${statusBadge(c.status)}</td>
+    <td data-label="Actions"><div class="row-actions">
+      ${c.status === "DRAFT" ? `<button class="btn btn-sm btn-primary" onclick="submitCampaignForReview('${c.id}')">Submit for review</button>` : ""}
+      <button class="btn btn-sm btn-danger" onclick="deleteCampaign('${c.id}')">Delete</button>
+    </div></td></tr>`).join("") : `<tr><td colspan="4">No campaigns yet — create one from "Create Campaign".</td></tr>`;
+}
+async function submitCampaignForReview(id) { await CF.updateDoc("campaigns", id, { status: "REVIEW" }); CF.toast("Campaign submitted for review."); loadMyCampaigns(); }
+async function deleteCampaign(id) { CF.confirmAction("Delete this campaign?", async () => { await CF.deleteDoc("campaigns", id); CF.toast("Campaign deleted."); loadMyCampaigns(); }); }
+
+async function saveCampaign(status) {
+  const name = document.getElementById("c-name").value, desc = document.getElementById("c-desc").value, budget = document.getElementById("c-budget").value;
+  const contentTypes = [...document.querySelectorAll(".ct-check:checked")].map(c => c.value);
+  const platforms = [...document.querySelectorAll(".pf-check:checked")].map(c => c.value);
+  if (!name || !desc || !budget || !contentTypes.length || !platforms.length) { CF.toast("Please fill all required fields.", "error"); return; }
+  try {
+    let poster = document.getElementById("c-poster").value;
+    const file = document.getElementById("c-poster-file").files[0];
+    if (file) poster = await CF.uploadImage(file, "campaigns");
+    const brand = await CF.getDoc("brands/" + myUid(), { name: "Your brand" });
+    await CF.addDoc("campaigns", {
+      brandId: myUid(), brandName: brand.name, campaignName: name, promotionName: document.getElementById("c-promo").value,
+      description: desc, budgetType: document.getElementById("c-budget-type").value, budget, contentTypes, platforms,
+      deliverables: document.getElementById("c-deliverables").value, deadline: document.getElementById("c-deadline").value,
+      location: document.getElementById("c-location").value, targetCreatorCategories: document.getElementById("c-target-category").value,
+      requirements: document.getElementById("c-requirements").value, referenceContent: document.getElementById("c-reference").value,
+      coverImage: poster, additionalNotes: document.getElementById("c-notes").value,
+      status, publicStatus: false
+    });
+    CF.toast(status === "REVIEW" ? "Campaign submitted for review." : "Campaign saved as draft.");
+    document.getElementById("campaign-form").reset();
+  } catch (err) { CF.toast(err.message, "error"); }
+}
+
+async function loadBrandApplications() {
+  const rows = await CF.getCollection("applications", { where: [["brandId", "==", myUid()]] });
+  document.getElementById("brand-applications-tbody").innerHTML = rows.length ? rows.map(a => `
+    <tr><td data-label="Campaign">${a.campaignId}</td><td data-label="Creator">${a.creatorId}</td>
+    <td data-label="Proposed rate">${CF.formatINR(a.proposedRate)}</td><td data-label="Status">${statusBadge(a.status)}</td></tr>`).join("")
+    : `<tr><td colspan="4">No applications yet.</td></tr>`;
+}
+
+async function loadFindCreators() {
+  const rows = await CF.getCollection("creators", { where: [["publicStatus", "==", true]], fallbackDemo: true });
+  window._findRows = rows;
+  renderFindGrid();
+}
+function renderFindGrid() {
+  const q = (document.getElementById("find-search").value || "").toLowerCase();
+  const rows = (window._findRows || []).filter(c => !q || [c.name, c.category, ...(c.platforms || [])].join(" ").toLowerCase().includes(q));
+  document.getElementById("find-grid").innerHTML = rows.length ? rows.map(c => `
+    <div class="creator-card"><div class="card-media"><img src="${c.profileImage || ''}" alt="${CF.escapeHtml(c.name)}"></div>
+    <div class="card-body"><div class="card-title">${CF.escapeHtml(c.name)}</div>
+    <div class="card-meta"><span>${CF.escapeHtml(c.category || "")}</span><span>${(c.followers || 0).toLocaleString("en-IN")} followers</span></div>
+    <p class="card-desc">${CF.escapeHtml(c.bio || "")}</p>
+    <button class="btn btn-sm btn-primary" onclick="openConnect('${c.id}')">Connect</button></div></div>`).join("")
+    : `<div class="empty-state" style="grid-column:1/-1"><h3>No creators found</h3></div>`;
+}
+document.getElementById("find-search").addEventListener("input", CF.debounce(renderFindGrid, 200));
+
+function openConnect(creatorId) {
+  const c = (window._findRows || []).find(x => x.id === creatorId);
+  document.getElementById("collab-modal-body").innerHTML = `
+    <button class="modal-close" onclick="CF.closeModal('collab-modal')">✕</button>
+    <h3 class="modal-title">Connect with ${CF.escapeHtml(c.name)}</h3>
+    <form class="form-grid" id="collab-form">
+      <div><label>Message</label><textarea id="cl-message" required></textarea></div>
+      <div><label>Content type</label><input type="text" id="cl-content-type"></div>
+      <div><label>Proposed budget (₹)</label><input type="number" id="cl-budget"></div>
+      <div><label>Deliverables</label><input type="text" id="cl-deliverables"></div>
+      <div><label>Deadline</label><input type="date" id="cl-deadline"></div>
+      <button class="btn btn-primary btn-block" type="submit">Send collaboration request</button>
+    </form>`;
+  document.getElementById("collab-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      await CF.addDoc("collaborationRequests", {
+        creatorId, brandId: myUid(), creatorName: c.name, message: document.getElementById("cl-message").value,
+        contentType: document.getElementById("cl-content-type").value, proposedBudget: document.getElementById("cl-budget").value,
+        deliverables: document.getElementById("cl-deliverables").value, deadline: document.getElementById("cl-deadline").value, status: "PENDING"
+      });
+      CF.toast("Request sent to CollabFlow."); CF.closeModal("collab-modal");
+    } catch (err) { CF.toast(err.message, "error"); }
+  });
+  CF.openModal("collab-modal");
+}
+
+async function loadSentRequests() {
+  const rows = await CF.getCollection("collaborationRequests", { where: [["brandId", "==", myUid()]] });
+  document.getElementById("sent-tbody").innerHTML = rows.length ? rows.map(r => `
+    <tr><td data-label="Creator">${CF.escapeHtml(r.creatorName || r.creatorId)}</td><td data-label="Message">${CF.escapeHtml((r.message || "").slice(0, 40))}</td>
+    <td data-label="Status">${statusBadge(r.status)}</td>
+    <td data-label="Actions">${r.status === "PENDING" ? `<button class="btn btn-sm btn-danger" onclick="cancelRequest('${r.id}')">Cancel</button>` : ""}</td></tr>`).join("")
+    : `<tr><td colspan="4">No requests sent yet.</td></tr>`;
+}
+async function cancelRequest(id) { await CF.updateDoc("collaborationRequests", id, { status: "CANCELLED" }); CF.toast("Request cancelled."); loadSentRequests(); }
+
+function loadTab(tab) {
+  if (tab === "dashboard") loadDashboard();
+  if (tab === "profile") loadProfile();
+  if (tab === "campaigns") loadMyCampaigns();
+  if (tab === "applications") loadBrandApplications();
+  if (tab === "find") loadFindCreators();
+  if (tab === "sent") loadSentRequests();
+}
+CF.onAuthReady(() => loadDashboard());
+</script>
+</body>
+</html>

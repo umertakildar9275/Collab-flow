@@ -1,850 +1,465 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>CollabFlow — Connect Brands With Creators</title>
-<meta name="description" content="CollabFlow is a managed platform connecting brands and creators for influencer marketing collaborations, coordinated end to end by the CollabFlow team.">
-<meta property="og:title" content="CollabFlow — Connect Brands With Creators">
-<meta property="og:description" content="Discover live campaigns and approved creators, coordinated by the CollabFlow team.">
-<meta property="og:type" content="website">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-/* ==================================================
-   COLLABFLOW — DESIGN SYSTEM
-   Concept: a "collaboration ledger" — the visual language of a
-   signed agreement between two parties. Left-aligned type,
-   a running vertical rule, deal-card motifs instead of generic
-   SaaS cards. Deep forest green ink on paper white.
-================================================== */
+  <meta charset="UTF-8">
 
-:root{
-  --paper:#FFFFFF;
-  --paper-tint:#F4F8F5;
-  --ink:#12211B;              /* near-black, green-leaning */
-  --ink-soft:#4B5F57;
-  --forest:#0F3D2E;           /* dark green — primary */
-  --forest-2:#0B2E22;
-  --sage:#4C8C6B;             /* soft green — secondary accent */
-  --sage-tint:#E4EFE7;
-  --line:#D9E3DD;
-  --rust:#9A4630;             /* used sparingly for destructive/error */
-  --amber:#8A6D1F;            /* used sparingly for "review/pending" */
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
-  --serif: "Fraunces", Georgia, serif;
-  --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  <meta
+    name="description"
+    content="CollabFlow — Connect brands with creators."
+  >
 
-  --radius-s:6px;
-  --radius-m:10px;
-  --shadow-card: 0 1px 2px rgba(18,33,27,.06), 0 6px 20px rgba(18,33,27,.05);
-  --maxw: 1180px;
-}
+  <meta name="theme-color" content="#123d2b">
 
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font-family:var(--sans);
-  color:var(--ink);
-  background:var(--paper);
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
-img{max-width:100%;display:block}
-a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer}
-h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0 0 .4em;line-height:1.15;letter-spacing:-.01em}
-h1{font-size:clamp(2.1rem,5vw,3.4rem)}
-h2{font-size:clamp(1.6rem,3.4vw,2.3rem)}
-h3{font-size:1.25rem}
-p{margin:0 0 1em;line-height:1.6;color:var(--ink-soft)}
-.container{max-width:var(--maxw);margin:0 auto;padding:0 20px}
-.section{padding:64px 0;border-top:1px solid var(--line)}
-.section:first-of-type{border-top:none}
-.eyebrow{font-size:.8rem;color:var(--sage);font-weight:600}
-.rule-left{border-left:3px solid var(--forest);padding-left:16px}
+  <title>CollabFlow — Connect Brands With Creators</title>
 
-/* ---------- buttons ---------- */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:13px 22px;border-radius:var(--radius-s);border:1px solid transparent;
-  font-weight:600;font-size:.95rem;transition:transform .15s ease, background .15s ease;
-  min-height:46px;
-}
-.btn:active{transform:scale(.98)}
-.btn-primary{background:var(--forest);color:#fff}
-.btn-primary:hover{background:var(--forest-2)}
-.btn-secondary{background:transparent;border-color:var(--forest);color:var(--forest)}
-.btn-secondary:hover{background:var(--sage-tint)}
-.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
-.btn-danger{background:var(--rust);color:#fff}
-.btn-sm{padding:8px 14px;min-height:36px;font-size:.85rem;border-radius:var(--radius-s)}
-.btn-block{width:100%}
-.btn[disabled]{opacity:.5;cursor:not-allowed}
-
-/* ---------- header ---------- */
-header.site-header{
-  position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);
-  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
-}
-.nav-row{display:flex;align-items:center;justify-content:space-between;height:68px}
-.brand-mark{font-family:var(--serif);font-weight:600;font-size:1.3rem;color:var(--forest)}
-.brand-mark small{display:block;font-family:var(--sans);font-weight:600;font-size:.55rem;letter-spacing:.12em;color:var(--sage)}
-.nav-links{display:none;gap:28px;align-items:center}
-.nav-links a{font-size:.92rem;font-weight:600;color:var(--ink-soft)}
-.nav-links a:hover{color:var(--forest)}
-.nav-actions{display:none;gap:10px;align-items:center}
-.hamburger{display:flex;flex-direction:column;gap:5px;background:none;border:none;padding:8px}
-.hamburger span{width:22px;height:2px;background:var(--ink)}
-@media(min-width:900px){
-  .nav-links,.nav-actions{display:flex}
-  .hamburger{display:none}
-}
-.mobile-drawer{
-  position:fixed;inset:0;background:var(--paper);z-index:60;
-  transform:translateX(100%);transition:transform .25s ease;
-  padding:20px;overflow-y:auto;
-}
-.mobile-drawer.open{transform:translateX(0)}
-.mobile-drawer .drawer-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.mobile-drawer a, .mobile-drawer button.drawer-link{
-  display:block;padding:16px 0;border-bottom:1px solid var(--line);
-  font-size:1.05rem;font-weight:600;background:none;border-left:none;border-right:none;border-top:none;
-  width:100%;text-align:left;color:var(--ink);
-}
-
-/* ---------- hero ---------- */
-.hero{padding:56px 0 40px}
-.hero-grid{display:grid;gap:36px;align-items:center}
-@media(min-width:920px){.hero-grid{grid-template-columns:1.05fr .95fr}}
-.hero-cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
-.deal-card{
-  background:var(--paper-tint);border:1px solid var(--line);border-radius:var(--radius-m);
-  padding:22px;position:relative;
-}
-.deal-card .deal-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
-.deal-card .deal-row:last-child{border-bottom:none}
-.deal-card .deal-label{color:var(--ink-soft)}
-.deal-card .deal-stamp{
-  position:absolute;top:18px;right:18px;border:1.5px solid var(--sage);color:var(--sage);
-  padding:3px 10px;border-radius:999px;font-size:.7rem;font-weight:700;letter-spacing:.06em;
-}
-
-/* ---------- how it works ---------- */
-.flow-cols{display:grid;gap:28px}
-@media(min-width:800px){.flow-cols{grid-template-columns:1fr 1fr}}
-.flow-col h3{margin-bottom:14px}
-.flow-steps{list-style:none;margin:0;padding:0;counter-reset:step}
-.flow-steps li{
-  counter-increment:step;position:relative;padding:12px 0 12px 38px;border-bottom:1px solid var(--line);
-  font-size:.95rem;color:var(--ink);
-}
-.flow-steps li::before{
-  content:counter(step);position:absolute;left:0;top:10px;width:24px;height:24px;border-radius:50%;
-  background:var(--sage-tint);color:var(--forest);font-size:.75rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-}
-
-/* ---------- rules ---------- */
-.rules-list{display:grid;gap:14px}
-.rule-item{display:flex;gap:14px;padding:16px;border:1px solid var(--line);border-radius:var(--radius-s)}
-.rule-item .dot{width:8px;height:8px;border-radius:50%;background:var(--sage);margin-top:8px;flex-shrink:0}
-
-/* ---------- toolbar / search / filters ---------- */
-.toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
-.search-input{
-  flex:1;min-width:200px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius-s);
-  font-size:.95rem;background:var(--paper);
-}
-.search-input:focus,input:focus,select:focus,textarea:focus{outline:2px solid var(--sage);outline-offset:1px}
-
-/* ---------- grids & cards ---------- */
-.grid-cards{display:grid;gap:20px;grid-template-columns:1fr}
-@media(min-width:640px){.grid-cards{grid-template-columns:1fr 1fr}}
-@media(min-width:980px){.grid-cards{grid-template-columns:1fr 1fr 1fr}}
-
-.campaign-card, .creator-card{
-  border:1px solid var(--line);border-radius:var(--radius-m);overflow:hidden;background:var(--paper);
-  box-shadow:var(--shadow-card);display:flex;flex-direction:column;
-}
-.card-media{aspect-ratio:16/10;background:var(--sage-tint);overflow:hidden}
-.card-media img{width:100%;height:100%;object-fit:cover}
-.card-body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
-.card-title{font-family:var(--serif);font-size:1.05rem;font-weight:600}
-.card-meta{font-size:.82rem;color:var(--ink-soft);display:flex;flex-wrap:wrap;gap:8px}
-.card-meta span{background:var(--sage-tint);padding:3px 8px;border-radius:999px}
-.card-desc{font-size:.88rem;color:var(--ink-soft);flex:1}
-.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
-.demo-tag{font-size:.68rem;letter-spacing:.05em;color:var(--amber);border:1px solid var(--amber);padding:2px 6px;border-radius:4px}
-
-/* ---------- badges/status ---------- */
-.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700}
-.badge-draft{background:#EDEDED;color:#555}
-.badge-review{background:#FBF0D9;color:var(--amber)}
-.badge-published{background:var(--sage-tint);color:var(--forest)}
-.badge-unpublished{background:#F3E3DF;color:var(--rust)}
-.badge-pending{background:#FBF0D9;color:var(--amber)}
-.badge-approved{background:var(--sage-tint);color:var(--forest)}
-.badge-suspended{background:#F3E3DF;color:var(--rust)}
-
-/* ---------- empty state ---------- */
-.empty-state{padding:52px 20px;text-align:center;border:1px dashed var(--line);border-radius:var(--radius-m)}
-.empty-state h3{color:var(--ink-soft)}
-
-/* ---------- about / footer ---------- */
-.about-grid{display:grid;gap:24px}
-@media(min-width:820px){.about-grid{grid-template-columns:1fr 1fr}}
-footer.site-footer{background:var(--forest);color:#EAF2ED;padding:48px 0 28px}
-footer.site-footer a{color:#EAF2ED;opacity:.85}
-footer.site-footer a:hover{opacity:1}
-.footer-grid{display:grid;gap:24px}
-@media(min-width:760px){.footer-grid{grid-template-columns:1.3fr 1fr 1fr 1fr}}
-.footer-grid h4{color:#fff;font-family:var(--sans);font-size:.85rem;letter-spacing:.04em;margin-bottom:10px}
-.footer-grid ul{list-style:none;padding:0;margin:0}
-.footer-grid li{margin-bottom:8px;font-size:.88rem}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.15);margin-top:32px;padding-top:18px;font-size:.8rem;opacity:.75}
-
-/* ---------- forms ---------- */
-.form-grid{display:grid;gap:14px}
-@media(min-width:700px){.form-grid.cols-2{grid-template-columns:1fr 1fr}}
-label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:var(--ink)}
-label .req{color:var(--rust)}
-input[type=text],input[type=email],input[type=password],input[type=number],
-input[type=date],input[type=url],input[type=tel],select,textarea{
-  width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:var(--radius-s);
-  font-size:.95rem;font-family:inherit;background:var(--paper);color:var(--ink);
-}
-textarea{min-height:110px;resize:vertical}
-.field-error{color:var(--rust);font-size:.78rem;margin-top:4px;display:none}
-.field-error.show{display:block}
-.checkbox-row{display:flex;flex-wrap:wrap;gap:10px}
-.checkbox-pill{display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:.85rem}
-.help-text{font-size:.78rem;color:var(--ink-soft);margin-top:-6px}
-
-/* ---------- modal ---------- */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(18,33,27,.55);z-index:100;
-  display:none;align-items:flex-end;justify-content:center;padding:0;
-}
-.modal-overlay.open{display:flex}
-@media(min-width:720px){.modal-overlay{align-items:center;padding:20px}}
-.modal-box{
-  background:var(--paper);width:100%;max-width:620px;max-height:92vh;overflow-y:auto;
-  border-radius:16px 16px 0 0;padding:24px;position:relative;
-}
-@media(min-width:720px){.modal-box{border-radius:var(--radius-m)}}
-.modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.3rem;padding:6px 10px}
-.modal-title{margin-bottom:4px}
-
-/* ---------- toasts ---------- */
-#toast-stack{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;width:min(92vw,380px)}
-.toast{
-  background:var(--forest);color:#fff;padding:12px 16px;border-radius:var(--radius-s);font-size:.88rem;
-  box-shadow:0 8px 24px rgba(0,0,0,.2);
-}
-.toast.error{background:var(--rust)}
-.toast.warn{background:var(--amber)}
-
-/* ---------- demo mode banner ---------- */
-.mode-banner{background:var(--amber);color:#fff;text-align:center;font-size:.8rem;padding:6px 12px}
-.mode-banner.live{background:var(--forest)}
-
-/* ---------- admin/panel layout ---------- */
-.panel-shell{display:flex;min-height:100vh}
-.panel-sidebar{
-  display:none;width:230px;flex-shrink:0;background:var(--forest);color:#EAF2ED;
-  padding:20px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;
-}
-.panel-sidebar .brand-mark{color:#fff}
-.panel-sidebar .brand-mark small{color:#BFE0CE}
-.panel-nav{margin-top:24px;display:flex;flex-direction:column;gap:2px}
-.panel-nav button, .panel-nav a{
-  background:none;border:none;color:#DCEBE2;text-align:left;padding:11px 12px;border-radius:var(--radius-s);
-  font-size:.9rem;font-weight:600;
-}
-.panel-nav button.active,.panel-nav a.active{background:rgba(255,255,255,.12);color:#fff}
-.panel-nav button:hover,.panel-nav a:hover{background:rgba(255,255,255,.08)}
-@media(min-width:960px){.panel-sidebar{display:block}}
-.panel-sidebar.open-mobile{display:block;position:fixed;inset:0 20% 0 0;z-index:80;height:100vh}
-.panel-main{flex:1;min-width:0;padding:20px}
-@media(min-width:960px){.panel-main{padding:32px}}
-.panel-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.panel-drawer-btn{background:var(--forest);color:#fff;border:none;padding:10px 14px;border-radius:var(--radius-s)}
-@media(min-width:960px){.panel-drawer-btn{display:none}}
-
-.stat-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr)}
-@media(min-width:640px){.stat-grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:960px){.stat-grid{grid-template-columns:repeat(6,1fr)}}
-.stat-card{border:1px solid var(--line);border-radius:var(--radius-m);padding:16px;background:var(--paper)}
-.stat-card .num{font-family:var(--serif);font-size:1.8rem;color:var(--forest)}
-.stat-card .lbl{font-size:.78rem;color:var(--ink-soft)}
-
-/* responsive table -> stacked cards */
-.data-table{width:100%;border-collapse:collapse}
-.data-table th{text-align:left;font-size:.78rem;color:var(--ink-soft);padding:8px;border-bottom:1px solid var(--line)}
-.data-table td{padding:10px 8px;border-bottom:1px solid var(--line);font-size:.88rem;vertical-align:top}
-@media(max-width:800px){
-  .data-table thead{display:none}
-  .data-table, .data-table tbody, .data-table tr, .data-table td{display:block;width:100%}
-  .data-table tr{border:1px solid var(--line);border-radius:var(--radius-s);margin-bottom:12px;padding:8px;background:var(--paper)}
-  .data-table td{border-bottom:none;display:flex;justify-content:space-between;gap:10px;padding:6px 4px}
-  .data-table td::before{content:attr(data-label);font-weight:600;color:var(--ink-soft);flex-shrink:0}
-}
-.row-actions{display:flex;flex-wrap:wrap;gap:6px}
-
-.auth-screen{max-width:420px;margin:60px auto;padding:0 20px}
-.tab-row{display:flex;gap:6px;margin-bottom:18px;border:1px solid var(--line);border-radius:var(--radius-s);padding:4px}
-.tab-row button{flex:1;background:none;border:none;padding:9px;border-radius:6px;font-weight:600;font-size:.85rem}
-.tab-row button.active{background:var(--forest);color:#fff}
-
-.skeleton{background:linear-gradient(90deg,var(--paper-tint) 25%,#eef3ef 37%,var(--paper-tint) 63%);background-size:400% 100%;animation:sk 1.4s ease infinite;border-radius:var(--radius-s)}
-@keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
-
-.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
-</style>
+  <link rel="stylesheet" href="./css/global.css">
+  <link rel="stylesheet" href="./css/public.css">
 </head>
+
 <body>
 
-<div class="mode-banner" id="mode-banner">Checking connection…</div>
+  <!-- =========================
+       PUBLIC WEBSITE
+  ========================== -->
 
-<header class="site-header">
-  <div class="container nav-row">
-    <a href="index.html" class="brand-mark">CollabFlow<small>Brand × Creator Collaboration</small></a>
-    <nav class="nav-links">
-      <a href="#brand-hub">Brand Hub</a>
-      <a href="#creator-hub">Creator Hub</a>
-      <a href="#how-it-works">How it works</a>
-      <a href="#about">About</a>
-    </nav>
-    <div class="nav-actions" id="nav-auth-slot"></div>
-    <button class="hamburger" onclick="CF.toggleDrawer()" aria-label="Open menu"><span></span><span></span><span></span></button>
-  </div>
-</header>
+  <div id="app">
 
-<div class="mobile-drawer" id="mobile-drawer">
-  <div class="drawer-top">
-    <span class="brand-mark">CollabFlow</span>
-    <button class="modal-close" style="position:static" onclick="CF.toggleDrawer()" aria-label="Close menu">✕</button>
-  </div>
-  <a href="#brand-hub" onclick="CF.toggleDrawer()">Brand Hub</a>
-  <a href="#creator-hub" onclick="CF.toggleDrawer()">Creator Hub</a>
-  <a href="#how-it-works" onclick="CF.toggleDrawer()">How it works</a>
-  <a href="#about" onclick="CF.toggleDrawer()">About</a>
-  <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px" id="drawer-auth-slot"></div>
-</div>
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="container header-inner">
 
-<!-- ============== HERO ============== -->
-<section class="hero">
-  <div class="container hero-grid">
-    <div>
-      <p class="eyebrow">Agency-managed collaborations</p>
-      <h1 id="hero-heading">Where brands and creators actually get things done</h1>
-      <p id="hero-description" style="font-size:1.05rem;max-width:46ch">CollabFlow is the managed workspace behind every jersey drop, product post and campaign — brands post what they need, creators apply, we coordinate the rest.</p>
-      <div class="hero-cta-row">
-        <a href="#brand-hub" class="btn btn-primary">Explore Brand Hub</a>
-        <a href="#creator-hub" class="btn btn-secondary">Explore Creator Hub</a>
+        <a href="./" class="brand-logo" aria-label="CollabFlow Home">
+          COLLABFLOW
+        </a>
+
+        <button
+          id="mobileMenuButton"
+          class="mobile-menu-button"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+        >
+          ☰
+        </button>
+
+        <nav id="mainNavigation" class="main-navigation">
+
+          <a href="#home">Home</a>
+          <a href="#brand-hub">Brand Hub</a>
+          <a href="#creator-hub">Creator Hub</a>
+          <a href="#about">About</a>
+
+          <a href="./brands/" class="panel-link">
+            Brands
+          </a>
+
+          <a href="./creator/" class="panel-link">
+            Creators
+          </a>
+
+        </nav>
+
       </div>
-    </div>
-    <div class="deal-card">
-      <span class="deal-stamp">SAMPLE DEAL</span>
-      <h3 style="margin-bottom:14px">Collaboration overview</h3>
-      <div class="deal-row"><span class="deal-label">Brand</span><span>Ridgeline Sportswear</span></div>
-      <div class="deal-row"><span class="deal-label">Creator</span><span>Fashion · 40K+ followers</span></div>
-      <div class="deal-row"><span class="deal-label">Deliverable</span><span>1 Reel + 2 Stories</span></div>
-      <div class="deal-row"><span class="deal-label">Coordinated by</span><span>CollabFlow</span></div>
-    </div>
-  </div>
-</section>
+    </header>
 
-<!-- ============== HOW IT WORKS ============== -->
-<section class="section" id="how-it-works">
-  <div class="container">
-    <p class="eyebrow">How it works</p>
-    <h2>Two sides, one coordinated workflow</h2>
-    <div class="flow-cols" style="margin-top:28px">
-      <div class="flow-col">
-        <h3>For brands</h3>
-        <ol class="flow-steps">
-          <li>Contact CollabFlow and share your campaign requirements</li>
-          <li>CollabFlow reviews and adds your campaign</li>
-          <li>Campaign is approved and published to the Brand Hub</li>
-          <li>Matching creators apply through the platform</li>
-          <li>CollabFlow coordinates the collaboration</li>
-        </ol>
-      </div>
-      <div class="flow-col">
-        <h3>For creators</h3>
-        <ol class="flow-steps">
-          <li>Contact CollabFlow and share your details and rates</li>
-          <li>CollabFlow reviews and approves your profile</li>
-          <li>Profile is published to the Creator Hub</li>
-          <li>You view and apply to suitable campaigns</li>
-          <li>CollabFlow coordinates the collaboration</li>
-        </ol>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ============== RULES ============== -->
-<section class="section" id="rules">
-  <div class="container">
-    <p class="eyebrow">Guidelines</p>
-    <h2>How we keep collaborations working</h2>
-    <div class="rules-list" id="rules-list" style="margin-top:24px"></div>
-  </div>
-</section>
+    <main>
 
-<!-- ============== BRAND HUB ============== -->
-<section class="section" id="brand-hub">
-  <div class="container">
-    <p class="eyebrow">Brand Hub</p>
-    <h2 id="brandhub-heading">Live campaigns</h2>
-    <p id="brandhub-desc">Campaigns currently approved and open to creators.</p>
-    <div class="toolbar">
-      <input class="search-input" id="campaign-search" placeholder="Search by brand, campaign or content type…">
-      <button class="btn btn-ghost" onclick="CF.openModal('campaign-filter-modal')">Filters</button>
-    </div>
-    <div id="campaign-grid" class="grid-cards"></div>
-  </div>
-</section>
+      <!-- HERO -->
+      <section id="home" class="hero-section">
 
-<!-- ============== CREATOR HUB ============== -->
-<section class="section" id="creator-hub">
-  <div class="container">
-    <p class="eyebrow">Creator Hub</p>
-    <h2 id="creatorhub-heading">Approved creators</h2>
-    <p id="creatorhub-desc">Creators reviewed and ready to collaborate.</p>
-    <div class="toolbar">
-      <input class="search-input" id="creator-search" placeholder="Search by name, category or platform…">
-      <select id="creator-sort" class="search-input" style="flex:0 0 190px">
-        <option value="recent">Recently added</option>
-        <option value="followers">Followers</option>
-        <option value="rate-low">Lowest starting rate</option>
-        <option value="rate-high">Highest starting rate</option>
-      </select>
-      <button class="btn btn-ghost" onclick="CF.openModal('creator-filter-modal')">Filters</button>
-    </div>
-    <div id="creator-grid" class="grid-cards"></div>
-  </div>
-</section>
+        <div class="container hero-grid">
 
-<!-- ============== ABOUT ============== -->
-<section class="section" id="about">
-  <div class="container about-grid">
-    <div>
-      <p class="eyebrow">About CollabFlow</p>
-      <h2 id="about-heading">One team coordinating both sides of the deal</h2>
-      <p id="about-description">CollabFlow is an agency-managed platform, not an open marketplace. Every brand and every creator is reviewed before anything goes public, and every collaboration is coordinated by our team from first message to delivery.</p>
-    </div>
-    <div class="rule-left">
-      <p><strong>For brands:</strong> a reviewed pool of creators, without managing outreach yourself.</p>
-      <p><strong>For creators:</strong> real campaign briefs, with rates and requirements agreed up front.</p>
-    </div>
-  </div>
-</section>
+          <div class="hero-content">
 
-<!-- ============== FOOTER ============== -->
-<footer class="site-footer">
-  <div class="container footer-grid">
-    <div>
-      <span class="brand-mark" style="color:#fff">CollabFlow</span>
-      <p style="color:#EAF2ED;opacity:.85;margin-top:10px;max-width:32ch">The managed workspace connecting brands and creators.</p>
-    </div>
-    <div>
-      <h4>Platform</h4>
-      <ul><li><a href="#brand-hub">Brand Hub</a></li><li><a href="#creator-hub">Creator Hub</a></li><li><a href="#about">About Us</a></li></ul>
-    </div>
-    <div>
-      <h4>Legal</h4>
-      <ul>
-        <li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-privacy')">Privacy Policy</button></li>
-        <li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-tos')">Terms of Service</button></li>
-        <li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-rules')">Collaboration Rules</button></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Support</h4>
-      <ul><li><button class="drawer-link" style="color:#EAF2ED;padding:0" onclick="CF.openModal('legal-contact')">Contact</button></li></ul>
-    </div>
-  </div>
-  <div class="container footer-bottom">© 2026 CollabFlow. All rights reserved.</div>
-</footer>
+            <span class="eyebrow">
+              COLLABORATION PLATFORM
+            </span>
 
-<!-- ============== AUTH MODAL ============== -->
-<div class="modal-overlay" id="auth-modal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="CF.closeModal('auth-modal')" aria-label="Close">✕</button>
-    <div class="tab-row">
-      <button id="tab-login" class="active" onclick="switchAuthTab('login')">Log in</button>
-      <button id="tab-signup" onclick="switchAuthTab('signup')">Get started</button>
-    </div>
+            <h1>
+              Connect Brands.
+              <br>
+              Create Together.
+            </h1>
 
-    <form id="login-form" class="form-grid">
-      <div><label>Email</label><input type="email" id="login-email" required></div>
-      <div><label>Password</label><input type="password" id="login-password" required></div>
-      <button class="btn btn-primary btn-block" type="submit">Log in</button>
-    </form>
+            <p>
+              CollabFlow connects brands and creators through
+              campaigns, collaborations and meaningful partnerships.
+            </p>
 
-    <form id="signup-form" class="form-grid" style="display:none">
-      <div>
-        <label>I am a</label>
-        <div class="checkbox-row">
-          <label class="checkbox-pill"><input type="radio" name="signup-role" value="BRAND" checked> Brand</label>
-          <label class="checkbox-pill"><input type="radio" name="signup-role" value="CREATOR"> Creator</label>
+            <div class="hero-actions">
+
+              <a href="#brand-hub" class="button button-primary">
+                Explore Campaigns
+              </a>
+
+              <a href="#creator-hub" class="button button-secondary">
+                Discover Creators
+              </a>
+
+            </div>
+
+          </div>
+
+
+          <div class="hero-visual">
+
+            <div class="hero-placeholder">
+              <span>COLLABFLOW</span>
+            </div>
+
+          </div>
+
         </div>
+
+      </section>
+
+
+      <!-- HOW IT WORKS -->
+      <section id="how-it-works" class="section">
+
+        <div class="container">
+
+          <div class="section-heading">
+            <span class="eyebrow">HOW IT WORKS</span>
+
+            <h2>
+              One platform. Two sides. Real collaborations.
+            </h2>
+
+            <p>
+              Brands create campaigns and creators discover
+              opportunities that match their content and audience.
+            </p>
+          </div>
+
+
+          <div class="info-grid">
+
+            <article class="info-card">
+
+              <span class="card-number">01</span>
+
+              <h3>Brands</h3>
+
+              <p>
+                Create campaigns, define requirements, budgets,
+                deliverables and discover suitable creators.
+              </p>
+
+            </article>
+
+
+            <article class="info-card">
+
+              <span class="card-number">02</span>
+
+              <h3>Creators</h3>
+
+              <p>
+                Build your profile, showcase your rates and
+                discover campaigns that match your preferences.
+              </p>
+
+            </article>
+
+
+            <article class="info-card">
+
+              <span class="card-number">03</span>
+
+              <h3>Collaborate</h3>
+
+              <p>
+                Applications, collaboration requests and
+                notifications stay connected through the platform.
+              </p>
+
+            </article>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- RULES -->
+      <section id="rules" class="section section-soft">
+
+        <div class="container">
+
+          <div class="section-heading">
+
+            <span class="eyebrow">GUIDELINES</span>
+
+            <h2>
+              Built for transparent collaborations.
+            </h2>
+
+            <p>
+              Campaigns, creator profiles and collaborations
+              are managed through structured workflows.
+            </p>
+
+          </div>
+
+
+          <div class="rules-grid">
+
+            <div class="rule-item">
+              <strong>Clear Requirements</strong>
+              <span>
+                Campaign expectations should be clearly defined.
+              </span>
+            </div>
+
+            <div class="rule-item">
+              <strong>Authentic Profiles</strong>
+              <span>
+                Creator and brand information should remain accurate.
+              </span>
+            </div>
+
+            <div class="rule-item">
+              <strong>Respectful Collaboration</strong>
+              <span>
+                Both sides should communicate professionally.
+              </span>
+            </div>
+
+            <div class="rule-item">
+              <strong>Platform Moderation</strong>
+              <span>
+                Approved content can be managed through CollabFlow.
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- BRAND HUB -->
+      <section id="brand-hub" class="hub-section">
+
+        <div class="container">
+
+          <div class="hub-card">
+
+            <div class="hub-image hub-image-brand">
+              <span>BRAND HUB</span>
+            </div>
+
+            <div class="hub-content">
+
+              <span class="eyebrow">
+                FOR CREATORS
+              </span>
+
+              <h2>BRAND HUB</h2>
+
+              <p>
+                Discover published brand campaigns,
+                requirements, budgets and collaboration opportunities.
+              </p>
+
+              <a href="./brands/" class="button button-primary">
+                Explore Brand Hub
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CREATOR HUB -->
+      <section id="creator-hub" class="hub-section">
+
+        <div class="container">
+
+          <div class="hub-card hub-card-reverse">
+
+            <div class="hub-image hub-image-creator">
+              <span>CREATOR HUB</span>
+            </div>
+
+            <div class="hub-content">
+
+              <span class="eyebrow">
+                FOR BRANDS
+              </span>
+
+              <h2>CREATOR HUB</h2>
+
+              <p>
+                Discover published creators, their platforms,
+                categories, audience information and collaboration rates.
+              </p>
+
+              <a href="./creator/" class="button button-primary">
+                Explore Creator Hub
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ABOUT -->
+      <section id="about" class="section">
+
+        <div class="container about-content">
+
+          <div class="section-heading">
+
+            <span class="eyebrow">ABOUT COLLABFLOW</span>
+
+            <h2>
+              Making brand-creator collaboration simpler.
+            </h2>
+
+            <p>
+              CollabFlow is designed to bring campaigns,
+              creators, applications and collaborations into
+              one organized platform.
+            </p>
+
+          </div>
+
+
+          <div class="about-grid">
+
+            <div>
+              <h3>For Brands</h3>
+
+              <p>
+                Find creators, launch campaigns and manage
+                collaboration workflows from one place.
+              </p>
+            </div>
+
+            <div>
+              <h3>For Creators</h3>
+
+              <p>
+                Showcase your work, discover campaigns and
+                manage collaboration opportunities.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+
+      <div class="container footer-grid">
+
+        <div>
+
+          <div class="footer-logo">
+            COLLABFLOW
+          </div>
+
+          <p>
+            Connecting brands with creators.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>Platform</h3>
+
+          <a href="#brand-hub">
+            Brand Hub
+          </a>
+
+          <a href="#creator-hub">
+            Creator Hub
+          </a>
+
+        </div>
+
+
+        <div>
+
+          <h3>Information</h3>
+
+          <a href="#rules">
+            Guidelines
+          </a>
+
+          <a href="#about">
+            About
+          </a>
+
+        </div>
+
+
+        <div>
+
+          <h3>Panels</h3>
+
+          <a href="./admin/">
+            Admin
+          </a>
+
+          <a href="./brands/">
+            Brands
+          </a>
+
+          <a href="./creator/">
+            Creator
+          </a>
+
+        </div>
+
       </div>
-      <div><label>Name <span id="signup-name-label">(brand name)</span></label><input type="text" id="signup-name" required></div>
-      <div id="signup-username-wrap" style="display:none"><label>Username / handle</label><input type="text" id="signup-username"></div>
-      <div><label>Email</label><input type="email" id="signup-email" required></div>
-      <div><label>Password</label><input type="password" id="signup-password" minlength="6" required></div>
-      <p class="help-text">Your account starts as pending until CollabFlow reviews and approves it.</p>
-      <button class="btn btn-primary btn-block" type="submit">Create account</button>
-    </form>
+
+
+      <div class="container footer-bottom">
+
+        <span>
+          © <span id="currentYear"></span> CollabFlow
+        </span>
+
+        <span>
+          Built for brands & creators.
+        </span>
+
+      </div>
+
+    </footer>
+
   </div>
-</div>
 
-<!-- ============== CAMPAIGN FILTER MODAL ============== -->
-<div class="modal-overlay" id="campaign-filter-modal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="CF.closeModal('campaign-filter-modal')" aria-label="Close">✕</button>
-    <h3 class="modal-title">Filter campaigns</h3>
-    <div class="form-grid">
-      <div><label>Content type</label>
-        <div class="checkbox-row" id="filter-content-type"></div>
-      </div>
-      <div><label>Platform</label>
-        <div class="checkbox-row" id="filter-platform"></div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:6px">
-        <button class="btn btn-ghost btn-block" onclick="clearCampaignFilters()">Clear filters</button>
-        <button class="btn btn-primary btn-block" onclick="applyCampaignFilters()">Apply filters</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- ============== CREATOR FILTER MODAL ============== -->
-<div class="modal-overlay" id="creator-filter-modal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="CF.closeModal('creator-filter-modal')" aria-label="Close">✕</button>
-    <h3 class="modal-title">Filter creators</h3>
-    <div class="form-grid">
-      <div><label>Category</label>
-        <div class="checkbox-row" id="filter-category"></div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:6px">
-        <button class="btn btn-ghost btn-block" onclick="clearCreatorFilters()">Clear filters</button>
-        <button class="btn btn-primary btn-block" onclick="applyCreatorFilters()">Apply filters</button>
-      </div>
-    </div>
-  </div>
-</div>
+  <!-- PUBLIC JAVASCRIPT -->
+  <script src="./js/public.js"></script>
 
-<!-- ============== CAMPAIGN DETAIL MODAL ============== -->
-<div class="modal-overlay" id="campaign-detail-modal">
-  <div class="modal-box" id="campaign-detail-body"></div>
-</div>
-
-<!-- ============== CREATOR PROFILE MODAL ============== -->
-<div class="modal-overlay" id="creator-profile-modal">
-  <div class="modal-box" id="creator-profile-body"></div>
-</div>
-
-<!-- ============== LEGAL MODALS ============== -->
-<div class="modal-overlay" id="legal-privacy"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-privacy')">✕</button><h3>Privacy Policy</h3><p class="help-text">Draft placeholder — pending final legal review. CollabFlow collects only the information needed to run campaigns and profiles, and never shares private contact details publicly.</p></div></div>
-<div class="modal-overlay" id="legal-tos"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-tos')">✕</button><h3>Terms of Service</h3><p class="help-text">Draft placeholder — pending final legal review. Use of CollabFlow is subject to the collaboration guidelines shown on this site.</p></div></div>
-<div class="modal-overlay" id="legal-rules"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-rules')">✕</button><h3>Collaboration Rules</h3><div id="legal-rules-list"></div></div></div>
-<div class="modal-overlay" id="legal-contact"><div class="modal-box"><button class="modal-close" onclick="CF.closeModal('legal-contact')">✕</button><h3>Contact CollabFlow</h3><p class="help-text">Reach out through the details CollabFlow shares with approved brands and creators directly.</p></div></div>
-
-<!-- ============== FIREBASE SDKS (compat) ============== -->
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-storage-compat.js"></script>
-<script src="js/firebase-init.js"></script>
-<script src="js/shared.js"></script>
-
-<script>
-let ALL_CAMPAIGNS = [], ALL_CREATORS = [];
-let campaignFilters = { contentTypes: [], platforms: [] };
-let creatorFilters = { categories: [] };
-const CONTENT_TYPES = ["Reel", "Post", "Story", "Video", "UGC", "Other"];
-const PLATFORMS = ["Instagram", "YouTube", "Other"];
-const CATEGORIES = ["Fashion", "Lifestyle", "Fitness", "Gaming", "Beauty", "Food", "Travel", "Tech", "Entertainment", "Other"];
-
-function switchAuthTab(tab) {
-  document.getElementById("tab-login").classList.toggle("active", tab === "login");
-  document.getElementById("tab-signup").classList.toggle("active", tab === "signup");
-  document.getElementById("login-form").style.display = tab === "login" ? "grid" : "none";
-  document.getElementById("signup-form").style.display = tab === "signup" ? "grid" : "none";
-}
-
-document.querySelectorAll('input[name="signup-role"]').forEach((r) => {
-  r.addEventListener("change", (e) => {
-    const isCreator = e.target.value === "CREATOR";
-    document.getElementById("signup-username-wrap").style.display = isCreator ? "block" : "none";
-    document.getElementById("signup-name-label").textContent = isCreator ? "(creator name)" : "(brand name)";
-  });
-});
-
-document.getElementById("login-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  try {
-    await CF.signIn(document.getElementById("login-email").value, document.getElementById("login-password").value);
-    CF.toast("Logged in.");
-    CF.closeModal("auth-modal");
-    setTimeout(() => CF.renderAuthNav(), 600);
-  } catch (err) { CF.toast(err.message, "error"); }
-});
-
-document.getElementById("signup-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const role = document.querySelector('input[name="signup-role"]:checked').value;
-  try {
-    await CF.signUp(
-      document.getElementById("signup-email").value,
-      document.getElementById("signup-password").value,
-      role,
-      { name: document.getElementById("signup-name").value, username: document.getElementById("signup-username").value }
-    );
-    CF.toast("Account created — pending CollabFlow review.");
-    CF.closeModal("auth-modal");
-  } catch (err) { CF.toast(err.message, "error"); }
-});
-
-function renderChecklist(containerId, values, groupKey) {
-  const el = document.getElementById(containerId);
-  el.innerHTML = values.map((v) =>
-    `<label class="checkbox-pill"><input type="checkbox" value="${v}" data-group="${groupKey}"> ${v}</label>`
-  ).join("");
-}
-renderChecklist("filter-content-type", CONTENT_TYPES, "ct");
-renderChecklist("filter-platform", PLATFORMS, "pf");
-renderChecklist("filter-category", CATEGORIES, "cat");
-
-function applyCampaignFilters() {
-  campaignFilters.contentTypes = [...document.querySelectorAll('[data-group="ct"]:checked')].map(c => c.value);
-  campaignFilters.platforms = [...document.querySelectorAll('[data-group="pf"]:checked')].map(c => c.value);
-  CF.closeModal("campaign-filter-modal");
-  renderCampaigns();
-}
-function clearCampaignFilters() {
-  document.querySelectorAll('[data-group="ct"],[data-group="pf"]').forEach(c => c.checked = false);
-  campaignFilters = { contentTypes: [], platforms: [] };
-  renderCampaigns();
-}
-function applyCreatorFilters() {
-  creatorFilters.categories = [...document.querySelectorAll('[data-group="cat"]:checked')].map(c => c.value);
-  CF.closeModal("creator-filter-modal");
-  renderCreators();
-}
-function clearCreatorFilters() {
-  document.querySelectorAll('[data-group="cat"]').forEach(c => c.checked = false);
-  creatorFilters = { categories: [] };
-  renderCreators();
-}
-
-function campaignCardHtml(c) {
-  const types = (c.contentTypes || []).join(", ");
-  return `<div class="campaign-card">
-    <div class="card-media"><img src="${c.coverImage || 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=600&auto=format&fit=crop'}" alt="${CF.escapeHtml(c.campaignName)} cover"></div>
-    <div class="card-body">
-      <div class="card-meta">${c.isDemo ? '<span class="demo-tag">DEMO</span>' : ""}<span>${CF.escapeHtml(types || "—")}</span></div>
-      <div class="card-title">${CF.escapeHtml(c.campaignName || "Untitled campaign")}</div>
-      <div class="card-meta"><span>${CF.escapeHtml(c.brandName || "")}</span><span>${CF.formatINR(c.budget)}</span></div>
-      <p class="card-desc">${CF.escapeHtml((c.description || "").slice(0, 90))}${(c.description || "").length > 90 ? "…" : ""}</p>
-      <div class="card-foot"><span class="help-text">Deadline: ${c.deadline || "—"}</span><button class="btn btn-sm btn-primary" onclick="openCampaignDetail('${c.id}')">View details</button></div>
-    </div>
-  </div>`;
-}
-
-function renderCampaigns() {
-  const q = (document.getElementById("campaign-search").value || "").toLowerCase();
-  let rows = ALL_CAMPAIGNS.filter(c => c.publicStatus);
-  if (q) rows = rows.filter(c => [c.brandName, c.campaignName, ...(c.contentTypes || []), ...(c.platforms || [])].join(" ").toLowerCase().includes(q));
-  if (campaignFilters.contentTypes.length) rows = rows.filter(c => (c.contentTypes || []).some(t => campaignFilters.contentTypes.includes(t)));
-  if (campaignFilters.platforms.length) rows = rows.filter(c => (c.platforms || []).some(p => campaignFilters.platforms.includes(p)));
-  const grid = document.getElementById("campaign-grid");
-  if (!rows.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>No active campaigns right now</h3><p>New opportunities will appear here once CollabFlow approves them.</p></div>`; return; }
-  grid.innerHTML = rows.map(campaignCardHtml).join("");
-}
-
-function openCampaignDetail(id) {
-  const c = ALL_CAMPAIGNS.find(x => x.id === id);
-  if (!c) return;
-  const closed = c.deadline && new Date(c.deadline) < new Date();
-  document.getElementById("campaign-detail-body").innerHTML = `
-    <button class="modal-close" onclick="CF.closeModal('campaign-detail-modal')">✕</button>
-    ${c.isDemo ? '<span class="demo-tag">DEMO CONTENT</span>' : ""}
-    <h3 class="modal-title" style="margin-top:8px">${CF.escapeHtml(c.campaignName)}</h3>
-    <p class="help-text">${CF.escapeHtml(c.brandName)}</p>
-    <img src="${c.coverImage}" style="border-radius:8px;margin:12px 0;max-height:220px;object-fit:cover;width:100%" alt="">
-    <p>${CF.escapeHtml(c.description || "")}</p>
-    <div class="card-meta" style="margin-bottom:12px">
-      <span>Budget: ${CF.formatINR(c.budget)}</span>
-      <span>Platforms: ${(c.platforms || []).join(", ") || "—"}</span>
-      <span>Content: ${(c.contentTypes || []).join(", ") || "—"}</span>
-      <span>Deadline: ${c.deadline || "—"}</span>
-      <span>Location: ${c.location || "—"}</span>
-    </div>
-    <p><strong>Requirements:</strong> ${CF.escapeHtml(c.requirements || "—")}</p>
-    ${closed ? '<p class="badge badge-unpublished">CAMPAIGN CLOSED</p>' :
-      (CF.currentUser && CF.currentUser.role === "CREATOR"
-        ? `<button class="btn btn-primary btn-block" onclick="openApplicationForm('${c.id}')">Apply for campaign</button>`
-        : `<button class="btn btn-primary btn-block" onclick="CF.closeModal('campaign-detail-modal');CF.openModal('auth-modal')">Log in as a creator to apply</button>`)}
-  `;
-  CF.openModal("campaign-detail-modal");
-}
-
-function openApplicationForm(campaignId) {
-  const c = ALL_CAMPAIGNS.find(x => x.id === campaignId);
-  document.getElementById("campaign-detail-body").innerHTML = `
-    <button class="modal-close" onclick="CF.closeModal('campaign-detail-modal')">✕</button>
-    <h3 class="modal-title">Apply — ${CF.escapeHtml(c.campaignName)}</h3>
-    <form class="form-grid" id="apply-form">
-      <div><label>Selected platform</label><select id="app-platform">${(c.platforms || PLATFORMS).map(p => `<option>${p}</option>`).join("")}</select></div>
-      <div><label>Profile / social link</label><input type="url" id="app-profile-link" required></div>
-      <div><label>Short introduction</label><textarea id="app-intro" required></textarea></div>
-      <div><label>Proposed deliverables</label><input type="text" id="app-deliverables" placeholder="e.g. 1 Reel + 2 Stories"></div>
-      <div><label>Proposed rate (₹)</label><input type="number" id="app-rate"></div>
-      <div><label>Additional note</label><textarea id="app-note"></textarea></div>
-      <button class="btn btn-primary btn-block" type="submit">Submit application</button>
-      <p class="help-text">CollabFlow reviews applications — your private contact details are never shared automatically.</p>
-    </form>`;
-  document.getElementById("apply-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      const existing = await CF.getCollection("applications", { where: [["campaignId", "==", campaignId], ["creatorId", "==", CF.currentUser.uid], ["status", "in", ["SUBMITTED", "UNDER_REVIEW", "SHORTLISTED"]]] });
-      if (existing.length && !CF.DEMO_MODE) { CF.toast("You already have an active application for this campaign.", "warn"); return; }
-      await CF.addDoc("applications", {
-        campaignId, brandId: c.brandId || null, creatorId: CF.currentUser.uid,
-        selectedPlatform: document.getElementById("app-platform").value,
-        profileLink: document.getElementById("app-profile-link").value,
-        introduction: document.getElementById("app-intro").value,
-        proposedDeliverables: document.getElementById("app-deliverables").value,
-        proposedRate: document.getElementById("app-rate").value,
-        additionalNote: document.getElementById("app-note").value,
-        status: "SUBMITTED"
-      });
-      CF.toast("Application submitted to CollabFlow.");
-      CF.closeModal("campaign-detail-modal");
-    } catch (err) { CF.toast(err.message, "error"); }
-  });
-}
-
-function creatorCardHtml(c) {
-  const startRate = c.rates ? Math.min(...Object.values(c.rates).filter(v => v > 0)) : null;
-  return `<div class="creator-card">
-    <div class="card-media"><img src="${c.profileImage || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop'}" alt="${CF.escapeHtml(c.name)}"></div>
-    <div class="card-body">
-      <div class="card-meta">${c.isDemo ? '<span class="demo-tag">DEMO</span>' : ""}<span>${CF.escapeHtml(c.category || "")}</span></div>
-      <div class="card-title">${CF.escapeHtml(c.name)}</div>
-      <div class="card-meta"><span>${CF.escapeHtml(c.username || "")}</span><span>${(c.followers || 0).toLocaleString("en-IN")} followers</span></div>
-      <p class="card-desc">${CF.escapeHtml((c.bio || "").slice(0, 80))}</p>
-      <div class="card-foot"><span class="help-text">From ${CF.formatINR(startRate)}</span><button class="btn btn-sm btn-primary" onclick="openCreatorProfile('${c.id}')">View profile</button></div>
-    </div>
-  </div>`;
-}
-
-function renderCreators() {
-  const q = (document.getElementById("creator-search").value || "").toLowerCase();
-  const sort = document.getElementById("creator-sort").value;
-  let rows = ALL_CREATORS.filter(c => c.publicStatus);
-  if (q) rows = rows.filter(c => [c.name, c.username, c.category, ...(c.platforms || [])].join(" ").toLowerCase().includes(q));
-  if (creatorFilters.categories.length) rows = rows.filter(c => creatorFilters.categories.includes(c.category));
-  const minRate = c => c.rates ? Math.min(...Object.values(c.rates).filter(v => v > 0)) : 0;
-  if (sort === "followers") rows.sort((a, b) => (b.followers || 0) - (a.followers || 0));
-  if (sort === "rate-low") rows.sort((a, b) => minRate(a) - minRate(b));
-  if (sort === "rate-high") rows.sort((a, b) => minRate(b) - minRate(a));
-  const grid = document.getElementById("creator-grid");
-  if (!rows.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><h3>No creators found</h3><p>Try another search or adjust your filters.</p></div>`; return; }
-  grid.innerHTML = rows.map(creatorCardHtml).join("");
-}
-
-function openCreatorProfile(id) {
-  const c = ALL_CREATORS.find(x => x.id === id);
-  if (!c) return;
-  const rateRows = c.rates ? Object.entries(c.rates).filter(([, v]) => v > 0).map(([k, v]) => `<div class="deal-row"><span class="deal-label">${k}</span><span>${CF.formatINR(v)}</span></div>`).join("") : "";
-  document.getElementById("creator-profile-body").innerHTML = `
-    <button class="modal-close" onclick="CF.closeModal('creator-profile-modal')">✕</button>
-    ${c.isDemo ? '<span class="demo-tag">DEMO CONTENT</span>' : ""}
-    <h3 class="modal-title" style="margin-top:8px">${CF.escapeHtml(c.name)}</h3>
-    <p class="help-text">${CF.escapeHtml(c.username || "")} · ${CF.escapeHtml(c.category || "")}</p>
-    <img src="${c.profileImage}" style="border-radius:8px;margin:12px 0;max-height:220px;object-fit:cover;width:100%" alt="">
-    <p>${CF.escapeHtml(c.bio || "")}</p>
-    <div class="deal-card" style="margin-bottom:14px">${rateRows || '<p class="help-text">Rates shared on request.</p>'}</div>
-    ${(CF.currentUser && CF.currentUser.role === "BRAND")
-      ? `<button class="btn btn-primary btn-block" onclick="openCollabRequestForm('${c.id}')">Connect with CollabFlow</button>`
-      : `<button class="btn btn-primary btn-block" onclick="CF.closeModal('creator-profile-modal');CF.openModal('auth-modal')">Log in as a brand to connect</button>`}
-  `;
-  CF.openModal("creator-profile-modal");
-}
-
-function openCollabRequestForm(creatorId) {
-  const c = ALL_CREATORS.find(x => x.id === creatorId);
-  document.getElementById("creator-profile-body").innerHTML = `
-    <button class="modal-close" onclick="CF.closeModal('creator-profile-modal')">✕</button>
-    <h3 class="modal-title">Connect with ${CF.escapeHtml(c.name)}</h3>
-    <p class="help-text">Submit your campaign requirements and CollabFlow will coordinate the collaboration.</p>
-    <form class="form-grid" id="collab-form">
-      <div><label>Message</label><textarea id="collab-message" required></textarea></div>
-      <div><label>Content type</label><input type="text" id="collab-content-type" placeholder="e.g. Reel"></div>
-      <div><label>Proposed budget (₹)</label><input type="number" id="collab-budget"></div>
-      <div><label>Deliverables</label><input type="text" id="collab-deliverables"></div>
-      <div><label>Deadline</label><input type="date" id="collab-deadline"></div>
-      <button class="btn btn-primary btn-block" type="submit">Send collaboration request</button>
-    </form>`;
-  document.getElementById("collab-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      const existing = await CF.getCollection("collaborationRequests", { where: [["creatorId", "==", creatorId], ["brandId", "==", CF.currentUser.uid], ["status", "==", "PENDING"]] });
-      if (existing.length && !CF.DEMO_MODE) { CF.toast("You already have an active request with this creator.", "warn"); return; }
-      await CF.addDoc("collaborationRequests", {
-        creatorId, brandId: CF.currentUser.uid, creatorName: c.name,
-        message: document.getElementById("collab-message").value,
-        contentType: document.getElementById("collab-content-type").value,
-        proposedBudget: document.getElementById("collab-budget").value,
-        deliverables: document.getElementById("collab-deliverables").value,
-        deadline: document.getElementById("collab-deadline").value,
-        status: "PENDING"
-      });
-      CF.toast("Request submitted to CollabFlow.");
-      CF.closeModal("creator-profile-modal");
-    } catch (err) { CF.toast(err.message, "error"); }
-  });
-}
-
-async function loadWebsiteContent() {
-  const site = await CF.getDoc("website/home", CF.DEMO.website);
-  document.getElementById("hero-heading").textContent = site.heroHeading;
-  document.getElementById("hero-description").textContent = site.heroDescription;
-  document.getElementById("brandhub-heading").textContent = site.brandHubHeading;
-  document.getElementById("brandhub-desc").textContent = site.brandHubDescription;
-  document.getElementById("creatorhub-heading").textContent = site.creatorHubHeading;
-  document.getElementById("creatorhub-desc").textContent = site.creatorHubDescription;
-  document.getElementById("about-heading").textContent = site.aboutHeading;
-  document.getElementById("about-description").textContent = site.aboutDescription;
-
-  const rules = await CF.getCollection("rules", { fallbackDemo: true });
-  const rulesHtml = rules.map(r => `<div class="rule-item"><span class="dot"></span><p style="margin:0">${CF.escapeHtml(r.text)}</p></div>`).join("");
-  document.getElementById("rules-list").innerHTML = rulesHtml;
-  document.getElementById("legal-rules-list").innerHTML = rulesHtml;
-}
-
-async function init() {
-  await loadWebsiteContent();
-  ALL_CAMPAIGNS = await CF.getCollection("campaigns", { where: [["publicStatus", "==", true]], fallbackDemo: true });
-  ALL_CREATORS = await CF.getCollection("creators", { where: [["publicStatus", "==", true]], fallbackDemo: true });
-  renderCampaigns();
-  renderCreators();
-  document.getElementById("campaign-search").addEventListener("input", CF.debounce(renderCampaigns, 200));
-  document.getElementById("creator-search").addEventListener("input", CF.debounce(renderCreators, 200));
-  document.getElementById("creator-sort").addEventListener("change", renderCreators);
-}
-init();
-</script>
 </body>
 </html>

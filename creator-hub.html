@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Creator Hub — CollabFlow</title>
+<meta name="description" content="Discover creators, their content categories, rates and collaboration options, reviewed and published by CollabFlow.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="globalConnError" class="status-banner error" style="display:none; position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:300; max-width:92vw; box-shadow:var(--shadow-2);">Unable to connect to CollabFlow. Please check your connection and try again.</div>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a href="index.html" class="logo"><span class="dot"></span>CollabFlow</a>
+    <nav class="main-nav">
+      <a href="brand-hub.html">Brand Hub</a>
+      <a href="creator-hub.html">Creator Hub</a>
+      <a href="index.html#howSection">How It Works</a>
+      <a href="index.html#aboutSection">About</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-ghost btn-sm" href="brands.html">Brand login</a>
+      <a class="btn btn-primary btn-sm" href="creator.html">Creator login</a>
+      <button class="hamburger" aria-label="Open menu" onclick="UI.toggleMobileMenu(true)"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-panel">
+    <button class="mm-close" aria-label="Close menu" onclick="UI.toggleMobileMenu(false)">×</button>
+    <a href="index.html">Home</a>
+    <a href="brand-hub.html">Brand Hub</a>
+    <a href="brands.html">Brand login</a>
+    <a href="creator.html">Creator login</a>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">CREATOR HUB</span>
+      <h2>Discover creators</h2>
+      <p>Discover creators, their content categories, rates and collaboration options.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search-input" id="creatorSearch" placeholder="Search name, username, category, platform…" oninput="CreatorHub.render()">
+      <button class="btn btn-outline btn-sm" onclick="CreatorHub.openFilters()">Filter</button>
+      <select class="search-input" id="creatorSort" style="flex:none; width:auto;" onchange="CreatorHub.render()">
+        <option value="recent">Recently added</option>
+        <option value="followers">Followers</option>
+        <option value="rate-low">Lowest starting rate</option>
+        <option value="rate-high">Highest starting rate</option>
+      </select>
+    </div>
+    <div class="card-grid" id="creatorGrid"><div class="empty-state" style="grid-column:1/-1;"><h3>Loading creators…</h3></div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div><div class="logo" style="color:#fff;"><span class="dot"></span>CollabFlow</div></div>
+    <div><h5>Platform</h5><a href="index.html">Home</a><a href="brand-hub.html">Brand Hub</a></div>
+    <div><h5>Management</h5><a href="brands.html">Brands Panel</a><a href="creator.html">Creator Panel</a><a href="admin.html">Admin Panel</a></div>
+  </div>
+  <div class="wrap footer-bottom"><span>© <span id="footYear"></span> CollabFlow.</span><span id="footerModePill" class="mode-pill mode-connecting">Connecting…</span></div>
+</footer>
+
+<div class="modal-overlay" id="genericModalOverlay">
+  <div class="modal" id="genericModal" role="dialog" aria-modal="true">
+    <button class="modal-close" aria-label="Close" onclick="UI.closeModal()">×</button>
+    <div id="genericModalBody"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal confirm-modal" role="alertdialog" aria-modal="true">
+    <h3 id="confirmTitle">Are you sure?</h3><p id="confirmText"></p>
+    <div class="confirm-actions"><button class="btn btn-outline" onclick="UI.closeConfirm()">Cancel</button><button class="btn btn-danger" id="confirmActionBtn">Confirm</button></div>
+  </div>
+</div>
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="app-core.js"></script>
+<script>
+document.getElementById('footYear').textContent = new Date().getFullYear();
+let creatorFilters = { category:[], platform:[] };
+
+const CreatorHub = {
+  render(){
+    const grid = document.getElementById('creatorGrid');
+    if(connectionState==='error'){ grid.innerHTML = `<div class="status-banner error" style="grid-column:1/-1;">Unable to connect to CollabFlow. Please check your connection and try again.</div>`; return; }
+    const q = (document.getElementById('creatorSearch').value||'').toLowerCase().trim();
+    let list = creators.slice();
+    if(q) list = list.filter(c => [c.name,c.username,...(c.categories||[]),...(c.platforms||[]),c.bio].join(' ').toLowerCase().includes(q));
+    if(creatorFilters.category.length) list = list.filter(c=>(c.categories||[]).some(cat=>creatorFilters.category.includes(cat)));
+    if(creatorFilters.platform.length) list = list.filter(c=>(c.platforms||[]).some(p=>creatorFilters.platform.includes(p)));
+    const sort = document.getElementById('creatorSort').value;
+    const startRate = c => Math.min(...Object.values(c.rates||{}).filter(v=>v>0), Infinity);
+    if(sort==='followers') list.sort((a,b)=>(b.followers||0)-(a.followers||0));
+    else if(sort==='rate-low') list.sort((a,b)=>startRate(a)-startRate(b));
+    else if(sort==='rate-high') list.sort((a,b)=>startRate(b)-startRate(a));
+    if(!list.length){ grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><h3>No creators found.</h3><p>Try another search or adjust your filters.</p></div>`; return; }
+    grid.innerHTML = list.map(c=>{
+      const rate = startRate(c);
+      return `
+      <div class="item-card">
+        <div class="item-cover"><img src="${c.coverImage||''}" alt="${UI.escapeHtml(c.name)} cover"></div>
+        <div class="item-body">
+          <h4>${UI.escapeHtml(c.name)}</h4>
+          <p class="item-desc" style="font-weight:600;">${UI.escapeHtml(c.username||'')} · ${(c.followers||0).toLocaleString()} followers</p>
+          <div class="item-meta">${(c.categories||[]).map(t=>`<span class="chip">${t}</span>`).join('')}${(c.platforms||[]).map(p=>`<span class="chip">${p}</span>`).join('')}</div>
+          <p class="item-desc">${UI.escapeHtml(c.bio||'')}</p>
+          <div class="item-foot">
+            <span class="price">${rate===Infinity? 'Rate on request' : 'From ₹'+rate.toLocaleString()}</span>
+            <button class="btn btn-primary btn-sm" onclick="CreatorHub.viewProfile('${c.id}')">View profile</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  },
+  viewProfile(id){
+    const c = creators.find(x=>x.id===id); if(!c) return;
+    const rates = c.rates||{};
+    UI.openModal(`
+      <h3>${UI.escapeHtml(c.name)}</h3>
+      <div class="modal-cover"><img src="${c.coverImage||''}" alt=""></div>
+      <div class="detail-row"><span>Username</span><span>${UI.escapeHtml(c.username||'')}</span></div>
+      <div class="detail-row"><span>Category</span><span>${(c.categories||[]).join(', ')}</span></div>
+      <div class="detail-row"><span>Platform</span><span>${(c.platforms||[]).join(', ')}</span></div>
+      <div class="detail-row"><span>Followers</span><span>${(c.followers||0).toLocaleString()}</span></div>
+      <div class="detail-row"><span>Location</span><span>${UI.escapeHtml(c.location||'—')}</span></div>
+      <div class="modal-section"><h5>Bio</h5><p>${UI.escapeHtml(c.bio||'')}</p></div>
+      <div class="modal-section"><h5>Rates ${c.negotiable?'(negotiable)':''}</h5>
+        <div class="rate-grid">${Object.entries(rates).filter(([,v])=>v>0).map(([k,v])=>`<div class="rate-box"><label>${k}</label><strong>₹${v.toLocaleString()}</strong></div>`).join('') || '<p>Rate on request</p>'}</div>
+      </div>
+      ${(c.packages||[]).length? `<div class="modal-section"><h5>Packages</h5>${c.packages.map(p=>`<div class="pkg-card"><div class="pkg-head"><strong>${UI.escapeHtml(p.name)}</strong><span class="price">₹${p.price.toLocaleString()}</span></div><p style="font-size:13.5px;color:var(--ink-soft);margin-top:4px;">${UI.escapeHtml(p.desc)}</p></div>`).join('')}</div>` : ''}
+      <div style="margin-top:18px;">
+        <a class="btn btn-primary btn-block" href="brands.html">Log in as a brand to connect</a>
+      </div>
+      <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">Private contact details aren't shown here — CollabFlow coordinates the introduction.</p>
+    `);
+  },
+  openFilters(){
+    UI.openModal(`
+      <h3>Filter creators</h3>
+      <div class="filter-sheet-body">
+        <div class="filter-group"><h5>Category</h5><div class="checkbox-grid" id="fCategory"></div></div>
+        <div class="filter-group"><h5>Platform</h5><div class="checkbox-grid" id="fCPlatform"></div></div>
+        <div class="filter-actions"><button class="btn btn-outline btn-block" onclick="CreatorHub.clearFilters()">Clear filters</button><button class="btn btn-primary btn-block" onclick="CreatorHub.applyFilters()">Apply filters</button></div>
+      </div>`);
+    document.getElementById('fCategory').innerHTML = ["Fashion","Lifestyle","Fitness","Gaming","Beauty","Food","Travel","Tech","Entertainment","Other"].map(c=>pill('cat',c,creatorFilters.category.includes(c))).join('');
+    document.getElementById('fCPlatform').innerHTML = ["Instagram","YouTube","Other"].map(c=>pill('cpl',c,creatorFilters.platform.includes(c))).join('');
+  },
+  applyFilters(){ creatorFilters.category = getCheckedPills('cat'); creatorFilters.platform = getCheckedPills('cpl'); UI.closeModal(); this.render(); },
+  clearFilters(){ creatorFilters={category:[],platform:[]}; UI.closeModal(); this.render(); }
+};
+
+function onBackendReady(){ wirePublicCreators(()=>CreatorHub.render()); }
+function rewirePublicListeners(){ if(connectionState==='live') wirePublicCreators(()=>CreatorHub.render()); }
+function onBackendError(){ CreatorHub.render(); }
+</script>
+</body>
+</html>

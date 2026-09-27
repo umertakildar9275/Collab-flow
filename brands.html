@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Brands Panel — CollabFlow</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="globalConnError" class="status-banner error" style="display:none; position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:300; max-width:92vw; box-shadow:var(--shadow-2);">Unable to connect to CollabFlow. Please check your connection and try again.</div>
+
+<div id="brandsLoginScreen" class="login-shell">
+  <div class="login-card">
+    <div id="brandsLoginForm">
+      <span class="login-tag">Brands Panel</span>
+      <h2 id="brandsAuthTitle">Sign in</h2>
+      <p class="sub" id="brandsAuthSub">Manage your campaigns and creator discovery.</p>
+      <div class="form-field" id="brandsNameField" style="display:none;"><label>Brand name</label><input type="text" id="brandsSignupName"></div>
+      <div class="form-field"><label>Email</label><input type="email" id="brandsEmail" autocomplete="username"></div>
+      <div class="form-field"><label>Password</label><input type="password" id="brandsPassword" autocomplete="current-password"></div>
+      <div class="form-error" id="brandsLoginError" style="display:none;"></div>
+      <button class="btn btn-primary btn-block" id="brandsAuthBtn" onclick="Auth.brandSubmit()">Log in</button>
+      <button class="btn btn-ghost btn-block" onclick="Auth.toggleBrandMode()" id="brandsToggleBtn" style="margin-top:6px;">New brand? Sign up</button>
+      <a class="btn btn-ghost btn-block" href="index.html">Back to homepage</a>
+    </div>
+    <div id="brandsAccessDenied" style="display:none;">
+      <span class="login-tag">Brands Panel</span>
+      <h2>Access denied</h2>
+      <p class="sub">Your account isn't a Brand account.</p>
+      <button class="btn btn-outline btn-block" onclick="Auth.logout()">Log out and try a different account</button>
+      <a class="btn btn-ghost btn-block" href="index.html" style="margin-top:6px;">Back to homepage</a>
+    </div>
+  </div>
+</div>
+
+<div id="brandsApp" style="display:none;">
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-title">
+        <button class="hamburger" style="display:block;" onclick="UI.toggleAppSidebar('brands',true)"><span style="background:#fff"></span><span style="background:#fff"></span><span style="background:#fff"></span></button>
+        CollabFlow <span class="panel-name">Brands</span>
+      </div>
+      <div class="app-header-actions">
+        <span class="mode-pill mode-connecting" id="brandsModePill">Connecting…</span>
+        <button class="icon-btn" onclick="Notifications.open('BRAND')" aria-label="Notifications">🔔<span class="dot-badge" id="brandsNotifDot" style="display:none;"></span></button>
+        <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">Log out</button>
+      </div>
+    </div>
+  </div>
+  <div class="app-drawer-overlay" id="brandsDrawerOverlay" onclick="UI.toggleAppSidebar('brands',false)"></div>
+  <div class="app-body">
+    <aside class="app-sidebar" id="brandsSidebar">
+      <a class="app-nav-item active" data-tab="dashboard" onclick="BrandsPanel.setTab('dashboard')">📊 Dashboard</a>
+      <a class="app-nav-item" data-tab="profile" onclick="BrandsPanel.setTab('profile')">🏢 Brand profile</a>
+      <a class="app-nav-item" data-tab="campaigns" onclick="BrandsPanel.setTab('campaigns')">📣 My campaigns</a>
+      <a class="app-nav-item" data-tab="applications" onclick="BrandsPanel.setTab('applications')">📥 Applications</a>
+      <a class="app-nav-item" data-tab="find" onclick="BrandsPanel.setTab('find')">🔍 Find creators</a>
+      <a class="app-nav-item" data-tab="requests" onclick="BrandsPanel.setTab('requests')">🤝 Sent requests</a>
+      <a class="app-nav-item" data-tab="settings" onclick="BrandsPanel.setTab('settings')">⚙️ Settings</a>
+      <a class="app-nav-item" href="index.html" style="margin-top:10px; border-top:1px solid var(--line); padding-top:14px;">← Public site</a>
+    </aside>
+    <main class="app-main" id="brandsMain"></main>
+  </div>
+</div>
+
+<div class="modal-overlay" id="genericModalOverlay">
+  <div class="modal" id="genericModal" role="dialog" aria-modal="true">
+    <button class="modal-close" aria-label="Close" onclick="UI.closeModal()">×</button>
+    <div id="genericModalBody"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal confirm-modal" role="alertdialog" aria-modal="true">
+    <h3 id="confirmTitle">Are you sure?</h3><p id="confirmText"></p>
+    <div class="confirm-actions"><button class="btn btn-outline" onclick="UI.closeConfirm()">Cancel</button><button class="btn btn-danger" id="confirmActionBtn">Confirm</button></div>
+  </div>
+</div>
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="app-core.js"></script>
+<script>
+function renderGate(){
+  const loginEl = document.getElementById('brandsLoginScreen'), appEl = document.getElementById('brandsApp');
+  const denied = document.getElementById('brandsAccessDenied'), form = document.getElementById('brandsLoginForm');
+  if(session.brand){ loginEl.style.display='none'; appEl.style.display='block'; BrandsPanel.setTab(BrandsPanel.currentTab||'dashboard'); return; }
+  loginEl.style.display='flex'; appEl.style.display='none';
+  if(Backend.auth && Backend.auth.currentUser){ form.style.display='none'; denied.style.display='block'; }
+  else { form.style.display='block'; denied.style.display='none'; }
+}
+function onAuthResolved(role){
+  if(role==='BRAND') wireBrandListeners(session.brand.id); else ['brandCampaigns','brandApplications','brandRequests','brandNotifications'].forEach(k=>Listeners.clear(k));
+  renderGate();
+}
+function onBackendReady(){ wirePublicCreators(()=>BrandsPanel.refreshIfVisible(['find'])); renderGate(); }
+function rewirePublicListeners(){ if(connectionState==='live') wirePublicCreators(()=>BrandsPanel.refreshIfVisible(['find'])); }
+function onBackendError(){ renderGate(); }
+
+function wireBrandListeners(uid){
+  const {collection, query, where, onSnapshot} = Backend.fsMod;
+  Listeners.set('brandCampaigns', onSnapshot(query(collection(Backend.db,'campaigns'), where('brandId','==',uid)), snap=>{ brandOwnCampaigns=snap.docs.map(d=>({id:d.id,...d.data()})); BrandsPanel.refreshIfVisible(['campaigns','dashboard']); },
+    err=>{ console.error(err); Toast.show("You don't have permission to perform this action.",'error'); }));
+  Listeners.set('brandApplications', onSnapshot(query(collection(Backend.db,'applications'), where('brandId','==',uid)), snap=>{ brandApplications=snap.docs.map(d=>({id:d.id,...d.data()})); BrandsPanel.refreshIfVisible(['applications']); }));
+  Listeners.set('brandRequests', onSnapshot(query(collection(Backend.db,'collaborationRequests'), where('brandId','==',uid)), snap=>{ brandRequests=snap.docs.map(d=>({id:d.id,...d.data()})); BrandsPanel.refreshIfVisible(['requests']); }));
+  Listeners.set('brandNotifications', onSnapshot(query(collection(Backend.db,'notifications'), where('userId','==',uid)), snap=>{
+    notifications.BRAND = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    UI.updateNotifDots();
+  }));
+}
+
+const BrandsPanel = {
+  currentTab:'dashboard',
+  setTab(tab){
+    this.currentTab = tab;
+    document.querySelectorAll('#brandsSidebar .app-nav-item[data-tab]').forEach(el=>el.classList.toggle('active', el.dataset.tab===tab));
+    UI.toggleAppSidebar('brands', false);
+    document.getElementById('brandsMain').innerHTML = this['render_'+tab] ? this['render_'+tab]() : '<p>Coming soon.</p>';
+  },
+  refreshIfVisible(tabs){ if(document.getElementById('brandsApp').style.display!=='none' && tabs.includes(this.currentTab)) this.setTab(this.currentTab); },
+  render_dashboard(){
+    return `<div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.length}</div><div class="stat-label">Total campaigns</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.filter(c=>c.status==='DRAFT').length}</div><div class="stat-label">Draft</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.filter(c=>c.status==='REVIEW').length}</div><div class="stat-label">In review</div></div>
+      <div class="stat-card"><div class="stat-num">${brandOwnCampaigns.filter(c=>c.publicStatus).length}</div><div class="stat-label">Published</div></div>
+    </div>
+    <div class="panel-block"><h3>Welcome, ${UI.escapeHtml(session.brand.name||'')}</h3><p class="sub">Manage your profile and campaigns from the sidebar.</p></div>`;
+  },
+  render_profile(){
+    const b = session.brand;
+    return `<div class="panel-block"><h3>Brand profile</h3>
+      <div class="two-col">
+        <div class="form-field"><label>Brand name</label><input id="bpName" value="${UI.escapeHtml(b.name||'')}"></div>
+        <div class="form-field"><label>Category</label><input id="bpCategory" value="${UI.escapeHtml(b.category||'')}"></div>
+      </div>
+      <div class="form-field"><label>Description</label><textarea id="bpDesc">${UI.escapeHtml(b.description||'')}</textarea></div>
+      <div class="two-col">
+        <div class="form-field"><label>Logo URL</label><input id="bpLogo" value="${UI.escapeHtml(b.logo||'')}"></div>
+        <div class="form-field"><label>Cover URL</label><input id="bpCover" value="${UI.escapeHtml(b.cover||'')}"></div>
+      </div>
+      <div class="two-col">
+        <div class="form-field"><label>Upload logo</label><input type="file" accept="image/*" id="bpLogoFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('bpLogoFile','bpLogo')">Upload</button></div>
+        <div class="form-field"><label>Upload cover</label><input type="file" accept="image/*" id="bpCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('bpCoverFile','bpCover')">Upload</button></div>
+      </div>
+      <div class="two-col">
+        <div class="form-field"><label>Mobile number <span class="private-note">Private</span></label><input id="bpPhone" value="${UI.escapeHtml(b.phone||'')}"></div>
+        <div class="form-field"><label>Email <span class="private-note">Private</span></label><input id="bpEmail" value="${UI.escapeHtml(b.email||'')}"></div>
+      </div>
+      <button class="btn btn-primary" onclick="BrandsPanel.saveProfile()">Save brand details</button>
+    </div>`;
+  },
+  async saveProfile(){
+    const data = {
+      name: document.getElementById('bpName').value, category: document.getElementById('bpCategory').value,
+      description: document.getElementById('bpDesc').value, logo: document.getElementById('bpLogo').value,
+      cover: document.getElementById('bpCover').value, phone: document.getElementById('bpPhone').value, email: document.getElementById('bpEmail').value
+    };
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'brands',session.brand.id), {...data, updatedAt:serverTimestamp()}); session.brand = {...session.brand, ...data}; Toast.show('Brand details saved.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
+  render_campaigns(){
+    return `<div class="panel-block">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <h3 style="margin:0;">My campaigns</h3><button class="btn btn-primary btn-sm" onclick="BrandsPanel.openCampaignForm()">Create campaign</button>
+      </div>
+      <div class="table-wrap" style="margin-top:16px;"><table class="data-table">
+        <thead><tr><th>Campaign</th><th>Budget</th><th>Status</th><th>Public</th><th>Actions</th></tr></thead>
+        <tbody>${brandOwnCampaigns.map(c=>`
+          <tr><td data-label="Campaign">${UI.escapeHtml(c.campaignName)}</td><td data-label="Budget">${UI.escapeHtml(c.budget||'')}</td>
+          <td data-label="Status"><span class="status-badge status-${(c.status||'draft').toLowerCase()}">${c.status||'DRAFT'}</span></td>
+          <td data-label="Public">${c.publicStatus?'Yes':'No'}</td>
+          <td data-label="Actions"><div class="row-actions">
+            <button onclick="BrandsPanel.openCampaignForm('${c.id}')">Edit</button>
+            ${c.status==='DRAFT'?`<button onclick="BrandsPanel.submitForReview('${c.id}')">Submit for review</button>`:''}
+            <button class="danger" onclick="BrandsPanel.deleteCampaign('${c.id}')">Delete</button>
+          </div></td></tr>`).join('') || `<tr><td colspan="5">No campaigns yet — create your first one above.</td></tr>`}</tbody>
+      </table></div>
+    </div>`;
+  },
+  async submitForReview(id){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'campaigns',id), {status:'REVIEW', updatedAt:serverTimestamp()}); Toast.show('Campaign submitted for review.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
+  deleteCampaign(id){
+    UI.confirm('Delete this campaign?','This action cannot be undone.', async ()=>{
+      const {doc, deleteDoc} = Backend.fsMod;
+      try{ await deleteDoc(doc(Backend.db,'campaigns',id)); Toast.show('Campaign deleted.'); }
+      catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+    });
+  },
+  openCampaignForm(id){
+    const c = id ? brandOwnCampaigns.find(x=>x.id===id) : null;
+    UI.openModal(`
+      <h3>${c?'Edit campaign':'Create campaign'}</h3>
+      <div class="form-field"><label>Campaign name <span class="req">*</span></label><input id="cfName" value="${c?UI.escapeHtml(c.campaignName):''}"></div>
+      <div class="form-field"><label>Description <span class="req">*</span></label><textarea id="cfDesc">${c?UI.escapeHtml(c.description):''}</textarea></div>
+      <div class="two-col">
+        <div class="form-field"><label>Budget <span class="req">*</span></label><input id="cfBudget" placeholder="e.g. ₹5,000 – ₹10,000" value="${c?UI.escapeHtml(c.budget):''}"></div>
+        <div class="form-field"><label>Deadline</label><input type="date" id="cfDeadline" value="${c?c.deadline||'':''}"></div>
+      </div>
+      <div class="form-field"><label>Content type <span class="req">*</span></label><div class="checkbox-grid" id="cfContentTypes">${["Reel","Post","Story","Video","UGC","Other"].map(t=>pill('cfct',t,c?(c.contentTypes||[]).includes(t):false)).join('')}</div></div>
+      <div class="form-field"><label>Platform <span class="req">*</span></label><div class="checkbox-grid" id="cfPlatforms">${["Instagram","YouTube","Other"].map(t=>pill('cfpl',t,c?(c.platforms||[]).includes(t):false)).join('')}</div></div>
+      <div class="form-field"><label>Requirements</label><textarea id="cfReq">${c?UI.escapeHtml(c.requirements||''):''}</textarea></div>
+      <div class="form-field"><label>Poster image URL</label><input id="cfCover" value="${c?c.coverImage||'':''}"></div>
+      <div class="form-field"><label>Or upload a poster</label><input type="file" accept="image/*" id="cfCoverFile"><button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="uploadImageFile('cfCoverFile','cfCover')">Upload</button></div>
+      <button class="btn btn-primary btn-block" onclick="BrandsPanel.saveCampaign('${id||''}')">Save as draft</button>
+    `);
+  },
+  async saveCampaign(id){
+    const name = document.getElementById('cfName').value.trim();
+    const desc = document.getElementById('cfDesc').value.trim();
+    const budget = document.getElementById('cfBudget').value.trim();
+    const cts = getCheckedPills('cfct'), pls = getCheckedPills('cfpl');
+    if(!name || !desc || !budget || !cts.length || !pls.length){ Toast.show('Please fill all required fields.','error'); return; }
+    const data = {
+      campaignName:name, description:desc, budget, budgetType:'Range', contentTypes:cts, platforms:pls,
+      requirements:document.getElementById('cfReq').value, coverImage:document.getElementById('cfCover').value,
+      deadline:document.getElementById('cfDeadline').value, deliverables: cts.join(' + ')
+    };
+    const {collection, doc, addDoc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      if(id){ await updateDoc(doc(Backend.db,'campaigns',id), {...data, updatedAt:serverTimestamp()}); Toast.show('Campaign updated.'); }
+      else{
+        await addDoc(collection(Backend.db,'campaigns'), {...data, brandId:session.brand.id, brandName:session.brand.name, status:'DRAFT', publicStatus:false, createdAt:serverTimestamp(), updatedAt:serverTimestamp()});
+        Toast.show('Campaign saved as draft.');
+      }
+      UI.closeModal();
+    }catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
+  render_applications(){
+    return `<div class="panel-block"><h3>Applications to my campaigns</h3>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Creator</th><th>Campaign</th><th>Proposed rate</th><th>Status</th></tr></thead>
+        <tbody>${brandApplications.map(a=>{
+          const camp = brandOwnCampaigns.find(c=>c.id===a.campaignId);
+          return `<tr><td data-label="Creator">${UI.escapeHtml(a.creatorName)}</td><td data-label="Campaign">${camp?UI.escapeHtml(camp.campaignName):'—'}</td><td data-label="Proposed rate">₹${(a.proposedRate||0).toLocaleString()}</td><td data-label="Status"><span class="status-badge status-review">${a.status}</span></td></tr>`;
+        }).join('') || `<tr><td colspan="4">No applications yet.</td></tr>`}</tbody>
+      </table></div></div>`;
+  },
+  render_find(){
+    return `<div class="panel-block"><h3>Find creators</h3>
+      <div class="card-grid">${creators.map(c=>`
+        <div class="item-card"><div class="item-cover"><img src="${c.profileImage||c.coverImage||''}" alt=""></div>
+        <div class="item-body"><h4>${UI.escapeHtml(c.name)}</h4><p class="item-desc">${UI.escapeHtml(c.username||'')} · ${(c.followers||0).toLocaleString()} followers</p>
+        <div class="item-meta">${(c.categories||[]).map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+        <div class="item-foot"><button class="btn btn-sm btn-primary" onclick="BrandsPanel.openConnect('${c.id}')">Connect</button></div>
+        </div></div>`).join('') || '<p style="color:var(--ink-soft)">No published creators yet.</p>'}</div>
+    </div>`;
+  },
+  openConnect(creatorId){
+    const c = creators.find(x=>x.id===creatorId); if(!c) return;
+    UI.openModal(`
+      <h3>Connect with ${UI.escapeHtml(c.name)}</h3>
+      <p style="color:var(--ink-soft); font-size:14px; margin-bottom:14px;">Submit your campaign requirements to CollabFlow — our team will coordinate the collaboration.</p>
+      <div class="form-field"><label>Message</label><textarea id="reqMessage" placeholder="Tell us about the collaboration…"></textarea></div>
+      <div class="form-field"><label>Proposed budget</label><input id="reqBudget" placeholder="e.g. ₹6,000"></div>
+      <button class="btn btn-primary btn-block" onclick="BrandsPanel.sendRequest('${creatorId}')">Send collaboration request</button>
+    `);
+  },
+  async sendRequest(creatorId){
+    const c = creators.find(x=>x.id===creatorId);
+    const dup = brandRequests.find(r=>r.creatorId===creatorId && r.status==='PENDING');
+    if(dup){ Toast.show('You already have an active request for this creator.', 'error'); return; }
+    const {collection, addDoc, serverTimestamp} = Backend.fsMod;
+    try{
+      await addDoc(collection(Backend.db,'collaborationRequests'), {
+        brandId:session.brand.id, brandName:session.brand.name, creatorId, creatorName:c.name, campaign:'',
+        message:document.getElementById('reqMessage').value, proposedBudget:document.getElementById('reqBudget').value,
+        status:'PENDING', createdAt:serverTimestamp(), updatedAt:serverTimestamp()
+      });
+      await addDoc(collection(Backend.db,'notifications'), {userId:creatorId, type:'COLLAB_REQUEST', title:'New collaboration request', message:`${session.brand.name} sent you a request.`, read:false, createdAt:serverTimestamp()});
+      UI.closeModal(); Toast.show('Your request has been submitted to CollabFlow.');
+    }catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
+  render_requests(){
+    return `<div class="panel-block"><h3>Sent requests</h3>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Creator</th><th>Budget</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${brandRequests.map(r=>`<tr><td data-label="Creator">${UI.escapeHtml(r.creatorName)}</td><td data-label="Budget">${UI.escapeHtml(r.proposedBudget||'—')}</td>
+        <td data-label="Status"><span class="status-badge status-pending">${r.status}</span></td>
+        <td data-label="Actions">${r.status==='PENDING'?`<button onclick="BrandsPanel.cancelRequest('${r.id}')">Cancel</button>`:'—'}</td></tr>`).join('') || `<tr><td colspan="4">No requests sent yet.</td></tr>`}</tbody>
+      </table></div></div>`;
+  },
+  async cancelRequest(id){
+    const {doc, updateDoc, serverTimestamp} = Backend.fsMod;
+    try{ await updateDoc(doc(Backend.db,'collaborationRequests',id), {status:'CANCELLED', updatedAt:serverTimestamp()}); Toast.show('Request cancelled.'); }
+    catch(e){ console.error(e); Toast.show("You don't have permission to perform this action.",'error'); }
+  },
+  render_settings(){
+    return `<div class="panel-block"><h3>Account settings</h3><p class="sub">Signed in as ${UI.escapeHtml(session.brand.email||'')}.</p>
+      <p style="font-size:13px; color:var(--ink-soft);">Password changes are managed through Firebase Authentication.</p></div>`;
+  }
+};
+</script>
+</body>
+</html>

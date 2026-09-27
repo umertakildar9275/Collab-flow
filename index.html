@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CollabFlow — Connect Brands With Creators</title>
+<meta name="description" content="CollabFlow is a managed influencer marketing platform connecting brands and creators through a reviewed, agency-coordinated collaboration workflow.">
+<meta property="og:title" content="CollabFlow — Connect Brands With Creators">
+<meta property="og:description" content="Discover creator opportunities and brand campaigns, coordinated by CollabFlow.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="globalConnError" class="status-banner error" style="display:none; position:fixed; top:76px; left:50%; transform:translateX(-50%); z-index:300; max-width:92vw; box-shadow:var(--shadow-2);">Unable to connect to CollabFlow. Please check your connection and try again.</div>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a href="index.html" class="logo"><span class="dot"></span>CollabFlow</a>
+    <nav class="main-nav">
+      <a href="brand-hub.html">Brand Hub</a>
+      <a href="creator-hub.html">Creator Hub</a>
+      <a href="#howSection">How It Works</a>
+      <a href="#aboutSection">About</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openLoginChooser()">Log in</button>
+      <button class="btn btn-primary btn-sm" onclick="openLoginChooser()">Get started</button>
+      <button class="hamburger" aria-label="Open menu" onclick="UI.toggleMobileMenu(true)"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-panel">
+    <button class="mm-close" aria-label="Close menu" onclick="UI.toggleMobileMenu(false)">×</button>
+    <a href="brand-hub.html">Brand Hub</a>
+    <a href="creator-hub.html">Creator Hub</a>
+    <a href="#howSection" onclick="UI.toggleMobileMenu(false)">How It Works</a>
+    <a href="#aboutSection" onclick="UI.toggleMobileMenu(false)">About</a>
+    <button onclick="openLoginChooser(); UI.toggleMobileMenu(false)">Log in</button>
+    <button onclick="openLoginChooser(); UI.toggleMobileMenu(false)">Get started</button>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">INFLUENCER MARKETING, MANAGED</span>
+      <h1>Brands and creators, matched through a team that actually reviews the fit.</h1>
+      <p class="lead">CollabFlow connects brands running campaigns with creators who fit them — every listing checked by our team before it goes live, every collaboration coordinated end to end.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="brand-hub.html">Explore Brand Hub</a>
+        <a class="btn btn-outline" href="creator-hub.html">Explore Creator Hub</a>
+      </div>
+    </div>
+    <div class="hero-visual" id="heroVisual">
+      <img id="heroImg" src="" alt="CollabFlow hero visual">
+      <span class="tag">Hero image — editable in Admin Panel</span>
+    </div>
+  </div>
+</section>
+
+<section id="howSection">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">THE PROCESS</span>
+      <h2>How CollabFlow works</h2>
+      <p>Every brand and every creator goes through the same reviewed process, so both sides know what to expect.</p>
+    </div>
+    <div class="flow-tabs">
+      <button class="flow-tab active" id="tabBrandFlow" onclick="setFlowTab('brand')">For brands</button>
+      <button class="flow-tab" id="tabCreatorFlow" onclick="setFlowTab('creator')">For creators</button>
+    </div>
+    <div class="steps" id="brandFlowSteps"></div>
+    <div class="steps" id="creatorFlowSteps" style="display:none;"></div>
+  </div>
+</section>
+
+<section class="section-alt" id="rulesSection">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">GUIDELINES</span>
+      <h2>Working together, the right way</h2>
+      <p>General collaboration guidelines. Full policies live on our legal pages, linked in the footer.</p>
+    </div>
+    <div class="rules-list" id="rulesList"><p style="color:var(--ink-soft);">Loading…</p></div>
+  </div>
+</section>
+
+<section id="hubSelectSection">
+  <div class="wrap">
+    <div class="section-head"><span class="eyebrow">START HERE</span><h2>Choose your hub</h2></div>
+    <div class="hub-grid">
+      <a class="hub-card" href="brand-hub.html" style="display:block; color:inherit;">
+        <div class="hub-cover"><img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80" alt="Team reviewing a marketing campaign"></div>
+        <div class="hub-body">
+          <div class="hub-title">Brand Hub</div>
+          <p>Discover active campaign opportunities and creator collaboration requirements, reviewed and published by CollabFlow.</p>
+          <span class="btn btn-primary btn-sm">Open Brand Hub</span>
+        </div>
+      </a>
+      <a class="hub-card" href="creator-hub.html" style="display:block; color:inherit;">
+        <div class="hub-cover"><img src="https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?w=900&q=80" alt="Creator recording a video"></div>
+        <div class="hub-body">
+          <div class="hub-title">Creator Hub</div>
+          <p>Discover brand opportunities and browse creator profiles, rates and collaboration details.</p>
+          <span class="btn btn-primary btn-sm">Open Creator Hub</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt" id="aboutSection">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">ABOUT COLLABFLOW</span>
+      <h2>A managed layer between brands and creators</h2>
+      <p>CollabFlow is an agency-run platform: every campaign and every creator profile is reviewed before it becomes public, and our team coordinates the handoff once a match happens.</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-card"><h4>For brands</h4><p>Share your campaign requirements once. We review and publish them to the right audience of creators, and coordinate applications as they come in.</p></div>
+      <div class="about-card"><h4>For creators</h4><p>Share your rates and portfolio once. Approved profiles surface relevant brand opportunities without exposing your private contact details publicly.</p></div>
+      <div class="about-card"><h4>Why managed</h4><p>A reviewed listing is a trustworthy listing. CollabFlow checks each side before it goes live, so both brands and creators know who they're dealing with.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="logo" style="color:#fff;"><span class="dot"></span>CollabFlow</div>
+      <p style="color:#bcd6c7; font-size:13.5px; margin-top:10px; max-width:32ch;">A managed collaboration platform connecting brands and creators.</p>
+    </div>
+    <div>
+      <h5>Platform</h5>
+      <a href="brand-hub.html">Brand Hub</a>
+      <a href="creator-hub.html">Creator Hub</a>
+      <a href="#aboutSection">About Us</a>
+      <a href="#" onclick="Legal.open('contact'); return false;">Contact</a>
+    </div>
+    <div>
+      <h5>Legal</h5>
+      <a href="#" onclick="Legal.open('terms'); return false;">Terms of Service</a>
+      <a href="#" onclick="Legal.open('privacy'); return false;">Privacy Policy</a>
+      <a href="#" onclick="Legal.open('brandGuidelines'); return false;">Brand Guidelines</a>
+      <a href="#" onclick="Legal.open('creatorGuidelines'); return false;">Creator Guidelines</a>
+    </div>
+    <div>
+      <h5>Management</h5>
+      <a href="brands.html">Brands Panel</a>
+      <a href="creator.html">Creator Panel</a>
+      <a href="admin.html">Admin Panel</a>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© <span id="footYear"></span> CollabFlow. All demo content is fictional.</span>
+    <span id="footerModePill" class="mode-pill mode-connecting">Connecting…</span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="genericModalOverlay">
+  <div class="modal" id="genericModal" role="dialog" aria-modal="true">
+    <button class="modal-close" aria-label="Close" onclick="UI.closeModal()">×</button>
+    <div id="genericModalBody"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal confirm-modal" role="alertdialog" aria-modal="true">
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p id="confirmText"></p>
+    <div class="confirm-actions"><button class="btn btn-outline" onclick="UI.closeConfirm()">Cancel</button><button class="btn btn-danger" id="confirmActionBtn">Confirm</button></div>
+  </div>
+</div>
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="app-core.js"></script>
+<script>
+const brandFlow = [
+  {t:"Contact CollabFlow", d:"Reach out to our team to get started."},
+  {t:"Share requirements", d:"Tell us your campaign goals, budget and content needs."},
+  {t:"We review & approve", d:"CollabFlow checks the listing before it goes live."},
+  {t:"Creators are connected", d:"Suitable creators discover and apply to your campaign."},
+  {t:"Collaboration happens", d:"We coordinate the handoff and the work begins."}
+];
+const creatorFlow = [
+  {t:"Contact CollabFlow", d:"Reach out to our team to get started."},
+  {t:"Share your details", d:"Provide your rates, portfolio and platform info."},
+  {t:"We review & approve", d:"CollabFlow checks your profile before it goes public."},
+  {t:"View opportunities", d:"See brand campaigns that match your profile."},
+  {t:"Collaboration happens", d:"We coordinate the handoff and the work begins."}
+];
+function renderFlow(list, containerId){
+  document.getElementById(containerId).innerHTML = list.map((s,i)=>`
+    <div class="step-card"><div class="step-num">${i+1}</div><h4>${UI.escapeHtml(s.t)}</h4><p>${UI.escapeHtml(s.d)}</p></div>`).join('');
+}
+function setFlowTab(which){
+  document.getElementById('tabBrandFlow').classList.toggle('active', which==='brand');
+  document.getElementById('tabCreatorFlow').classList.toggle('active', which==='creator');
+  document.getElementById('brandFlowSteps').style.display = which==='brand' ? 'grid':'none';
+  document.getElementById('creatorFlowSteps').style.display = which==='creator' ? 'grid':'none';
+}
+renderFlow(brandFlow,'brandFlowSteps');
+renderFlow(creatorFlow,'creatorFlowSteps');
+document.getElementById('footYear').textContent = new Date().getFullYear();
+
+const Legal = {
+  content:{
+    terms:["Terms of Service","Placeholder terms. CollabFlow acts as a coordinating platform between brands and creators; it does not guarantee outcomes of any collaboration. This copy requires final legal review before launch."],
+    privacy:["Privacy Policy","Placeholder privacy notice. CollabFlow collects information you submit (profile, campaign and contact details) to operate the matching and review workflow. This copy requires final legal review before launch."],
+    brandGuidelines:["Brand Guidelines","Provide accurate campaign requirements, respond to applications in a timely manner, and honor agreed payment terms."],
+    creatorGuidelines:["Creator Guidelines","Provide accurate rates and audience data, meet agreed deliverables and deadlines, and communicate professionally."],
+    contact:["Contact CollabFlow","Reach our team through the channel shared with you during onboarding."]
+  },
+  open(key){ const [title, body] = this.content[key]; UI.openModal(`<h3>${title}</h3><div class="modal-section"><p>${body}</p></div>`); }
+};
+
+function openLoginChooser(){
+  UI.openModal(`
+    <h3>Log in to CollabFlow</h3>
+    <p style="color:var(--ink-soft); font-size:14px; margin-bottom:16px;">Choose the panel that matches your account.</p>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <a class="btn btn-outline btn-block" href="brands.html">I'm a brand</a>
+      <a class="btn btn-outline btn-block" href="creator.html">I'm a creator</a>
+      <a class="btn btn-ghost btn-block" href="admin.html">CollabFlow staff</a>
+    </div>
+  `);
+}
+
+function applySiteSettingsToDom(){
+  document.getElementById('heroImg').src = siteSettings.heroImage || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80';
+  document.getElementById('rulesList').innerHTML = (siteSettings.rules||[]).length
+    ? siteSettings.rules.map((r,i)=>`<div class="rule-item"><div class="rule-mark">${i+1}</div><p>${UI.escapeHtml(r)}</p></div>`).join('')
+    : `<p style="color:var(--ink-soft);">Guidelines will appear here once published by CollabFlow.</p>`;
+  if(siteSettings.aboutHeading){
+    const h = document.querySelector('#aboutSection .section-head h2');
+    const p = document.querySelector('#aboutSection .section-head p');
+    if(h) h.textContent = siteSettings.aboutHeading;
+    if(p) p.textContent = siteSettings.aboutDescription || '';
+  }
+}
+function onBackendReady(){ wireSiteSettings(); }
+function rewirePublicListeners(){ if(connectionState==='live') wireSiteSettings(); }
+function onBackendError(){ document.getElementById('rulesList').innerHTML = `<div class="status-banner error">Unable to connect to CollabFlow. Please check your connection and try again.</div>`; }
+</script>
+</body>
+</html>

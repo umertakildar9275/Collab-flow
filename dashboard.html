@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Your dashboard — CollabFlow</title><link rel="stylesheet" href="./css/style.css"></head>
+<body><header class="dash-header"><a class="brand" href="./index.html">Collab<span>Flow</span><i>.</i></a><div><a class="text-link" href="./index.html">View website</a><button id="logout" class="btn btn-small btn-ghost">Log out</button></div></header>
+<main class="dashboard wrap"><div class="dash-intro"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>Welcome, <span id="welcome-name">there</span>.</h1><p class="muted">Manage your public profile and collaboration details.</p></div><span id="account-role" class="role-pill">ACCOUNT</span></div>
+<div class="dashboard-columns"><section class="panel dash-panel"><div class="eyebrow">PUBLIC PROFILE SUBMISSION</div><h2>Tell the network about you.</h2><p class="muted">Submit your details. The CollabFlow team reviews submissions before publishing them publicly.</p>
+<form id="profile-form" class="form-stack">
+<label id="display-name-label">Display name<input id="displayName" required maxlength="80" placeholder="Name shown publicly"></label>
+<label>Short headline<input id="headline" required maxlength="120" placeholder="e.g. Lifestyle creator | Pune"></label>
+<label>About you<textarea id="bio" required minlength="20" maxlength="700" rows="5" placeholder="Tell brands or creators about your work…"></textarea></label>
+<label id="niche-label">Niche / industry<input id="niche" required maxlength="100" placeholder="e.g. Fashion, tech, food"></label>
+<label id="location-label">Location<input id="location" maxlength="100" placeholder="City, country"></label>
+<label>Website or portfolio URL<input id="website" type="url" maxlength="300" placeholder="https://…"></label>
+<label>Instagram / social profile URL<input id="social" type="url" maxlength="300" placeholder="https://instagram.com/…"></label>
+<label>Profile image URL <span class="muted inline-note">(optional; public image URL only)</span><input id="imageUrl" type="url" maxlength="500" placeholder="https://…"></label>
+<button class="btn" type="submit">Submit for review ↗</button><p id="profile-message" class="form-message" aria-live="polite"></p>
+</form></section>
+<aside class="panel dash-panel"><div class="eyebrow">SUBMISSION STATUS</div><h2>Your latest submission</h2><div id="submission-status" class="status-card">Loading status…</div><div class="notice"><strong>How publishing works</strong><p>Your submission stays private while pending. Once approved by the CollabFlow admin, your profile appears on the public website in real time.</p></div></aside></div></main><div id="toast" class="toast"></div><script type="module" src="./js/dashboard.js"></script></body></html>

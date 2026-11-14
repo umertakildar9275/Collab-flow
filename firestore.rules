@@ -1,0 +1,87 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isOwner(uid) { return signedIn() && request.auth.uid == uid; }
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+    function validProfile(data) {
+      return data.keys().hasAll(['type','displayName','headline','bio','niche','status'])
+        && data.type in ['creator','brand']
+        && data.displayName is string && data.displayName.size() >= 2 && data.displayName.size() <= 80
+        && data.headline is string && data.headline.size() <= 120
+        && data.bio is string && data.bio.size() >= 20 && data.bio.size() <= 700
+        && data.niche is string && data.niche.size() <= 100;
+    }
+
+    match /admins/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if false;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role in ['creator','brand']
+        && request.resource.data.keys().hasOnly(['uid','displayName','email','role','createdAt','updatedAt']);
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName','updatedAt']);
+      allow delete: if false;
+    }
+
+    match /submissions/{submissionId} {
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerEmail == request.auth.token.email
+        && request.resource.data.status == 'pending'
+        && validProfile(request.resource.data)
+        && request.resource.data.keys().hasOnly([
+          'ownerUid','ownerEmail','type','displayName','headline','bio','niche','location',
+          'website','social','imageUrl','status','adminNote','createdAt','updatedAt'
+        ])
+        && request.resource.data.type in ['creator','brand'];
+      allow read: if isAdmin() || (signedIn() && resource.data.ownerUid == request.auth.uid);
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.ownerUid == request.auth.uid
+          && resource.data.status != 'approved'
+          && request.resource.data.ownerUid == resource.data.ownerUid
+          && request.resource.data.status == 'pending'
+          && validProfile(request.resource.data)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'displayName','headline','bio','niche','location','website','social','imageUrl','status','adminNote','updatedAt'
+          ]));
+      allow delete: if isAdmin();
+    }
+
+    match /publicProfiles/{profileId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow create: if isAdmin()
+        && validProfile(request.resource.data)
+        && request.resource.data.status == 'published';
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'type','displayName','headline','bio','niche','location','website','social','imageUrl',
+          'status','unpublishedAt','updatedAt','publishedAt'
+        ]);
+      allow delete: if isAdmin();
+    }
+
+    match /platformSettings/{documentId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
